@@ -14,7 +14,7 @@ export const Route = createFileRoute('/tournaments/$tournamentId/')({
 
 function HomeTournament() {
   const { tournamentId } = Route.useParams()
-  const [tab, setTab] = useState<'today' | 'tomorrow'>('today')
+  const [tab, setTab] = useState<'today' | 'tomorrow'>('tomorrow')
 
   const today = tab === 'today' ? DateTime.now().toUTC() : DateTime.now().toUTC().plus({ days: 1 })
   const nextDay = today.plus({ days: 1 })
@@ -42,9 +42,9 @@ function HomeTournament() {
     <>
       <h1 style={{ fontWeight: 'bold' }}>Torneos / {tournament?.name}</h1>
       <Flex gap="1" mb="5" justifyContent="center">
-        <Button onClick={() => setTab('today')} variant="ghost" isActive={tab === 'today'}>Hoy</Button>
+        {/* <Button onClick={() => setTab('today')} variant="ghost" isActive={tab === 'today'}>Hoy</Button> */}
         <Button onClick={() => setTab('tomorrow')} variant="ghost" isActive={tab === 'tomorrow'}>Manana</Button>
-        <Button variant="ghost">Tabla de puntos</Button>
+        {/* <Button variant="ghost">Tabla de puntos</Button> */}
       </Flex>
       {matches.map(match => <Match key={match.id} match={match} />)}
       {matches.length === 0 ? <>No hay partidos Hoy</> : null}
