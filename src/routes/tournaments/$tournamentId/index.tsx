@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { Collections, MatchesResponse, PredictionsRecord, PredictionsResponse, TournamentsResponse } from '../../../pocketbase-types'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { pb } from '../../../pb'
@@ -44,7 +44,9 @@ function HomeTournament() {
       <Flex gap="1" mb="5" justifyContent="center">
         <Button onClick={() => setTab('today')} variant="ghost" isActive={tab === 'today'}>Hoy</Button>
         <Button onClick={() => setTab('tomorrow')} variant="ghost" isActive={tab === 'tomorrow'}>Manana</Button>
-        {/* <Button variant="ghost">Tabla de puntos</Button> */}
+        <Link to="/tournaments/$tournamentId/points" params={{ tournamentId }}>
+          <Button variant="ghost">Puntos</Button>
+        </Link>
       </Flex>
       {matches.map(match => <Match key={match.id} match={match} />)}
       {matches.length === 0 ? <>No hay partidos Hoy</> : null}

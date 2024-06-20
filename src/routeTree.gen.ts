@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as TournamentsTournamentIdIndexImport } from './routes/tournaments/$tournamentId/index'
+import { Route as TournamentsTournamentIdPointsImport } from './routes/tournaments/$tournamentId/points'
 
 // Create/Update Routes
 
@@ -27,6 +28,12 @@ const TournamentsTournamentIdIndexRoute =
     getParentRoute: () => rootRoute,
   } as any)
 
+const TournamentsTournamentIdPointsRoute =
+  TournamentsTournamentIdPointsImport.update({
+    path: '/tournaments/$tournamentId/points',
+    getParentRoute: () => rootRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -36,6 +43,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/tournaments/$tournamentId/points': {
+      id: '/tournaments/$tournamentId/points'
+      path: '/tournaments/$tournamentId/points'
+      fullPath: '/tournaments/$tournamentId/points'
+      preLoaderRoute: typeof TournamentsTournamentIdPointsImport
       parentRoute: typeof rootRoute
     }
     '/tournaments/$tournamentId/': {
@@ -52,6 +66,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
+  TournamentsTournamentIdPointsRoute,
   TournamentsTournamentIdIndexRoute,
 })
 
@@ -64,11 +79,15 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/tournaments/$tournamentId/points",
         "/tournaments/$tournamentId/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/tournaments/$tournamentId/points": {
+      "filePath": "tournaments/$tournamentId/points.tsx"
     },
     "/tournaments/$tournamentId/": {
       "filePath": "tournaments/$tournamentId/index.tsx"
