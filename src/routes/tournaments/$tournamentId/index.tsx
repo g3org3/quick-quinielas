@@ -14,7 +14,7 @@ export const Route = createFileRoute('/tournaments/$tournamentId/')({
 
 function HomeTournament() {
   const { tournamentId } = Route.useParams()
-  const [tab, setTab] = useState<'today' | 'tomorrow'>('tomorrow')
+  const [tab, setTab] = useState<'today' | 'tomorrow' | 'yesterday'>('today')
 
   const today = tab === 'today' ? DateTime.now().toUTC() : DateTime.now().toUTC().plus({ days: 1 })
   const nextDay = today.plus({ days: 1 })
@@ -42,7 +42,7 @@ function HomeTournament() {
     <>
       <h1 style={{ fontWeight: 'bold' }}>Torneos / {tournament?.name}</h1>
       <Flex gap="1" mb="5" justifyContent="center">
-        {/* <Button onClick={() => setTab('today')} variant="ghost" isActive={tab === 'today'}>Hoy</Button> */}
+        <Button onClick={() => setTab('today')} variant="ghost" isActive={tab === 'today'}>Hoy</Button>
         <Button onClick={() => setTab('tomorrow')} variant="ghost" isActive={tab === 'tomorrow'}>Manana</Button>
         {/* <Button variant="ghost">Tabla de puntos</Button> */}
       </Flex>
@@ -87,6 +87,10 @@ function Match({ match }: { match: MatchesResponse }) {
     e.preventDefault()
     if (isPending) return
 
+    if (DateTime.now().toMillis() > DateTime.fromSQL(match.startAtUtc).toMillis()) {
+      toaster.error('Ya ha empezado el partido!')
+      return
+    }
     const data = new FormData(e.currentTarget)
     const form: Record<string, number> = {}
     for (const [key, value] of data.entries()) {
