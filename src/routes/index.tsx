@@ -23,7 +23,7 @@ function Home() {
 
   return <>
     <h1 style={{ fontWeight: 'bold' }}>Torneos</h1>
-    <Flex gap="2" flexDirection="column">
+    <Flex gap="5" flexDirection="column">
       {data.map(tournament => (
         <Link key={tournament.id} to="/tournaments/$tournamentId" params={{ tournamentId: tournament.id }}>
           <Button width="100%" bg={btn} border="1px solid" boxShadow="sm" borderColor={border}>
