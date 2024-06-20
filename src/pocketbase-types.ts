@@ -4,7 +4,7 @@
 
 import type PocketBase from 'pocketbase'
 import { z } from 'zod'
-import type { RecordService, RecordFullListOptions, RecordListOptions } from 'pocketbase'
+import type { RecordService } from 'pocketbase'
 
 export enum Collections {
   Leaderboard = "leaderboard",
@@ -147,13 +147,9 @@ export type CollectionRecords = {
 
 export type CollectionResponses = {
   leaderboard: LeaderboardResponse
-  links: LinksResponse
   matches: MatchesResponse
   predictions: PredictionsResponse
   results: ResultsResponse
-  snapshots: SnapshotsResponse
-  sprints: SprintsResponse
-  tickets: TicketsResponse
   tournaments: TournamentsResponse
   users: UsersResponse
 }
@@ -163,13 +159,9 @@ export type CollectionResponses = {
 
 export type TypedPocketBase = PocketBase & {
   collection(idOrName: 'leaderboard'): RecordService<LeaderboardResponse>
-  collection(idOrName: 'links'): RecordService<LinksResponse>
   collection(idOrName: 'matches'): RecordService<MatchesResponse>
   collection(idOrName: 'predictions'): RecordService<PredictionsResponse>
   collection(idOrName: 'results'): RecordService<ResultsResponse>
-  collection(idOrName: 'snapshots'): RecordService<SnapshotsResponse>
-  collection(idOrName: 'sprints'): RecordService<SprintsResponse>
-  collection(idOrName: 'tickets'): RecordService<TicketsResponse>
   collection(idOrName: 'tournaments'): RecordService<TournamentsResponse>
   collection(idOrName: 'users'): RecordService<UsersResponse>
 }
