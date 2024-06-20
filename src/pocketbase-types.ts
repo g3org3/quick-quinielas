@@ -45,6 +45,7 @@ export type AuthSystemFields<T = never> = {
 
 export type LeaderboardRecord<Tpoints = unknown> = {
   points?: null | Tpoints
+  tournament_id?: RecordIdString
   user?: RecordIdString
 }
 
@@ -85,6 +86,7 @@ export type ResultsRecord<Tpoints = unknown> = {
   p_away?: number
   p_home?: number
   points?: null | Tpoints
+  tournament_id?: RecordIdString
   user?: RecordIdString
 }
 
@@ -181,6 +183,7 @@ export type TypedPocketBase = PocketBase & {
 
 export const leaderboardSchema = z.object({
   user: z.string().nullish(),
+  tournament_id: z.string().nullish(),
   points: z.number().nullish(),
 })
 
@@ -206,6 +209,7 @@ export const predictionsSchema = z.object({
 export const resultsSchema = z.object({
   user: z.string().nullish(),
   match_id: z.string().nullish(),
+  tournament_id: z.string().nullish(),
   p_home: z.number().nullish(),
   p_away: z.number().nullish(),
   home: z.string().nullish(),
@@ -213,10 +217,6 @@ export const resultsSchema = z.object({
   away: z.string().nullish(),
   awayScore: z.number().nullish(),
   points: z.number().nullish(),
-})
-
-export const sprintsSchema = z.object({
-  name: z.string().nullish(),
 })
 
 export const tournamentsSchema = z.object({
