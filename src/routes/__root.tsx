@@ -25,6 +25,17 @@ function Root() {
     window.document.location = '/'
   }
 
+  const onToggleColorMode = () => {
+    const meta = document.querySelectorAll('meta[name="theme-color"]')[0] as unknown
+    if (meta && typeof meta === 'object' && "content" in meta && colorMode === 'light') {
+      meta.content = '#000'
+    }
+    if (meta && typeof meta === 'object' && "content" in meta && colorMode === 'dark') {
+      meta.content = '#fff'
+    }
+    toggleColorMode()
+  }
+
   return (
     <Flex color={color} bg={bg} flexDir="column" minH="100dvh">
       <Flex py="2" bg={bg} alignItems="center" borderBottom="1px solid" borderColor={border}>
@@ -33,7 +44,7 @@ function Root() {
             <span style={{ fontWeight: 'bold' }}>Quiniela</span>
           </Link>
           <Spacer />
-          <Button size="sm" variant="ghost" onClick={toggleColorMode}>
+          <Button size="sm" variant="ghost" onClick={onToggleColorMode}>
             Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
           </Button>
           <Button size="sm" variant="ghost" onClick={onLogout}>
