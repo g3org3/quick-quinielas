@@ -3,7 +3,6 @@
 */
 
 import type PocketBase from 'pocketbase'
-import { z } from 'zod'
 import type { RecordService } from 'pocketbase'
 
 export enum Collections {
@@ -124,9 +123,13 @@ export type UsersRecord = {
 
 // Response types include system fields and match responses from the PocketBase API
 export type LeaderboardResponse<Tpoints = unknown, Texpand = unknown> = Required<LeaderboardRecord<Tpoints>> & BaseSystemFields<Texpand>
+export type LinksResponse<Ttags = unknown, Texpand = unknown> = Required<LinksRecord<Ttags>> & BaseSystemFields<Texpand>
 export type MatchesResponse<Texpand = unknown> = Required<MatchesRecord> & BaseSystemFields<Texpand>
 export type PredictionsResponse<Texpand = unknown> = Required<PredictionsRecord> & BaseSystemFields<Texpand>
 export type ResultsResponse<Tpoints = unknown, Texpand = unknown> = Required<ResultsRecord<Tpoints>> & BaseSystemFields<Texpand>
+export type SnapshotsResponse<Texpand = unknown> = Required<SnapshotsRecord> & BaseSystemFields<Texpand>
+export type SprintsResponse<Texpand = unknown> = Required<SprintsRecord> & BaseSystemFields<Texpand>
+export type TicketsResponse<Tlabels = unknown, Tparents = unknown, Texpand = unknown> = Required<TicketsRecord<Tlabels, Tparents>> & BaseSystemFields<Texpand>
 export type TournamentsResponse<Texpand = unknown> = Required<TournamentsRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
@@ -147,9 +150,13 @@ export type CollectionRecords = {
 
 export type CollectionResponses = {
   leaderboard: LeaderboardResponse
+  links: LinksResponse
   matches: MatchesResponse
   predictions: PredictionsResponse
   results: ResultsResponse
+  snapshots: SnapshotsResponse
+  sprints: SprintsResponse
+  tickets: TicketsResponse
   tournaments: TournamentsResponse
   users: UsersResponse
 }
@@ -159,61 +166,13 @@ export type CollectionResponses = {
 
 export type TypedPocketBase = PocketBase & {
   collection(idOrName: 'leaderboard'): RecordService<LeaderboardResponse>
+  collection(idOrName: 'links'): RecordService<LinksResponse>
   collection(idOrName: 'matches'): RecordService<MatchesResponse>
   collection(idOrName: 'predictions'): RecordService<PredictionsResponse>
   collection(idOrName: 'results'): RecordService<ResultsResponse>
+  collection(idOrName: 'snapshots'): RecordService<SnapshotsResponse>
+  collection(idOrName: 'sprints'): RecordService<SprintsResponse>
+  collection(idOrName: 'tickets'): RecordService<TicketsResponse>
   collection(idOrName: 'tournaments'): RecordService<TournamentsResponse>
   collection(idOrName: 'users'): RecordService<UsersResponse>
 }
-
-
-// Generated Schemas
-
-export const leaderboardSchema = z.object({
-  user: z.string().nullish(),
-  tournament_id: z.string().nullish(),
-  points: z.number().nullish(),
-})
-
-export const matchesSchema = z.object({
-  home: z.string().nullish(),
-  away: z.string().nullish(),
-  homeScore: z.number().nullish(),
-  awayScore: z.number().nullish(),
-  tournament: z.string().nullish(),
-  startAtUtc: z.string().nullish(),
-  matchNumber: z.number().nullish(),
-  roundNumber: z.number().nullish(),
-  location: z.string().nullish(),
-})
-
-export const predictionsSchema = z.object({
-  user: z.string().nullish(),
-  homeScore: z.number().nullish(),
-  awayScore: z.number().nullish(),
-  match: z.string().nullish(),
-})
-
-export const resultsSchema = z.object({
-  user: z.string().nullish(),
-  match_id: z.string().nullish(),
-  tournament_id: z.string().nullish(),
-  p_home: z.number().nullish(),
-  p_away: z.number().nullish(),
-  home: z.string().nullish(),
-  homeScore: z.number().nullish(),
-  away: z.string().nullish(),
-  awayScore: z.number().nullish(),
-  points: z.number().nullish(),
-})
-
-export const tournamentsSchema = z.object({
-  name: z.string().nullish(),
-  logo: z.string().url().nullish(),
-})
-
-export const usersSchema = z.object({
-  name: z.string().nullish(),
-  avatar: z.string().nullish(),
-  img: z.string().url().nullish(),
-})
