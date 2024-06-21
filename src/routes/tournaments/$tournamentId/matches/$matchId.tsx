@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Flex, Input } from '@chakra-ui/react'
 import { Table, Tr, Td, Th, Tbody } from '@chakra-ui/react'
 import { DateTime } from 'luxon'
+import Loading from '../../../../components/Loading'
 
 export const Route = createFileRoute('/tournaments/$tournamentId/matches/$matchId')({
   component: SingleMatch
@@ -19,13 +20,13 @@ function SingleMatch() {
       .getOne<TournamentsResponse>(tournamentId)
   })
 
-  const { data: match } = useQuery({
+  const { data: match, isLoading: isLoadingM } = useQuery({
     queryKey: ['get-one', Collections.Matches, matchId],
     queryFn: () => pb.collection(Collections.Matches)
       .getOne<MatchesResponse>(matchId)
   })
 
-  const { data: predictions = [] } = useQuery({
+  const { data: predictions = [], isLoading: isLoadingP } = useQuery({
     queryKey: ['get-all', Collections.Results, matchId],
     queryFn: () => pb.collection(Collections.Results)
       .getFullList<ResultsResponse<number, { user: UsersResponse }>>({
@@ -34,6 +35,8 @@ function SingleMatch() {
         sort: '-points'
       })
   })
+
+  if (isLoading || isLoadingM || isLoadingP) return <Loading />
 
   if (!match) return <div>something went wrong</div>
 
