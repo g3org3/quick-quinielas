@@ -33,7 +33,9 @@ function Points() {
     queryKey: ['get-all', Collections.Leaderboard, tournamentId],
     queryFn: () => pb.collection(Collections.Leaderboard)
       .getFullList<LeaderboardResponse<number, { user: UsersRecord }>>({
-        expand: 'user'
+        filter: `tournament_id = '${tournamentId}'`,
+        expand: 'user',
+        sort: '-points',
       })
   })
 
