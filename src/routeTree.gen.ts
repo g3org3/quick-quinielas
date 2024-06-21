@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as TournamentsTournamentIdIndexImport } from './routes/tournaments/$tournamentId/index'
 import { Route as TournamentsTournamentIdPointsImport } from './routes/tournaments/$tournamentId/points'
+import { Route as TournamentsTournamentIdMatchesMatchIdImport } from './routes/tournaments/$tournamentId/matches/$matchId'
 
 // Create/Update Routes
 
@@ -31,6 +32,12 @@ const TournamentsTournamentIdIndexRoute =
 const TournamentsTournamentIdPointsRoute =
   TournamentsTournamentIdPointsImport.update({
     path: '/tournaments/$tournamentId/points',
+    getParentRoute: () => rootRoute,
+  } as any)
+
+const TournamentsTournamentIdMatchesMatchIdRoute =
+  TournamentsTournamentIdMatchesMatchIdImport.update({
+    path: '/tournaments/$tournamentId/matches/$matchId',
     getParentRoute: () => rootRoute,
   } as any)
 
@@ -59,6 +66,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TournamentsTournamentIdIndexImport
       parentRoute: typeof rootRoute
     }
+    '/tournaments/$tournamentId/matches/$matchId': {
+      id: '/tournaments/$tournamentId/matches/$matchId'
+      path: '/tournaments/$tournamentId/matches/$matchId'
+      fullPath: '/tournaments/$tournamentId/matches/$matchId'
+      preLoaderRoute: typeof TournamentsTournamentIdMatchesMatchIdImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -68,6 +82,7 @@ export const routeTree = rootRoute.addChildren({
   IndexRoute,
   TournamentsTournamentIdPointsRoute,
   TournamentsTournamentIdIndexRoute,
+  TournamentsTournamentIdMatchesMatchIdRoute,
 })
 
 /* prettier-ignore-end */
@@ -80,7 +95,8 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/",
         "/tournaments/$tournamentId/points",
-        "/tournaments/$tournamentId/"
+        "/tournaments/$tournamentId/",
+        "/tournaments/$tournamentId/matches/$matchId"
       ]
     },
     "/": {
@@ -91,6 +107,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/tournaments/$tournamentId/": {
       "filePath": "tournaments/$tournamentId/index.tsx"
+    },
+    "/tournaments/$tournamentId/matches/$matchId": {
+      "filePath": "tournaments/$tournamentId/matches/$matchId.tsx"
     }
   }
 }

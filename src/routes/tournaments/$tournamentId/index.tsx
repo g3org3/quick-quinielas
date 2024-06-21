@@ -14,9 +14,10 @@ export const Route = createFileRoute('/tournaments/$tournamentId/')({
 
 function HomeTournament() {
   const { tournamentId } = Route.useParams()
-  const [tab, setTab] = useState<'today' | 'tomorrow' | 'yesterday'>('today')
+  const [tab, setTab] = useState<'today' | 'tomorrow' | 'ayer'>('today')
 
-  const today = tab === 'today' ? DateTime.now().toUTC() : DateTime.now().toUTC().plus({ days: 1 })
+  let today = tab === 'today' ? DateTime.now().toUTC() : DateTime.now().toUTC().plus({ days: 1 })
+  today = tab === 'ayer' ? DateTime.now().toUTC().minus({ days: 1 }) : today
   const nextDay = today.plus({ days: 1 })
   const todayUtc = `${today.toSQLDate()} 00:00:00Z`
   const nextDayUtc = `${nextDay.toSQLDate()} 00:00:00Z`
@@ -42,6 +43,7 @@ function HomeTournament() {
     <>
       <h1 style={{ fontWeight: 'bold' }}>Torneos / {tournament?.name}</h1>
       <Flex gap="1" mb="5" justifyContent="center">
+        <Button onClick={() => setTab('ayer')} variant="ghost" isActive={tab === 'ayer'}>Ayer</Button>
         <Button onClick={() => setTab('today')} variant="ghost" isActive={tab === 'today'}>Hoy</Button>
         <Button onClick={() => setTab('tomorrow')} variant="ghost" isActive={tab === 'tomorrow'}>Manana</Button>
         <Link to="/tournaments/$tournamentId/points" params={{ tournamentId }}>
@@ -55,6 +57,7 @@ function HomeTournament() {
 }
 
 function Match({ match }: { match: MatchesResponse }) {
+  const { tournamentId } = Route.useParams()
   const { mutate, isPending } = useMutation({
     mutationFn: (prediction: PredictionsRecord) => pb.collection(Collections.Predictions).create(prediction),
     onSuccess() {
@@ -110,6 +113,7 @@ function Match({ match }: { match: MatchesResponse }) {
   }
 
   const isAnyPending = isLoading || isPending || uisPending
+  const isGameStarted = DateTime.fromSQL(match.startAtUtc).toMillis() <= DateTime.now().toMillis()
 
   return (
     <form onSubmit={onUpdate}>
@@ -117,14 +121,47 @@ function Match({ match }: { match: MatchesResponse }) {
         <Flex alignItems="center" gap="3">
           <Flex flex="1" gap="3">
             <Flex flex="1" alignItems="center" justifyContent="flex-end">{match.home}</Flex>
-            <Input defaultValue={home} disabled={isAnyPending} p="1" name="home" textAlign="center" placeholder="-" w="40px" />
+            <Input
+              defaultValue={home}
+              disabled={isAnyPending || isGameStarted}
+              p="1"
+              name="home"
+              textAlign="center"
+              placeholder="-"
+              w="40px" />
           </Flex>
           <Flex>vs</Flex>
           <Flex flex="1" gap="3">
-            <Input defaultValue={away} disabled={isAnyPending} textAlign="center" p="1" name="away" placeholder="-" w="40px" />
+            <Input
+              defaultValue={away}
+              disabled={isAnyPending || isGameStarted}
+              textAlign="center"
+              p="1"
+              name="away"
+              placeholder="-"
+              w="40px" />
             <Flex flex="1" alignItems="center">{match.away}</Flex>
           </Flex>
-          <Button disabled={isAnyPending} type="submit" size="sm" variant="outline" colorScheme="purple"> 💾 </Button>
+          {!isGameStarted
+            ? <Button
+              disabled={isAnyPending}
+              type="submit"
+              size="sm"
+              variant="solid"
+              colorScheme="green"> save
+            </Button>
+            : (
+              <Link
+                to="/tournaments/$tournamentId/matches/$matchId"
+                params={{ tournamentId, matchId: match.id }}>
+                <Button
+                  disabled={isAnyPending}
+                  size="sm"
+                  variant="solid"
+                  colorScheme="blue">ver
+                </Button>
+              </Link>
+            )}
         </Flex>
         <Flex display="box" fontSize="14px" textAlign="center">{match.homeScore} - {match.awayScore}</Flex>
         <Flex display="box" fontSize="14px" textAlign="center">
@@ -135,3 +172,4 @@ function Match({ match }: { match: MatchesResponse }) {
     </form>
   )
 }
+
