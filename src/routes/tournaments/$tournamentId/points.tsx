@@ -6,7 +6,6 @@ import Loading from '../../../components/Loading'
 import {
   Flex,
   Button,
-  Spacer,
   Table,
   TableContainer,
   Tbody,

@@ -3,7 +3,7 @@ import { Collections, MatchesResponse, PredictionsRecord, PredictionsResponse, T
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { pb } from '../../../pb'
 import Loading from '../../../components/Loading'
-import { Button, Flex, Img, Input, Spacer } from '@chakra-ui/react'
+import { Button, Flex, Img, Input } from '@chakra-ui/react'
 import { DateTime } from 'luxon'
 import toaster from 'react-hot-toast'
 import { useState } from 'react'
