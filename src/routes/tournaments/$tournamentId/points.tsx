@@ -6,6 +6,7 @@ import Loading from '../../../components/Loading'
 import {
   Flex,
   Button,
+  Spacer,
   Table,
   TableContainer,
   Tbody,
@@ -43,15 +44,18 @@ function Points() {
   if (isLoading || lisLoading) return <Loading />
 
   return <>
-    <h1 style={{ fontWeight: 'bold' }}>Torneos / {tournament?.name} / Puntos</h1>
-    <Flex gap="1" mb="5" justifyContent="center">
+    <Flex alignItems="center" justifyContent="space-between">
+      <Link to="/">
+        <Button size="sm" variant="outline">Torneos</Button>
+      </Link>
       <Link to="/tournaments/$tournamentId" params={{ tournamentId }}>
-        <Button variant="ghost">Hoy</Button>
+        <Button size="sm" variant="outline">{tournament?.name}</Button>
       </Link>
       <Link to="/tournaments/$tournamentId/points" params={{ tournamentId }}>
-        <Button isActive variant="ghost">Puntos</Button>
+        <Button isActive size="sm" variant="outline">Puntos</Button>
       </Link>
     </Flex>
+    <hr />
     <TableContainer>
       <Table variant='simple'>
         <Thead>

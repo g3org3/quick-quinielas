@@ -3,10 +3,11 @@ import { Collections, MatchesResponse, PredictionsRecord, PredictionsResponse, T
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { pb } from '../../../pb'
 import Loading from '../../../components/Loading'
-import { Button, Flex, Input } from '@chakra-ui/react'
+import { Button, Flex, Img, Input, Spacer } from '@chakra-ui/react'
 import { DateTime } from 'luxon'
 import toaster from 'react-hot-toast'
 import { useState } from 'react'
+import { getCountryCode } from '../../../countries'
 
 export const Route = createFileRoute('/tournaments/$tournamentId/')({
   component: HomeTournament,
@@ -41,14 +42,22 @@ function HomeTournament() {
 
   return (
     <>
-      <h1 style={{ fontWeight: 'bold' }}>Torneos / {tournament?.name}</h1>
+      <Flex alignItems="center" justifyContent="space-between">
+        <Link to="/">
+          <Button size="sm" variant="outline">Torneos</Button>
+        </Link>
+        <Link to="/tournaments/$tournamentId" params={{ tournamentId }}>
+          <Button isActive size="sm" variant="outline">{tournament?.name}</Button>
+        </Link>
+        <Link to="/tournaments/$tournamentId/points" params={{ tournamentId }}>
+          <Button size="sm" variant="outline">Puntos</Button>
+        </Link>
+      </Flex>
+      <hr />
       <Flex gap="1" mb="5" justifyContent="center">
         <Button onClick={() => setTab('ayer')} variant="ghost" isActive={tab === 'ayer'}>Ayer</Button>
         <Button onClick={() => setTab('today')} variant="ghost" isActive={tab === 'today'}>Hoy</Button>
         <Button onClick={() => setTab('tomorrow')} variant="ghost" isActive={tab === 'tomorrow'}>Manana</Button>
-        <Link to="/tournaments/$tournamentId/points" params={{ tournamentId }}>
-          <Button variant="ghost">Puntos</Button>
-        </Link>
       </Flex>
       {matches.map(match => <Match key={match.id} match={match} />)}
       {matches.length === 0 ? <>No hay partidos Hoy</> : null}
@@ -117,10 +126,13 @@ function Match({ match }: { match: MatchesResponse }) {
 
   return (
     <form onSubmit={onUpdate}>
-      <Flex flexDir="column">
+      <Flex flexDir="column" borderBottom="1px solid #ccc" pb="5">
         <Flex alignItems="center" gap="3">
-          <Flex flex="1" gap="3">
-            <Flex flex="1" alignItems="center" justifyContent="flex-end">{match.home}</Flex>
+          <Flex flex="1" gap="3" alignItems="center">
+            <Flex flex="1" flexDir="column" alignItems="center" justifyContent="flex-end">
+              <Img src={`https://flagsapi.com/${getCountryCode(match.home)}/flat/64.png`} />
+              {match.home}
+            </Flex>
             <Input
               defaultValue={home}
               disabled={isAnyPending || isGameStarted}
@@ -131,7 +143,7 @@ function Match({ match }: { match: MatchesResponse }) {
               w="40px" />
           </Flex>
           <Flex>vs</Flex>
-          <Flex flex="1" gap="3">
+          <Flex flex="1" gap="3" alignItems="center">
             <Input
               defaultValue={away}
               disabled={isAnyPending || isGameStarted}
@@ -140,7 +152,10 @@ function Match({ match }: { match: MatchesResponse }) {
               name="away"
               placeholder="-"
               w="40px" />
-            <Flex flex="1" alignItems="center">{match.away}</Flex>
+            <Flex flex="1" alignItems="center" flexDir="column">
+              <Img src={`https://flagsapi.com/${getCountryCode(match.away)}/flat/64.png`} />
+              {match.away}
+            </Flex>
           </Flex>
           {!isGameStarted
             ? <Button
@@ -163,7 +178,6 @@ function Match({ match }: { match: MatchesResponse }) {
               </Link>
             )}
         </Flex>
-        <Flex display="box" fontSize="14px" textAlign="center">{match.homeScore} - {match.awayScore}</Flex>
         <Flex display="box" fontSize="14px" textAlign="center">
           {DateTime.fromSQL(match.startAtUtc).toFormat('EEE MMM dd ')}
           hora: {DateTime.fromSQL(match.startAtUtc).toFormat('HH:mm')}

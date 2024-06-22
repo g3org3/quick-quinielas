@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { pb } from '../pb'
 import { Collections, TournamentsResponse } from '../pocketbase-types'
-import { Button, Flex, useColorModeValue } from '@chakra-ui/react'
+import { Button, Flex, Img, useColorModeValue } from '@chakra-ui/react'
 import Loading from '../components/Loading'
 
 export const Route = createFileRoute('/')({
@@ -26,8 +26,13 @@ function Home() {
     <Flex gap="5" flexDirection="column">
       {data.map(tournament => (
         <Link key={tournament.id} to="/tournaments/$tournamentId" params={{ tournamentId: tournament.id }}>
-          <Button width="100%" bg={btn} border="1px solid" boxShadow="sm" borderColor={border}>
-            <Flex>{tournament.name}</Flex>
+          <Button display="flex" justifyContent="flex-start" gap="5" h="120px" width="100%" bg={btn} border="1px solid" boxShadow="sm" borderColor={border}>
+            <Flex borderRight="1px solid" borderColor={border} pr="5">
+              <Img width="100px" height="100px" src={tournament.logo} />
+            </Flex>
+            <Flex>
+              {tournament.name}
+            </Flex>
           </Button>
         </Link>
       ))}
