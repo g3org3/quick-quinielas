@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Collections, MatchesResponse, PredictionsResponse, ResultsResponse, TournamentsResponse, UsersResponse } from '../../../../pocketbase-types'
+import { Collections, MatchesResponse, ResultsResponse, TournamentsResponse, UsersResponse } from '../../../../pocketbase-types'
 import { pb } from '../../../../pb'
 import { useQuery } from '@tanstack/react-query'
 import { Flex, Input } from '@chakra-ui/react'
