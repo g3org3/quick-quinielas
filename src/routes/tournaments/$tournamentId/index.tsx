@@ -3,7 +3,7 @@ import { Collections, MatchesResponse, PredictionsRecord, PredictionsResponse, T
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { pb } from '../../../pb'
 import Loading from '../../../components/Loading'
-import { Button, Flex, Img, Input } from '@chakra-ui/react'
+import { Button, Flex, Img, Input, useColorModeValue } from '@chakra-ui/react'
 import { DateTime } from 'luxon'
 import toaster from 'react-hot-toast'
 import { useState } from 'react'
@@ -73,6 +73,7 @@ function HomeTournament() {
 }
 
 function Match({ match }: { match: MatchesResponse }) {
+  const border = useColorModeValue('gray.200', 'gray.700')
   const { tournamentId } = Route.useParams()
   const { mutate, isPending } = useMutation({
     mutationFn: (prediction: PredictionsRecord) => pb.collection(Collections.Predictions).create(prediction),
@@ -133,7 +134,7 @@ function Match({ match }: { match: MatchesResponse }) {
 
   return (
     <form onSubmit={onUpdate}>
-      <Flex flexDir="column" borderBottom="1px solid #ccc" pb="5">
+      <Flex flexDir="column" borderBottom="1px solid" borderColor={border} pb="5">
         <Flex alignItems="center" gap="3">
           <Flex flex="1" gap="3" alignItems="center">
             <Flex flex="1" flexDir="column" alignItems="center" justifyContent="flex-end">

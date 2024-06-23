@@ -10,7 +10,7 @@ export const Route = createRootRoute({
   component: Root,
 })
 
-const isDev = import.meta.env.DEV
+const isDev = false
 
 function Root() {
   const { colorMode, toggleColorMode } = useColorMode()
@@ -52,13 +52,11 @@ function Root() {
           </Button>
         </Container>
       </Flex>
-      <Flex flexDir="column" flex="1" py="4">
-        <Container maxW="container.xl" display="flex" gap="3" flexDir="column" flex="1">
-          <Outlet />
-        </Container>
-      </Flex>
+      <Container maxW="container.xl" display="flex" py="4" gap="3" flexDir="column" flex="1" overflow="auto">
+        <Outlet />
+      </Container>
       <Toaster />
       {isDev ? <TanStackRouterDevtools /> : null}
-    </Flex>
+    </Flex >
   )
 }
