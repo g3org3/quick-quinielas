@@ -10,7 +10,7 @@ export const Route = createRootRoute({
   component: Root,
 })
 
-const isDev = import.meta.env.DEV
+const isDev = !import.meta.env.DEV
 
 function Root() {
   const { colorMode, toggleColorMode } = useColorMode()

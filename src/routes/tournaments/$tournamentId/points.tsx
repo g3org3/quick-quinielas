@@ -43,44 +43,47 @@ function Points() {
   if (isLoading || lisLoading) return <Loading />
 
   return <>
-    <Flex alignItems="center" justifyContent="space-between">
-      <Link to="/">
-        <Button size="sm" variant="outline">Torneos</Button>
-      </Link>
-      <Link to="/tournaments/$tournamentId" params={{ tournamentId }}>
-        <Button size="sm" variant="outline">{tournament?.name}</Button>
-      </Link>
-      <Link to="/tournaments/$tournamentId/points" params={{ tournamentId }}>
-        <Button isActive size="sm" variant="outline">Puntos</Button>
-      </Link>
+    <h1 style={{ fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}>{tournament?.name}</h1>
+    <Flex flex="1" flexDir="column">
+      <TableContainer>
+        <Table variant='simple'>
+          <Thead>
+            <Tr>
+              <Th>Participante</Th>
+              <Th>Puntos</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {leaderboard.map(row => (
+              <Tr key={row.id}>
+                <Td display="flex" alignItems="center" gap="2">
+                  <Img
+                    rounded="full"
+                    w="40px"
+                    h="40px"
+                    // @ts-expect-error we dont care
+                    src={row.expand?.user.img || `https://api.dicebear.com/9.x/initials/svg?seed=${row.expand?.user.username}`}
+                  />
+                  {row.expand?.user.name}
+                </Td>
+                <Td>{row.points}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
     </Flex>
     <hr />
-    <TableContainer>
-      <Table variant='simple'>
-        <Thead>
-          <Tr>
-            <Th>Participante</Th>
-            <Th>Puntos</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {leaderboard.map(row => (
-            <Tr key={row.id}>
-              <Td display="flex" alignItems="center" gap="2">
-                <Img
-                  rounded="full"
-                  w="40px"
-                  h="40px"
-                  // @ts-expect-error we dont care
-                  src={row.expand?.user.img || `https://api.dicebear.com/9.x/initials/svg?seed=${row.expand?.user.username}`}
-                />
-                {row.expand?.user.name}
-              </Td>
-              <Td>{row.points}</Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </TableContainer>
+    <Flex alignItems="center" gap="2">
+      <Link style={{ width: '100%' }} to="/">
+        <Button w="100%" variant="ghost">Torneos</Button>
+      </Link>
+      <Link style={{ width: '100%' }} to="/tournaments/$tournamentId" params={{ tournamentId }}>
+        <Button w="100%" variant="ghost">Vaticinios</Button>
+      </Link>
+      <Link style={{ width: '100%' }} to="/tournaments/$tournamentId/points" params={{ tournamentId }}>
+        <Button isActive w="100%" variant="ghost">Puntos</Button>
+      </Link>
+    </Flex>
   </>
 }

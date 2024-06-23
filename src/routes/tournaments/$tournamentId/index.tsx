@@ -15,10 +15,12 @@ export const Route = createFileRoute('/tournaments/$tournamentId/')({
 
 function HomeTournament() {
   const { tournamentId } = Route.useParams()
-  const [tab, setTab] = useState<'today' | 'tomorrow' | 'ayer'>('today')
+  const [tab, setTab] = useState<'today' | 'tomorrow' | 'ayer' | 'ante' | 'pasado'>('today')
 
   let today = tab === 'today' ? DateTime.now().toUTC() : DateTime.now().toUTC().plus({ days: 1 })
   today = tab === 'ayer' ? DateTime.now().toUTC().minus({ days: 1 }) : today
+  today = tab === 'ante' ? DateTime.now().toUTC().minus({ days: 2 }) : today
+  today = tab === 'pasado' ? DateTime.now().toUTC().plus({ days: 2 }) : today
   const nextDay = today.plus({ days: 1 })
   const todayUtc = `${today.toSQLDate()} 00:00:00Z`
   const nextDayUtc = `${nextDay.toSQLDate()} 00:00:00Z`
@@ -42,25 +44,30 @@ function HomeTournament() {
 
   return (
     <>
-      <Flex alignItems="center" justifyContent="space-between">
-        <Link to="/">
-          <Button size="sm" variant="outline">Torneos</Button>
-        </Link>
-        <Link to="/tournaments/$tournamentId" params={{ tournamentId }}>
-          <Button isActive size="sm" variant="outline">{tournament?.name}</Button>
-        </Link>
-        <Link to="/tournaments/$tournamentId/points" params={{ tournamentId }}>
-          <Button size="sm" variant="outline">Puntos</Button>
-        </Link>
-      </Flex>
-      <hr />
-      <Flex gap="1" mb="5" justifyContent="center">
+      <h1 style={{ fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}>{tournament?.name}</h1>
+      <Flex gap="1" my="5" justifyContent="center">
+        <Button onClick={() => setTab('ante')} variant="ghost" isActive={tab === 'ante'}>Ante</Button>
         <Button onClick={() => setTab('ayer')} variant="ghost" isActive={tab === 'ayer'}>Ayer</Button>
         <Button onClick={() => setTab('today')} variant="ghost" isActive={tab === 'today'}>Hoy</Button>
         <Button onClick={() => setTab('tomorrow')} variant="ghost" isActive={tab === 'tomorrow'}>Manana</Button>
+        <Button onClick={() => setTab('pasado')} variant="ghost" isActive={tab === 'pasado'}>Pasado</Button>
       </Flex>
-      {matches.map(match => <Match key={match.id} match={match} />)}
-      {matches.length === 0 ? <>No hay partidos Hoy</> : null}
+      <Flex flexDir="column" flex="1">
+        {matches.map(match => <Match key={match.id} match={match} />)}
+        {matches.length === 0 ? <>No hay partidos</> : null}
+      </Flex>
+      <hr />
+      <Flex alignItems="center" gap="2">
+        <Link style={{ width: '100%' }} to="/">
+          <Button w="100%" variant="ghost">Torneos</Button>
+        </Link>
+        <Link style={{ width: '100%' }} to="/tournaments/$tournamentId" params={{ tournamentId }}>
+          <Button isActive w="100%" variant="ghost">Vaticinios</Button>
+        </Link>
+        <Link style={{ width: '100%' }} to="/tournaments/$tournamentId/points" params={{ tournamentId }}>
+          <Button w="100%" variant="ghost">Puntos</Button>
+        </Link>
+      </Flex>
     </>
   )
 }
@@ -108,7 +115,7 @@ function Match({ match }: { match: MatchesResponse }) {
     const data = new FormData(e.currentTarget)
     const form: Record<string, number> = {}
     for (const [key, value] of data.entries()) {
-      form[key] = Number(value)
+      form[key] = Number(value) || 0
     }
 
     const payload: PredictionsRecord = {
