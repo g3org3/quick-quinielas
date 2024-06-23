@@ -10,7 +10,7 @@ export const Route = createRootRoute({
   component: Root,
 })
 
-const isDev = !import.meta.env.DEV
+const isDev = import.meta.env.DEV
 
 function Root() {
   const { colorMode, toggleColorMode } = useColorMode()
@@ -45,7 +45,7 @@ function Root() {
           </Link>
           <Spacer />
           <Button size="sm" variant="ghost" onClick={onToggleColorMode}>
-            Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
+            Toggle {colorMode === 'light' ? '🌚' : '☀️'}
           </Button>
           <Button size="sm" variant="ghost" onClick={onLogout}>
             Logout

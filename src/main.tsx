@@ -19,7 +19,7 @@ declare module '@tanstack/react-router' {
 }
 
 const queryClient = new QueryClient()
-const isDev = !import.meta.env.DEV
+const isDev = import.meta.env.DEV
 
 // Render the app
 const rootElement = document.getElementById('root')!
