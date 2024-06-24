@@ -44,8 +44,8 @@ function HomeTournament() {
 
   return (
     <>
-      <h1 style={{ fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}>{tournament?.name}</h1>
-      <Flex gap="1" my="5" justifyContent="center">
+      <h1 style={{ fontWeight: 'bold', letterSpacing: '2px', fontSize: '20px', textAlign: 'center' }}>{tournament?.name}</h1>
+      <Flex gap="1" mt="5" justifyContent="center">
         <Button onClick={() => setTab('ante')} variant="ghost" isActive={tab === 'ante'}>Ante</Button>
         <Button onClick={() => setTab('ayer')} variant="ghost" isActive={tab === 'ayer'}>Ayer</Button>
         <Button onClick={() => setTab('today')} variant="ghost" isActive={tab === 'today'}>Hoy</Button>
@@ -134,7 +134,7 @@ function Match({ match }: { match: MatchesResponse }) {
 
   return (
     <form onSubmit={onUpdate}>
-      <Flex flexDir="column" borderBottom="1px solid" borderColor={border} pb="5">
+      <Flex flexDir="column" borderBottom="1px solid" borderColor={border} py="5">
         <Flex alignItems="center" gap="3">
           <Flex flex="1" gap="3" alignItems="center">
             <Flex flex="1" flexDir="column" alignItems="center" justifyContent="flex-end">

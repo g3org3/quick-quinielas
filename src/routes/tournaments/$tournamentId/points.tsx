@@ -43,7 +43,7 @@ function Points() {
   if (isLoading || lisLoading) return <Loading />
 
   return <>
-    <h1 style={{ fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}>{tournament?.name}</h1>
+    <h1 style={{ fontWeight: 'bold', letterSpacing: '2px', fontSize: '20px', textAlign: 'center' }}>{tournament?.name}</h1>
     <Flex flex="1" flexDir="column">
       <TableContainer>
         <Table variant='simple'>

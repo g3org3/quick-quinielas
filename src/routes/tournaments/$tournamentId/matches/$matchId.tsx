@@ -52,7 +52,7 @@ function SingleMatch() {
 
   return (
     <>
-      <h1 style={{ fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}>{tournament?.name}</h1>
+      <h1 style={{ fontWeight: 'bold', letterSpacing: '2px', fontSize: '20px', textAlign: 'center' }}>{tournament?.name}</h1>
       <Flex flexDir="column">
         <Flex alignItems="center" gap="3">
           <Flex flex="1" gap="3" alignItems="center">
