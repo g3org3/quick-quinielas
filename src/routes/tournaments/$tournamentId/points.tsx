@@ -54,9 +54,10 @@ function Points() {
             </Tr>
           </Thead>
           <Tbody>
-            {leaderboard.map(row => (
+            {leaderboard.map((row, i) => (
               <Tr key={row.id}>
                 <Td display="flex" alignItems="center" gap="2">
+                  <span>{i + 1}.</span>
                   <Img
                     rounded="full"
                     w="40px"
