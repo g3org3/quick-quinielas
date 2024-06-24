@@ -4,6 +4,8 @@ import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 import { ChakraProvider } from '@chakra-ui/react'
+import { persistQueryClient } from '@tanstack/react-query-persist-client'
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
@@ -18,7 +20,24 @@ declare module '@tanstack/react-router' {
   }
 }
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: 1000 * 60 * 60 * 24 // 24 hours
+    }
+  }
+})
+
+const localStoragePersister = createSyncStoragePersister({
+  storage: window.localStorage,
+})
+// const sessionStoragePersister = createSyncStoragePersister({ storage: window.sessionStorage })
+
+persistQueryClient({
+  queryClient,
+  persister: localStoragePersister,
+})
+
 const isDev = false
 
 // Render the app
