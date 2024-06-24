@@ -6,16 +6,26 @@ import Loading from '../../../components/Loading'
 import { Button, Flex, Img, Input, useColorModeValue } from '@chakra-ui/react'
 import { DateTime } from 'luxon'
 import toaster from 'react-hot-toast'
-import { useState } from 'react'
 import { getCountryCode } from '../../../countries'
+import { z } from 'zod'
+import { useEffect } from 'react'
+
+const homeSchema = z.object({
+  tab: z.enum(['today', 'tomorrow', 'ayer', 'ante', 'pasado']).nullish(),
+})
 
 export const Route = createFileRoute('/tournaments/$tournamentId/')({
   component: HomeTournament,
+  validateSearch: homeSchema,
 })
 
 function HomeTournament() {
   const { tournamentId } = Route.useParams()
-  const [tab, setTab] = useState<'today' | 'tomorrow' | 'ayer' | 'ante' | 'pasado'>('today')
+  const { tab = JSON.parse(localStorage.getItem('tab') || '"today"') } = Route.useSearch()
+
+  useEffect(() => {
+    localStorage.setItem('tab', JSON.stringify(tab))
+  }, [tab])
 
   let today = tab === 'today' ? DateTime.now().toUTC() : DateTime.now().toUTC().plus({ days: 1 })
   today = tab === 'ayer' ? DateTime.now().toUTC().minus({ days: 1 }) : today
@@ -46,11 +56,16 @@ function HomeTournament() {
     <>
       <h1 style={{ fontWeight: 'bold', letterSpacing: '2px', fontSize: '20px', textAlign: 'center' }}>{tournament?.name}</h1>
       <Flex gap="1" mt="5" justifyContent="center">
-        <Button onClick={() => setTab('ante')} variant="ghost" isActive={tab === 'ante'}>Ante</Button>
-        <Button onClick={() => setTab('ayer')} variant="ghost" isActive={tab === 'ayer'}>Ayer</Button>
-        <Button onClick={() => setTab('today')} variant="ghost" isActive={tab === 'today'}>Hoy</Button>
-        <Button onClick={() => setTab('tomorrow')} variant="ghost" isActive={tab === 'tomorrow'}>Manana</Button>
-        <Button onClick={() => setTab('pasado')} variant="ghost" isActive={tab === 'pasado'}>Pasado</Button>
+        <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'ante' }}>
+          <Button variant="ghost" isActive={tab === 'ante'}>Ante</Button></Link>
+        <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'ayer' }}>
+          <Button variant="ghost" isActive={tab === 'ayer'}>Ayer</Button></Link>
+        <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'today' }}>
+          <Button variant="ghost" isActive={tab === 'today'}>Hoy</Button></Link>
+        <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'tomorrow' }}>
+          <Button variant="ghost" isActive={tab === 'tomorrow'}>Manana</Button></Link>
+        <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'pasado' }}>
+          <Button variant="ghost" isActive={tab === 'pasado'}>Pasado</Button></Link>
       </Flex>
       <Flex flexDir="column" flex="1">
         {matches.map(match => <Match key={match.id} match={match} />)}
@@ -186,7 +201,7 @@ function Match({ match }: { match: MatchesResponse }) {
               </Link>
             )}
         </Flex>
-        <Flex display="box" fontSize="14px" textAlign="center">
+        <Flex color="gray.500" display="box" fontSize="14px" textAlign="center">
           {DateTime.fromSQL(match.startAtUtc).toFormat('EEE MMM dd ')}
           hora: {DateTime.fromSQL(match.startAtUtc).toFormat('HH:mm')}
         </Flex>
