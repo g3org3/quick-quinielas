@@ -1,11 +1,7 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Collections, LeaderboardResponse, TournamentsResponse, UsersRecord } from '../../../pocketbase-types'
-import { pb } from '../../../pb'
+import { createFileRoute, } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import Loading from '../../../components/Loading'
 import {
   Flex,
-  Button,
   Table,
   TableContainer,
   Tbody,
@@ -15,6 +11,11 @@ import {
   Tr,
   Img,
 } from '@chakra-ui/react'
+
+import { Collections, LeaderboardResponse, TournamentsResponse, UsersRecord } from '../../../pocketbase-types'
+import { pb } from '../../../pb'
+import Loading from '../../../components/Loading'
+import BottomNav from '../../../components/BottomNav'
 
 export const Route = createFileRoute('/tournaments/$tournamentId/points')({
   component: Points,
@@ -74,17 +75,6 @@ function Points() {
         </Table>
       </TableContainer>
     </Flex>
-    <hr />
-    <Flex alignItems="center" gap="2">
-      <Link style={{ width: '100%' }} to="/">
-        <Button w="100%" variant="ghost">Torneos</Button>
-      </Link>
-      <Link style={{ width: '100%' }} to="/tournaments/$tournamentId" params={{ tournamentId }}>
-        <Button w="100%" variant="ghost">Vaticinios</Button>
-      </Link>
-      <Link style={{ width: '100%' }} to="/tournaments/$tournamentId/points" params={{ tournamentId }}>
-        <Button isActive w="100%" variant="ghost">Puntos</Button>
-      </Link>
-    </Flex>
+    <BottomNav tournamentId={tournamentId} state='puntos' />
   </>
 }
