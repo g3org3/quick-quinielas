@@ -60,7 +60,7 @@ function HomeTournament() {
   return (
     <>
       <h1 style={{ fontWeight: 'bold', letterSpacing: '2px', fontSize: '20px', textAlign: 'center' }}>{tournament?.name}</h1>
-      <Flex gap="1" mt="5" justifyContent="center">
+      <Flex gap="1" mt="5" justifyContent="center" overflow="auto">
         <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'todos' }}>
           <Button variant="ghost" isActive={tab === 'todos'}>Todos</Button></Link>
         <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'ante' }}>
