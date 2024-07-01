@@ -4,11 +4,16 @@ import { DateTime } from 'luxon'
 import { Link } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
-import { Collections, MatchesResponse, PredictionsRecord, PredictionsResponse } from '@/pocketbase-types'
+import { Collections, MatchBetsResponse, MatchesResponse, PredictionsRecord, PredictionsResponse } from '@/pocketbase-types'
 import { getCountryCode } from '@/countries'
 import { pb } from '@/pb'
 
-export default function Match({ match, tournamentId }: { match: MatchesResponse, tournamentId: string }) {
+interface Props {
+  bet?: MatchBetsResponse<number, number, number>
+  match: MatchesResponse
+  tournamentId: string
+}
+export default function Match({ match, tournamentId, bet }: Props) {
   const border = useColorModeValue('gray.200', 'gray.700')
   const { mutate, isPending } = useMutation({
     mutationFn: (prediction: PredictionsRecord) => pb.collection(Collections.Predictions).create(prediction),
@@ -76,6 +81,7 @@ export default function Match({ match, tournamentId }: { match: MatchesResponse,
             <Flex flex="1" flexDir="column" alignItems="center" justifyContent="flex-end">
               <Img src={`https://flagsapi.com/${getCountryCode(match.home)}/flat/64.png`} />
               {match.home}
+              <Flex color="gray.500" fontFamily="monospace">{Math.floor(100 * (bet?.home_per || 0) / 8)}%</Flex>
             </Flex>
             <Input
               defaultValue={home}
@@ -99,6 +105,7 @@ export default function Match({ match, tournamentId }: { match: MatchesResponse,
             <Flex flex="1" alignItems="center" flexDir="column">
               <Img src={`https://flagsapi.com/${getCountryCode(match.away)}/flat/64.png`} />
               {match.away}
+              <Flex color="gray.500" fontFamily="monospace">{Math.floor(100 * (bet?.away_per || 0) / 8)}%</Flex>
             </Flex>
           </Flex>
           {!isGameStarted

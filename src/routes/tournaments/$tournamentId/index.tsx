@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
 import { DateTime } from 'luxon'
 
-import { Collections, MatchesResponse, TournamentsResponse } from '@/pocketbase-types'
+import { Collections, MatchBetsResponse, MatchesResponse, TournamentsResponse } from '@/pocketbase-types'
 import { pb } from '@/pb'
 import Loading from '@/components/Loading'
 import BottomNav from '@/components/BottomNav'
@@ -55,6 +55,12 @@ function HomeTournament() {
       })
   })
 
+  const { data: bets = [] } = useQuery({
+    queryKey: ['get-all', Collections.MatchBets],
+    queryFn: () => pb.collection(Collections.MatchBets)
+      .getFullList<MatchBetsResponse<number, number, number>>()
+  })
+
   if (isLoadingMatches || isLoadingTournaments) return <Loading />
 
   return (
@@ -75,7 +81,10 @@ function HomeTournament() {
           <Button variant="ghost" isActive={tab === 'pasado'}>Pasado</Button></Link>
       </Flex>
       <Flex flexDir="column" flex="1" overflow="auto">
-        {matches.map(match => <Match key={match.id} match={match} tournamentId={tournamentId} />)}
+        {matches.map(match => {
+          const bet = bets.find(bet => bet.match_id === match.id)
+          return <Match key={match.id} match={match} bet={bet} tournamentId={tournamentId} />
+        })}
         {matches.length === 0 ? <>No hay partidos</> : null}
       </Flex>
       <BottomNav state='vaticinios' tournamentId={tournamentId} />
