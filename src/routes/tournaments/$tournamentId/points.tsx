@@ -1,4 +1,4 @@
-import { createFileRoute, } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import {
   Flex,
@@ -57,7 +57,7 @@ function Points() {
           <Tbody>
             {leaderboard.map((row, i) => (
               <Tr key={row.id}>
-                <Td display="flex" alignItems="center" gap="2">
+                <Td display="flex" alignItems="center" gap="3">
                   <span>{i + 1}.</span>
                   <Img
                     rounded="full"
@@ -66,7 +66,9 @@ function Points() {
                     // @ts-expect-error we dont care
                     src={row.expand?.user.img || `https://api.dicebear.com/9.x/initials/svg?seed=${row.expand?.user.username}`}
                   />
-                  {row.expand?.user.name}
+                  <Link to="/tournaments/$tournamentId/$userId" params={{ tournamentId, userId: row.user }}>
+                    {row.expand?.user.name}
+                  </Link>
                 </Td>
                 <Td>{row.points}</Td>
               </Tr>

@@ -93,6 +93,7 @@ export type ResultsRecord<Tpoints = unknown> = {
   p_away?: number
   p_home?: number
   points?: null | Tpoints
+  startAtUtc?: string
   prediction_id?: RecordIdString
   tournament_id?: RecordIdString
   user?: RecordIdString

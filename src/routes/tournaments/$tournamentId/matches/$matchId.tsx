@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Table, Thead, Tr, Td, Th, Tbody, Button, Spacer } from '@chakra-ui/react'
+import { Table, Thead, Tr, Td, Th, Tbody, Button, Spacer, Text } from '@chakra-ui/react'
 import { Flex, Image, useColorModeValue } from '@chakra-ui/react'
 import { DateTime } from 'luxon'
 import toaster from 'react-hot-toast'
 
-import { Collections, MatchesResponse, ResultsResponse, TournamentsResponse, UsersResponse } from '@/pocketbase-types'
+import { Collections, MatchesResponse, PredictionsResponse, ResultsResponse, TournamentsResponse, UsersResponse } from '@/pocketbase-types'
 import { pb } from '@/pb'
 import Loading from '@/components/Loading'
 import { getCountryCode } from '@/countries'
@@ -42,12 +42,12 @@ function SingleMatch() {
       .getFullList<UsersResponse>()
   })
 
-  const { data: predictions = [], isLoading: isLoadingP } = useQuery({
+  const { data: results = [], isLoading: isLoadingP } = useQuery({
     queryKey: ['get-all', Collections.Results, matchId],
     queryFn: () => pb.collection(Collections.Results)
-      .getFullList<ResultsResponse<number, { user: UsersResponse }>>({
+      .getFullList<ResultsResponse<number, { user: UsersResponse, prediction_id: PredictionsResponse }>>({
         filter: `match_id = '${matchId}'`,
-        expand: 'user',
+        expand: 'user,prediction_id',
         sort: '-points'
       })
   })
@@ -66,9 +66,9 @@ function SingleMatch() {
   })
 
   const total = users.length
-  const homeper = Math.floor(100 * predictions.filter(p => p.p_home > p.p_away).length / total)
-  const awayper = Math.floor(100 * predictions.filter(p => p.p_home < p.p_away).length / total)
-  const tieper = Math.floor(100 * predictions.filter(p => p.p_home === p.p_away).length / total)
+  const homeper = Math.floor(100 * results.filter(p => p.p_home > p.p_away).length / total)
+  const awayper = Math.floor(100 * results.filter(p => p.p_home < p.p_away).length / total)
+  const tieper = Math.floor(100 * results.filter(p => p.p_home === p.p_away).length / total)
 
   if (isLoading || isLoadingM || isLoadingP || isLoadingU) return <Loading />
 
@@ -78,7 +78,7 @@ function SingleMatch() {
     <>
       <h1 style={{ fontWeight: 'bold', letterSpacing: '2px', fontSize: '20px', textAlign: 'center' }}>{tournament?.name}</h1>
       <Flex flexDir="column">
-        <Flex alignItems="center" gap="3" pb="2">
+        <Flex alignItems="center" gap="3" mb="3">
           <Flex flex="1" gap="3" alignItems="center">
             <Flex flexDir="column" flex="1" alignItems="center" justifyContent="flex-end">
               <Image src={`https://flagsapi.com/${getCountryCode(match.home)}/flat/64.png`} />
@@ -104,8 +104,9 @@ function SingleMatch() {
           </Flex>
         </Flex>
         <hr />
-        <Flex color="gray.500" display="box" fontSize="16px" textAlign="center">
-          {DateTime.fromSQL(match.startAtUtc).toFormat('EEE MMM dd ')}
+        <Flex color="gray.500" display="box" pt="1" fontSize="16px" textAlign="center">
+          {DateTime.fromSQL(match.startAtUtc).toFormat('EEE MMM dd')}
+          {' - '}{DateTime.fromSQL(match.startAtUtc).toFormat('h:mm a')}
         </Flex>
         <Flex color="gray.500" display="box" fontSize="14px" textAlign="center" mb="2">
           {match.location} - {DateTime.fromSQL(match.startAtUtc).toRelative()}
@@ -124,13 +125,21 @@ function SingleMatch() {
           </Thead>
           <Tbody>
             {users.map(user => {
-              const prediction = predictions.find(p => p.expand?.user.id === user.id)
+              const result = results.find(p => p.expand?.user.id === user.id)
+
               return (
-                <Tr bg={prediction?.points === 3 ? green : prediction?.points === 1 ? yellow : red} key={user.id}>
-                  <Td>{user.name}</Td>
-                  <Td>{prediction?.p_home ?? '-'}</Td>
-                  <Td>{prediction?.p_away ?? '-'}</Td>
-                  <Td>{prediction?.points ?? '-'}</Td>
+                <Tr
+                  bg={result?.points === 3 ? green : result?.points === 1 ? yellow : red}
+                  key={user.id}>
+                  <Td>
+                    {user.name}<br />
+                    <Text color="gray.500">{result?.expand?.prediction_id?.created ?
+                      DateTime.fromSQL(result.expand.prediction_id.created).toFormat('MMM dd h:mm a')
+                      : null}</Text>
+                  </Td>
+                  <Td>{result?.p_home ?? '-'}</Td>
+                  <Td>{result?.p_away ?? '-'}</Td>
+                  <Td>{result?.points ?? '-'}</Td>
                 </Tr>
               )
             })}
@@ -138,7 +147,7 @@ function SingleMatch() {
         </Table>
       </Flex>
       {isAdmin ? <Flex flexDir="column">
-        {predictions.map(p => (
+        {results.map(p => (
           <Flex gap="3" p="1" borderTop="1px solid" borderColor="gray.100">
             {p.prediction_id} -{p.expand?.user.name} - {p.p_home} {p.p_away}
             <Spacer />
