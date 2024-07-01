@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { Flex, Button } from '@chakra-ui/react'
 
-export default function BottomNav({ tournamentId, state }: { tournamentId: string, state: 'vaticinios' | 'puntos' }) {
+export default function BottomNav({ tournamentId, state }: { tournamentId: string, state?: 'vaticinios' | 'puntos' }) {
   return (
     <>
       <hr />

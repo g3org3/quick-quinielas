@@ -1,9 +1,10 @@
-import { useQuery } from '@tanstack/react-query'
-import { Link, createFileRoute } from '@tanstack/react-router'
-import { pb } from '../pb'
-import { Collections, TournamentsResponse } from '../pocketbase-types'
 import { Button, Flex, Img, useColorModeValue } from '@chakra-ui/react'
-import Loading from '../components/Loading'
+import { Link, createFileRoute } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
+
+import Loading from '@/components/Loading'
+import { Collections, TournamentsResponse } from '@/pocketbase-types'
+import { pb } from '@/pb'
 
 export const Route = createFileRoute('/')({
   component: Home,

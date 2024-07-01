@@ -1,10 +1,10 @@
-import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 import { Button, Container, Flex, Spacer, useColorMode, useColorModeValue } from '@chakra-ui/react'
+import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 import { Toaster } from 'react-hot-toast'
+import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
 
-import Login from '../components/Login'
-import { pb } from '../pb'
+import Login from '@/components/Login'
+import { pb } from '@/pb'
 
 export const Route = createRootRoute({
   component: Root,

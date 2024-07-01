@@ -1,12 +1,14 @@
-import { Link, createFileRoute } from '@tanstack/react-router'
-import { Collections, MatchesResponse, ResultsResponse, TournamentsResponse, UsersResponse } from '../../../../pocketbase-types'
-import { pb } from '../../../../pb'
+import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { Flex, Img, Input, Button, useColorModeValue } from '@chakra-ui/react'
 import { Table, Thead, Tr, Td, Th, Tbody } from '@chakra-ui/react'
+import { Flex, Img, Input, useColorModeValue } from '@chakra-ui/react'
 import { DateTime } from 'luxon'
-import Loading from '../../../../components/Loading'
-import { getCountryCode } from '../../../../countries'
+
+import { Collections, MatchesResponse, ResultsResponse, TournamentsResponse, UsersResponse } from '@/pocketbase-types'
+import { pb } from '@/pb'
+import Loading from '@/components/Loading'
+import { getCountryCode } from '@/countries'
+import BottomNav from '@/components/BottomNav'
 
 export const Route = createFileRoute('/tournaments/$tournamentId/matches/$matchId')({
   component: SingleMatch
@@ -101,18 +103,7 @@ function SingleMatch() {
           </Tbody>
         </Table>
       </Flex>
-      <hr />
-      <Flex alignItems="center" gap="2">
-        <Link style={{ width: '100%' }} to="/">
-          <Button w="100%" variant="ghost">Torneos</Button>
-        </Link>
-        <Link style={{ width: '100%' }} to="/tournaments/$tournamentId" params={{ tournamentId }}>
-          <Button w="100%" variant="ghost">Vaticinios</Button>
-        </Link>
-        <Link style={{ width: '100%' }} to="/tournaments/$tournamentId/points" params={{ tournamentId }}>
-          <Button w="100%" variant="ghost">Puntos</Button>
-        </Link>
-      </Flex>
+      <BottomNav tournamentId={tournamentId} />
     </>
   )
 }

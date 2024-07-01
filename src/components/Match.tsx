@@ -1,12 +1,12 @@
 import toaster from 'react-hot-toast'
 import { Button, Flex, Img, Input, useColorModeValue } from '@chakra-ui/react'
+import { DateTime } from 'luxon'
 import { Link } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { DateTime } from 'luxon'
 
-import { Collections, MatchesResponse, PredictionsRecord, PredictionsResponse } from '../pocketbase-types'
-import { pb } from '../pb'
-import { getCountryCode } from '../countries'
+import { Collections, MatchesResponse, PredictionsRecord, PredictionsResponse } from '@/pocketbase-types'
+import { getCountryCode } from '@/countries'
+import { pb } from '@/pb'
 
 export default function Match({ match, tournamentId }: { match: MatchesResponse, tournamentId: string }) {
   const border = useColorModeValue('gray.200', 'gray.700')
@@ -123,6 +123,7 @@ export default function Match({ match, tournamentId }: { match: MatchesResponse,
             )}
         </Flex>
         <Flex color="gray.500" display="box" fontSize="14px" textAlign="center">
+          {match.location} {' - '}
           {matchdate.toFormat('EEE MMM dd ')} - hora: {matchdate.toFormat('h:mm a')}
           <br />
           {matchdate.toRelative()}

@@ -1,7 +1,8 @@
 import { Flex, Button, Input } from "@chakra-ui/react";
 import type { ClientResponseError } from "pocketbase";
-import { pb } from "../pb";
 import { useState } from "react";
+
+import { pb } from "@/pb";
 
 export default function Login() {
   const [state, setState] = useState('')

@@ -3,13 +3,13 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
-
-import { Collections, MatchesResponse, TournamentsResponse } from '../../../pocketbase-types'
-import { pb } from '../../../pb'
-import Loading from '../../../components/Loading'
 import { DateTime } from 'luxon'
-import BottomNav from '../../../components/BottomNav'
-import Match from '../../../components/Match'
+
+import { Collections, MatchesResponse, TournamentsResponse } from '@/pocketbase-types'
+import { pb } from '@/pb'
+import Loading from '@/components/Loading'
+import BottomNav from '@/components/BottomNav'
+import Match from '@/components/Match'
 
 const homeSchema = z.object({
   tab: z.enum(['today', 'tomorrow', 'ayer', 'ante', 'pasado']).nullish(),

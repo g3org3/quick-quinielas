@@ -12,10 +12,10 @@ import {
   Img,
 } from '@chakra-ui/react'
 
-import { Collections, LeaderboardResponse, TournamentsResponse, UsersRecord } from '../../../pocketbase-types'
-import { pb } from '../../../pb'
-import Loading from '../../../components/Loading'
-import BottomNav from '../../../components/BottomNav'
+import { Collections, LeaderboardResponse, TournamentsResponse, UsersRecord } from '@/pocketbase-types'
+import { pb } from '@/pb'
+import Loading from '@/components/Loading'
+import BottomNav from '@/components/BottomNav'
 
 export const Route = createFileRoute('/tournaments/$tournamentId/points')({
   component: Points,
