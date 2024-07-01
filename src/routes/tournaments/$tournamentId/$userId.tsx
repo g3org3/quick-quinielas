@@ -53,10 +53,10 @@ function UserPredictions() {
         <Thead>
           <Tr>
             <Th></Th>
-            <Th>local</Th>
-            <Th>-</Th>
-            <Th>-</Th>
-            <Th>visita</Th>
+            <Th></Th>
+            <Th></Th>
+            <Th></Th>
+            <Th></Th>
             <Th>pts</Th>
           </Tr>
         </Thead>
