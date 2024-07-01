@@ -1,4 +1,6 @@
-export const getCountryCode = (name: string) => {
+export const getCountryCode = (name?: string) => {
+  if (!name) return
+
   const country = countries.find(country => country.name.toLowerCase() === name.toLowerCase())
 
   return country?.code

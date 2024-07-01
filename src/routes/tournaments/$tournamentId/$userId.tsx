@@ -6,6 +6,7 @@ import { pb } from '@/pb'
 import { Collections, MatchesResponse, ResultsResponse, UsersResponse } from '@/pocketbase-types'
 import Loading from '@/components/Loading'
 import BottomNav from '@/components/BottomNav'
+import { getCountryCode } from '@/countries'
 
 export const Route = createFileRoute('/tournaments/$tournamentId/$userId')({
   component: UserPredictions,
@@ -53,9 +54,9 @@ function UserPredictions() {
           <Tr>
             <Th></Th>
             <Th>local</Th>
+            <Th>-</Th>
+            <Th>-</Th>
             <Th>visita</Th>
-            <Th>-</Th>
-            <Th>-</Th>
             <Th>pts</Th>
           </Tr>
         </Thead>
@@ -71,11 +72,13 @@ function UserPredictions() {
                   </Link>
                 </Td>
                 <Td>
-                  {result.expand?.match_id.home.substr(0, 3)}
+                  <Image src={`https://flagsapi.com/${getCountryCode(result.expand?.match_id.home)}/flat/32.png`} />
                 </Td>
-                <Td>{result.expand?.match_id.away.substr(0, 3)}</Td>
                 <Td>{result?.p_home ?? '-'}</Td>
                 <Td>{result?.p_away ?? '-'}</Td>
+                <Td>
+                  <Image src={`https://flagsapi.com/${getCountryCode(result.expand?.match_id.away)}/flat/32.png`} />
+                </Td>
                 <Td>{result?.points ?? '-'}</Td>
               </Tr>
             )
