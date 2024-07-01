@@ -123,9 +123,9 @@ export default function Match({ match, tournamentId }: { match: MatchesResponse,
             )}
         </Flex>
         <Flex color="gray.500" display="box" fontSize="14px" textAlign="center">
-          {match.location} {' - '}
           {matchdate.toFormat('EEE MMM dd ')} - hora: {matchdate.toFormat('h:mm a')}
           <br />
+          {match.location} {' - '}
           {matchdate.toRelative()}
         </Flex>
       </Flex>

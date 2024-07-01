@@ -8,6 +8,7 @@ import type { RecordService } from 'pocketbase'
 export enum Collections {
   Leaderboard = "leaderboard",
   Links = "links",
+  MatchBets = "match_bets",
   Matches = "matches",
   Predictions = "predictions",
   Results = "results",
@@ -57,6 +58,13 @@ export type LinksRecord<Ttags = unknown> = {
   url?: string
 }
 
+export type MatchBetsRecord<Taway_per = unknown, Thome_per = unknown, Ttie_per = unknown> = {
+  away_per?: null | Taway_per
+  home_per?: null | Thome_per
+  match_id?: RecordIdString
+  tie_per?: null | Ttie_per
+}
+
 export type MatchesRecord = {
   away?: string
   awayScore?: number
@@ -85,6 +93,7 @@ export type ResultsRecord<Tpoints = unknown> = {
   p_away?: number
   p_home?: number
   points?: null | Tpoints
+  prediction_id?: RecordIdString
   tournament_id?: RecordIdString
   user?: RecordIdString
 }
@@ -124,6 +133,7 @@ export type UsersRecord = {
 // Response types include system fields and match responses from the PocketBase API
 export type LeaderboardResponse<Tpoints = unknown, Texpand = unknown> = Required<LeaderboardRecord<Tpoints>> & BaseSystemFields<Texpand>
 export type LinksResponse<Ttags = unknown, Texpand = unknown> = Required<LinksRecord<Ttags>> & BaseSystemFields<Texpand>
+export type MatchBetsResponse<Taway_per = unknown, Thome_per = unknown, Ttie_per = unknown, Texpand = unknown> = Required<MatchBetsRecord<Taway_per, Thome_per, Ttie_per>> & BaseSystemFields<Texpand>
 export type MatchesResponse<Texpand = unknown> = Required<MatchesRecord> & BaseSystemFields<Texpand>
 export type PredictionsResponse<Texpand = unknown> = Required<PredictionsRecord> & BaseSystemFields<Texpand>
 export type ResultsResponse<Tpoints = unknown, Texpand = unknown> = Required<ResultsRecord<Tpoints>> & BaseSystemFields<Texpand>
@@ -138,6 +148,7 @@ export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSyste
 export type CollectionRecords = {
   leaderboard: LeaderboardRecord
   links: LinksRecord
+  match_bets: MatchBetsRecord
   matches: MatchesRecord
   predictions: PredictionsRecord
   results: ResultsRecord
@@ -151,6 +162,7 @@ export type CollectionRecords = {
 export type CollectionResponses = {
   leaderboard: LeaderboardResponse
   links: LinksResponse
+  match_bets: MatchBetsResponse
   matches: MatchesResponse
   predictions: PredictionsResponse
   results: ResultsResponse
@@ -167,6 +179,7 @@ export type CollectionResponses = {
 export type TypedPocketBase = PocketBase & {
   collection(idOrName: 'leaderboard'): RecordService<LeaderboardResponse>
   collection(idOrName: 'links'): RecordService<LinksResponse>
+  collection(idOrName: 'match_bets'): RecordService<MatchBetsResponse>
   collection(idOrName: 'matches'): RecordService<MatchesResponse>
   collection(idOrName: 'predictions'): RecordService<PredictionsResponse>
   collection(idOrName: 'results'): RecordService<ResultsResponse>

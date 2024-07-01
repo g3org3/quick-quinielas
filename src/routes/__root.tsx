@@ -19,7 +19,7 @@ function Root() {
   if (!pb.authStore.isValid) return <Login />
 
   return (
-    <Flex color={color} bg={bg} flexDir="column" minH="100dvh">
+    <Flex color={color} bg={bg} flexDir="column" height="100dvh">
       <Navbar />
       <Container maxW="container.xl" display="flex" py="4" gap="3" flexDir="column" flex="1" overflow="auto">
         <Outlet />

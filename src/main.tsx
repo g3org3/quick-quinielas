@@ -2,10 +2,11 @@ import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { ChakraProvider } from '@chakra-ui/react'
 import { persistQueryClient } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import { queryClient } from '@/queryClient'
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
@@ -19,14 +20,6 @@ declare module '@tanstack/react-router' {
     router: typeof router
   }
 }
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      gcTime: 1000 * 60 * 60 * 1 // 24 hours
-    }
-  }
-})
 
 const localStoragePersister = createSyncStoragePersister({
   storage: window.localStorage,

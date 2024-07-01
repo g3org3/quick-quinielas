@@ -1,18 +1,22 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { Table, Thead, Tr, Td, Th, Tbody } from '@chakra-ui/react'
-import { Flex, Img, Input, useColorModeValue } from '@chakra-ui/react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { Table, Thead, Tr, Td, Th, Tbody, Button, Spacer } from '@chakra-ui/react'
+import { Flex, Image, useColorModeValue } from '@chakra-ui/react'
 import { DateTime } from 'luxon'
+import toaster from 'react-hot-toast'
 
 import { Collections, MatchesResponse, ResultsResponse, TournamentsResponse, UsersResponse } from '@/pocketbase-types'
 import { pb } from '@/pb'
 import Loading from '@/components/Loading'
 import { getCountryCode } from '@/countries'
 import BottomNav from '@/components/BottomNav'
+import { queryClient } from '@/queryClient'
 
 export const Route = createFileRoute('/tournaments/$tournamentId/matches/$matchId')({
   component: SingleMatch
 })
+
+const isAdmin = false
 
 function SingleMatch() {
   const { matchId, tournamentId } = Route.useParams()
@@ -48,6 +52,24 @@ function SingleMatch() {
       })
   })
 
+  const { mutate: onDelete } = useMutation({
+    mutationFn: (id: string) => pb.collection(Collections.Predictions).delete(id),
+    onError(e) {
+      toaster.error(e.message)
+    },
+    onSuccess() {
+      toaster.success('deleted')
+      queryClient.invalidateQueries({
+        queryKey: ['get-all', Collections.Results, matchId]
+      })
+    }
+  })
+
+  const total = users.length
+  const homeper = Math.floor(100 * predictions.filter(p => p.p_home > p.p_away).length / total)
+  const awayper = Math.floor(100 * predictions.filter(p => p.p_home < p.p_away).length / total)
+  const tieper = Math.floor(100 * predictions.filter(p => p.p_home === p.p_away).length / total)
+
   if (isLoading || isLoadingM || isLoadingP || isLoadingU) return <Loading />
 
   if (!match) return <div>something went wrong</div>
@@ -56,30 +78,42 @@ function SingleMatch() {
     <>
       <h1 style={{ fontWeight: 'bold', letterSpacing: '2px', fontSize: '20px', textAlign: 'center' }}>{tournament?.name}</h1>
       <Flex flexDir="column">
-        <Flex alignItems="center" gap="3">
+        <Flex alignItems="center" gap="3" pb="2">
           <Flex flex="1" gap="3" alignItems="center">
             <Flex flexDir="column" flex="1" alignItems="center" justifyContent="flex-end">
-              <Img src={`https://flagsapi.com/${getCountryCode(match.home)}/flat/64.png`} />
+              <Image src={`https://flagsapi.com/${getCountryCode(match.home)}/flat/64.png`} />
               {match.home}
+              <Flex fontFamily="monospace" color="gray.600">{homeper}%</Flex>
             </Flex>
-            <Input fontWeight="bold" disabled defaultValue={match.homeScore} p="1" name="home" textAlign="center" placeholder="-" w="40px" />
           </Flex>
-          <Flex>vs</Flex>
+          <Flex flexDir="column" alignSelf="flex-end">
+            <Flex alignItems="center">
+              <Flex fontWeight="bold" p="1">{match.homeScore}</Flex>
+              <Flex>vs</Flex>
+              <Flex fontWeight="bold" p="1">{match.awayScore}</Flex>
+            </Flex>
+            <br />
+            <Flex color="gray.600" fontFamily="monospace" display="box" textAlign="center">{tieper}%</Flex>
+          </Flex>
           <Flex flex="1" gap="3" alignItems="center">
-            <Input fontWeight="bold" disabled defaultValue={match.awayScore} textAlign="center" p="1" name="away" placeholder="-" w="40px" />
             <Flex flexDir="column" flex="1" alignItems="center">
-              <Img src={`https://flagsapi.com/${getCountryCode(match.away)}/flat/64.png`} />
+              <Image fallbackSrc="fallbackSrc='https://via.placeholder.com/64'" src={`https://flagsapi.com/${getCountryCode(match.away)}/flat/64.png`} />
               {match.away}
+              <Flex fontFamily="monospace" color="gray.600">{awayper}%</Flex>
             </Flex>
           </Flex>
         </Flex>
-        <Flex display="box" fontSize="14px" textAlign="center">
+        <hr />
+        <Flex color="gray.500" display="box" fontSize="16px" textAlign="center">
           {DateTime.fromSQL(match.startAtUtc).toFormat('EEE MMM dd ')}
-          hora: {DateTime.fromSQL(match.startAtUtc).toFormat('HH:mm')}
         </Flex>
+        <Flex color="gray.500" display="box" fontSize="14px" textAlign="center" mb="2">
+          {match.location} - {DateTime.fromSQL(match.startAtUtc).toRelative()}
+        </Flex>
+        <hr />
       </Flex>
-      <Flex flexDir="column" flex="1">
-        <Table>
+      <Flex flexDir="column" flex="1" overflow="auto">
+        <Table boxShadow="md" borderRadius="sm">
           <Thead>
             <Tr>
               <Th>Participante</Th>
@@ -103,6 +137,15 @@ function SingleMatch() {
           </Tbody>
         </Table>
       </Flex>
+      {isAdmin ? <Flex flexDir="column">
+        {predictions.map(p => (
+          <Flex gap="3" p="1" borderTop="1px solid" borderColor="gray.100">
+            {p.prediction_id} -{p.expand?.user.name} - {p.p_home} {p.p_away}
+            <Spacer />
+            <Button onClick={() => onDelete(p.prediction_id)} colorScheme="red" size="sm">delete</Button>
+          </Flex>
+        ))}
+      </Flex> : null}
       <BottomNav tournamentId={tournamentId} />
     </>
   )

@@ -12,7 +12,7 @@ import BottomNav from '@/components/BottomNav'
 import Match from '@/components/Match'
 
 const homeSchema = z.object({
-  tab: z.enum(['today', 'tomorrow', 'ayer', 'ante', 'pasado']).nullish(),
+  tab: z.enum(['todos', 'today', 'tomorrow', 'ayer', 'ante', 'pasado']).nullish(),
 })
 
 export const Route = createFileRoute('/tournaments/$tournamentId/')({
@@ -35,6 +35,10 @@ function HomeTournament() {
   const nextDay = today.plus({ days: 1 })
   const todayUtc = `${today.toSQLDate()} 00:00:00Z`
   const nextDayUtc = `${nextDay.toSQLDate()} 00:00:00Z`
+  let filter = `tournament = '${tournamentId}' && startAtUtc > '${todayUtc}' && startAtUtc < '${nextDayUtc}'`
+  if (tab === 'todos') {
+    filter = `tournament = '${tournamentId}' && startAtUtc < '${todayUtc}'`
+  }
 
   const { data: tournament, isLoading: isLoadingTournaments } = useQuery({
     queryKey: ['get-one', Collections.Tournaments, tournamentId],
@@ -46,8 +50,8 @@ function HomeTournament() {
     queryKey: ['get-all', Collections.Matches, tournamentId, `${todayUtc}-${nextDayUtc}`],
     queryFn: () => pb.collection(Collections.Matches)
       .getFullList<MatchesResponse>({
-        filter: `tournament = '${tournamentId}' && startAtUtc > '${todayUtc}' && startAtUtc < '${nextDayUtc}'`,
-        sort: 'matchNumber'
+        filter,
+        sort: 'startAtUtc'
       })
   })
 
@@ -57,6 +61,8 @@ function HomeTournament() {
     <>
       <h1 style={{ fontWeight: 'bold', letterSpacing: '2px', fontSize: '20px', textAlign: 'center' }}>{tournament?.name}</h1>
       <Flex gap="1" mt="5" justifyContent="center">
+        <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'todos' }}>
+          <Button variant="ghost" isActive={tab === 'todos'}>Todos</Button></Link>
         <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'ante' }}>
           <Button variant="ghost" isActive={tab === 'ante'}>Ante</Button></Link>
         <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'ayer' }}>
@@ -68,7 +74,7 @@ function HomeTournament() {
         <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'pasado' }}>
           <Button variant="ghost" isActive={tab === 'pasado'}>Pasado</Button></Link>
       </Flex>
-      <Flex flexDir="column" flex="1">
+      <Flex flexDir="column" flex="1" overflow="auto">
         {matches.map(match => <Match key={match.id} match={match} tournamentId={tournamentId} />)}
         {matches.length === 0 ? <>No hay partidos</> : null}
       </Flex>
