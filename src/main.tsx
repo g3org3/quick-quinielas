@@ -31,7 +31,7 @@ persistQueryClient({
   persister: localStoragePersister,
 })
 
-const isDev = true
+const isDev = false
 
 // Render the app
 const rootElement = document.getElementById('root')!
