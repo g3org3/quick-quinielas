@@ -11,6 +11,9 @@ importers:
       '@chakra-ui/react':
         specifier: ^2.8.2
         version: 2.8.2(@emotion/react@11.11.4(@types/react@18.3.3)(react@18.3.1))(@emotion/styled@11.11.5(@emotion/react@11.11.4(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(framer-motion@11.2.11(@emotion/is-prop-valid@1.2.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@datadog/browser-logs':
+        specifier: ^5.22.0
+        version: 5.22.0
       '@emotion/react':
         specifier: ^11.11.4
         version: 11.11.4(@types/react@18.3.3)(react@18.3.1)
@@ -725,6 +728,17 @@ packages:
     peerDependencies:
       '@chakra-ui/system': '>=2.0.0'
       react: '>=18'
+
+  '@datadog/browser-core@5.22.0':
+    resolution: {integrity: sha512-Me7N+l+T5DyN4xnJmnxB93TWxj+u9YwMghvcqS3LLCxSj+fpG/aLlK9hvDG2uhZsnsQdiULrzlbjfekjijwunQ==}
+
+  '@datadog/browser-logs@5.22.0':
+    resolution: {integrity: sha512-7mXQwcwilRvhVVQj1CAs5TZgk3mgVWvPJPL/hMfdvHh8GotSp8bNK6cd6mmLtPwRc7AAtobj3Tnj/pXLNtpQlQ==}
+    peerDependencies:
+      '@datadog/browser-rum': 5.22.0
+    peerDependenciesMeta:
+      '@datadog/browser-rum':
+        optional: true
 
   '@emotion/babel-plugin@11.11.0':
     resolution: {integrity: sha512-m4HEDZleaaCH+XgDDsPF15Ht6wTLsgDTeR3WYj9Q/k76JtWhrJjcP4+/XlG8LGT/Rol9qUfOIztXeA84ATpqPQ==}
@@ -3161,6 +3175,12 @@ snapshots:
     dependencies:
       '@chakra-ui/system': 2.6.2(@emotion/react@11.11.4(@types/react@18.3.3)(react@18.3.1))(@emotion/styled@11.11.5(@emotion/react@11.11.4(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
       react: 18.3.1
+
+  '@datadog/browser-core@5.22.0': {}
+
+  '@datadog/browser-logs@5.22.0':
+    dependencies:
+      '@datadog/browser-core': 5.22.0
 
   '@emotion/babel-plugin@11.11.0':
     dependencies:
