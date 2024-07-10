@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { Flex, Image, Table, Th, Td, Tr, Tbody, Thead, useColorModeValue, Spacer, Button } from '@chakra-ui/react'
+import { Flex, Image, Table, Th, Td, Tr, Tbody, Thead, useColorModeValue, Button } from '@chakra-ui/react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 
 import { pb } from '@/pb'
@@ -35,56 +35,58 @@ function UserPredictions() {
   const total = results.reduce((sum, p) => sum + (p.points || 0), 0)
 
   return <>
-    <Flex flexDir="column" flex="1">
-      <hr />
-      <Flex alignItems="center" gap="3" p="3">
+    <Flex flexDir="column" flex="1" overflow="auto">
+      <Flex justifyContent="center" alignItems="center" gap="3" p="3">
         <Image
           rounded="full"
-          w="40px"
-          h="40px"
+          w="100px"
+          h="100px"
           src={user.img || `https://api.dicebear.com/9.x/initials/svg?seed=${user.username}`}
         />
-        {user.name}
-        <Spacer />
-        {total} puntos
+        <Flex flexDir="column">
+          <Flex fontSize="x-large" letterSpacing="2px">{user.name}</Flex>
+          <Flex>{total} puntos</Flex>
+        </Flex>
       </Flex>
       <hr />
-      <Table boxShadow="md" borderRadius="sm">
-        <Thead>
-          <Tr>
-            <Th></Th>
-            <Th></Th>
-            <Th></Th>
-            <Th></Th>
-            <Th></Th>
-            <Th>pts</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {results.map(result => {
-            return (
-              <Tr bg={result?.points === 3 ? green : result?.points === 1 ? yellow : red} key={result.id}>
-                <Td>
-                  <Link
-                    to="/tournaments/$tournamentId/matches/$matchId"
-                    params={{ tournamentId, matchId: result.match_id }}>
-                    <Button size="xs" colorScheme='blue'>ver</Button>
-                  </Link>
-                </Td>
-                <Td>
-                  <Image src={`https://flagsapi.com/${getCountryCode(result.expand?.match_id.home)}/flat/32.png`} />
-                </Td>
-                <Td>{result?.p_home ?? '-'}</Td>
-                <Td>{result?.p_away ?? '-'}</Td>
-                <Td>
-                  <Image src={`https://flagsapi.com/${getCountryCode(result.expand?.match_id.away)}/flat/32.png`} />
-                </Td>
-                <Td>{result?.points ?? '-'}</Td>
-              </Tr>
-            )
-          })}
-        </Tbody>
-      </Table>
+      <Flex flexDir="column" flex="1" overflow="auto">
+        <Table boxShadow="md" borderRadius="sm">
+          <Thead>
+            <Tr>
+              <Th></Th>
+              <Th>L</Th>
+              <Th>-</Th>
+              <Th>-</Th>
+              <Th>V</Th>
+              <Th>pts</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {results.map(result => {
+              return (
+                <Tr bg={result?.points === 3 ? green : result?.points === 1 ? yellow : red} key={result.id}>
+                  <Td>
+                    <Link
+                      to="/tournaments/$tournamentId/matches/$matchId"
+                      params={{ tournamentId, matchId: result.match_id }}>
+                      <Button size="xs" colorScheme='blue'>ver</Button>
+                    </Link>
+                  </Td>
+                  <Td>
+                    <Image src={`https://flagsapi.com/${getCountryCode(result.expand?.match_id.home)}/flat/32.png`} />
+                  </Td>
+                  <Td>{result?.p_home ?? '-'}</Td>
+                  <Td>{result?.p_away ?? '-'}</Td>
+                  <Td>
+                    <Image src={`https://flagsapi.com/${getCountryCode(result.expand?.match_id.away)}/flat/32.png`} />
+                  </Td>
+                  <Td>{result?.points ?? '-'}</Td>
+                </Tr>
+              )
+            })}
+          </Tbody>
+        </Table>
+      </Flex>
     </Flex>
     <BottomNav tournamentId={tournamentId} />
   </>
