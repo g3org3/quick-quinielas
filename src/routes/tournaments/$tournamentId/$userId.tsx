@@ -27,25 +27,28 @@ function UserPredictions() {
       })
   })
   const green = useColorModeValue('green.100', 'green.800')
-  const yellow = useColorModeValue('yellow.100', 'yellow.800')
   const red = useColorModeValue('red.50', 'red.800')
 
   if (isLoading || !user || isLoadingUser) return <Loading />
 
   const total = results.reduce((sum, p) => sum + (p.points || 0), 0)
+  const perfect_count = results.filter(p => p.points === 3).length
+  const acertados_count = results.filter(p => (p.points || 0) > 0).length
 
   return <>
     <Flex flexDir="column" flex="1" overflow="auto">
       <Flex justifyContent="center" alignItems="center" gap="3" p="3">
         <Image
           rounded="full"
-          w="100px"
-          h="100px"
+          w="120px"
+          h="120px"
           src={user.img || `https://api.dicebear.com/9.x/initials/svg?seed=${user.username}`}
         />
         <Flex flexDir="column">
-          <Flex fontSize="x-large" letterSpacing="2px">{user.name}</Flex>
-          <Flex>{total} puntos</Flex>
+          <Flex fontSize="x-large" fontWeight="bold" letterSpacing="2px">{user.name}</Flex>
+          <Flex fontSize="large">❗️ {total} puntos</Flex>
+          <Flex>✅ {acertados_count} - partidos acertados</Flex>
+          <Flex>🙌 {perfect_count} - partidos perfectos</Flex>
         </Flex>
       </Flex>
       <hr />
@@ -64,7 +67,7 @@ function UserPredictions() {
           <Tbody>
             {results.map(result => {
               return (
-                <Tr bg={result?.points === 3 ? green : result?.points === 1 ? yellow : red} key={result.id}>
+                <Tr bg={result?.points === 3 ? green : result?.points === 1 ? undefined : red} key={result.id}>
                   <Td>
                     <Link
                       to="/tournaments/$tournamentId/matches/$matchId"
