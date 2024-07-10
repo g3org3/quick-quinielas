@@ -16,7 +16,7 @@ export const Route = createFileRoute('/tournaments/$tournamentId/matches/$matchI
   component: SingleMatch
 })
 
-const isAdmin = true
+const isAdmin = false
 
 function SingleMatch() {
   const { matchId, tournamentId } = Route.useParams()
