@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query'
 import {
   Flex,
   Table,
-  TableContainer,
   Tbody,
   Td,
   Th,
@@ -51,38 +50,36 @@ function Points() {
 
   return <>
     <h1 style={{ fontWeight: 'bold', letterSpacing: '2px', fontSize: '20px', textAlign: 'center' }}>{tournament?.name}</h1>
-    <Flex flex="1" flexDir="column">
-      <TableContainer>
-        <Table variant='simple'>
-          <Thead>
-            <Tr>
-              <Th>Participante</Th>
-              <Th>Puntos</Th>
+    <Flex flex="1" flexDir="column" overflow="auto">
+      <Table variant='simple'>
+        <Thead>
+          <Tr>
+            <Th>Participante</Th>
+            <Th>Puntos</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {leaderboard.map((row, i) => (
+            <Tr key={row.id}>
+              <Td display="flex" alignItems="center" gap="3">
+                <span>{i + 1}.</span>
+                <Img
+                  rounded="full"
+                  w="40px"
+                  h="40px"
+                  // @ts-expect-error we dont care
+                  src={row.expand?.user.img || `https://api.dicebear.com/9.x/initials/svg?seed=${row.expand?.user.username}`}
+                />
+                <Link to="/tournaments/$tournamentId/$userId" params={{ tournamentId, userId: row.user }}>
+                  {row.expand?.user.name}
+                </Link>
+              </Td>
+              <Td>{row.points}</Td>
             </Tr>
-          </Thead>
-          <Tbody>
-            {leaderboard.map((row, i) => (
-              <Tr key={row.id}>
-                <Td display="flex" alignItems="center" gap="3">
-                  <span>{i + 1}.</span>
-                  <Img
-                    rounded="full"
-                    w="40px"
-                    h="40px"
-                    // @ts-expect-error we dont care
-                    src={row.expand?.user.img || `https://api.dicebear.com/9.x/initials/svg?seed=${row.expand?.user.username}`}
-                  />
-                  <Link to="/tournaments/$tournamentId/$userId" params={{ tournamentId, userId: row.user }}>
-                    {row.expand?.user.name}
-                  </Link>
-                </Td>
-                <Td>{row.points}</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
-    </Flex>
+          ))}
+        </Tbody>
+      </Table>
+    </Flex >
     <BottomNav tournamentId={tournamentId} state='puntos' />
   </>
 }
