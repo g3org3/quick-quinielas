@@ -16,7 +16,10 @@ function Root() {
   const bg = useColorModeValue('white', 'black')
   const color = useColorModeValue('black', 'white')
 
-  if (!pb.authStore.isValid) return <Login />
+  if (!pb.authStore.isValid) return <>
+    <Login />
+    <Toaster />
+  </>
 
   return (
     <Flex color={color} bg={bg} flexDir="column" height="100dvh">

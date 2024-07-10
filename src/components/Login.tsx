@@ -2,11 +2,13 @@ import { Flex, Button, Input } from "@chakra-ui/react";
 import type { ClientResponseError } from "pocketbase";
 import { useState } from "react";
 import { datadogLogs } from '@datadog/browser-logs';
+import toaster from 'react-hot-toast'
 
 import { pb } from "@/pb";
 
 export default function Login() {
   const [state, setState] = useState('')
+  const [account, setAccount] = useState('')
 
   const onLogin = async () => {
     let res = null;
@@ -14,36 +16,34 @@ export default function Login() {
       datadogLogs.logger.info("Login-Attemp")
       res = await pb.collection("users").authWithOAuth2({ provider: "google" });
       const { id } = res.record
+      if (res.meta?.avatarUrl) {
+        const { avatarUrl } = res.meta;
+        await pb.collection("users").update(res.record.id, { avatarUrl });
+      }
+      toaster.success("Bienvenido");
       datadogLogs.logger.info("Login-Success", { id })
+      document.location = "/";
     } catch (e) {
       const err = e as ClientResponseError;
       datadogLogs.logger.error("Login-Failure", { message: err.message })
-      alert(err.message);
+      toaster.error(err.message);
     }
-    if (res?.meta?.avatarUrl) {
-      const { avatarUrl } = res.meta;
-      await pb.collection("users").update(res.record.id, { avatarUrl });
-    }
-    document.location = "/";
   };
 
   const onEmailLogin: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
 
-    const data = new FormData(e.currentTarget)
-    const form: Record<string, string> = {}
-    for (const [key, value] of data.entries()) {
-      form[key] = String(value)
-    }
-
     try {
-      await pb.collection("users").authWithPassword(form.username, form.password);
+      datadogLogs.logger.info("Login-Attemp", { account })
+      await pb.collection("users").authWithPassword(account, "Ab123456!");
+      datadogLogs.logger.info("Login-Success", { account })
+      toaster.success("Bienvenido");
+      document.location = "/";
     } catch (e) {
       const err = e as ClientResponseError;
-      alert(err.message);
+      datadogLogs.logger.error("Login-Failure", { message: err.message })
+      toaster.error(err.message);
     }
-
-    document.location = "/";
   }
 
   return (
@@ -63,21 +63,20 @@ export default function Login() {
           <Flex fontSize="xx-large">Quiniela | Login</Flex>
           {state === 'email'
             ? null
-            : <Button colorScheme="blue" onClick={onLogin}>login with google</Button>
+            : <Button colorScheme="purple" onClick={onLogin}>Login con Google</Button>
           }
           {state === 'email'
             ? <>
-              <Input name="username" placeholder="email" />
-              <Input name="password" placeholder="password" type="password" />
+              <Input placeholder="Email?" onChange={(e) => setAccount(e.target.value)} value={account} />
             </>
             : null
           }
           {state === 'email'
             ? null
-            : <Button colorScheme="gray" onClick={() => setState('email')}>login with email</Button>
+            : <Button colorScheme="gray" onClick={() => setState('email')}>No Pude Hacer Login, Ayuda!</Button>
           }
-          {state === 'email' ? <Button type="submit">Login</Button> : null}
-          {state === 'email' ? <Button onClick={() => setState('')}>Home</Button> : null}
+          {state === 'email' ? <Button colorScheme="blue" type="submit">Acceder</Button> : null}
+          {state === 'email' ? <Button onClick={() => setState('')}>regresar</Button> : null}
         </Flex>
       </Flex>
     </form>
