@@ -9,6 +9,7 @@ import {
   Thead,
   Tr,
   Img,
+  useColorModeValue,
 } from '@chakra-ui/react'
 import { datadogLogs } from '@datadog/browser-logs';
 
@@ -24,6 +25,7 @@ export const Route = createFileRoute('/tournaments/$tournamentId/points')({
 
 function Points() {
   const { tournamentId } = Route.useParams()
+  const blue = useColorModeValue('blue.100', 'blue.800')
 
   useEffect(() => {
     datadogLogs.logger.info('view-points', { user: pb.authStore.model?.email })
@@ -60,7 +62,7 @@ function Points() {
         </Thead>
         <Tbody>
           {leaderboard.map((row, i) => (
-            <Tr key={row.id}>
+            <Tr key={row.id} bg={pb.authStore.model?.id === row.user ? blue : undefined}>
               <Td display="flex" alignItems="center" gap="3">
                 <span>{i + 1}.</span>
                 <Img
