@@ -30,6 +30,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
     mutationFn: (params: { id: string, prediction: PredictionsRecord }) =>
       pb.collection(Collections.Predictions).update(params.id, params.prediction),
     onSuccess() {
+      datadogLogs.logger.error("Update-Prediction-Success", pb.authStore.model?.id)
       toaster.success('saved')
     },
     onError(err) {
