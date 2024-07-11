@@ -67,7 +67,7 @@ export default function Login() {
           }
           {state === 'email'
             ? <>
-              <Input placeholder="Email?" onChange={(e) => setAccount(e.target.value)} value={account} />
+              <Input placeholder="Email?" onChange={(e) => setAccount(e.target.value.toLowerCase())} value={account} />
             </>
             : null
           }
