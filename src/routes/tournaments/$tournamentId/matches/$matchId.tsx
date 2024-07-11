@@ -148,7 +148,7 @@ function SingleMatch() {
       </Flex>
       {isAdmin ? <Flex flexDir="column">
         {results.map(p => (
-          <Flex gap="3" p="1" borderTop="1px solid" borderColor="gray.100">
+          <Flex key={p.id} gap="3" p="1" borderTop="1px solid" borderColor="gray.100">
             {p.prediction_id} -{p.expand?.user.name} - {p.p_home} {p.p_away}
             <Spacer />
             <Button onClick={() => onDelete(p.prediction_id)} colorScheme="red" size="sm">delete</Button>
