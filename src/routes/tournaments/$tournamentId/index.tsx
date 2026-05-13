@@ -1,93 +1,140 @@
-import { Button, Flex } from '@chakra-ui/react'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { z } from 'zod'
-import { DateTime } from 'luxon'
+import { Button, Flex } from "@chakra-ui/react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { z } from "zod";
+import { DateTime } from "luxon";
 
-import { Collections, MatchBetsResponse, MatchesResponse, TournamentsResponse } from '@/pocketbase-types'
-import { pb } from '@/pb'
-import Loading from '@/components/Loading'
-import BottomNav from '@/components/BottomNav'
-import Match from '@/components/Match'
+import {
+  Collections,
+  MatchBetsResponse,
+  MatchesResponse,
+  TournamentsResponse,
+} from "@/pocketbase-types";
+import { pb } from "@/pb";
+import Loading from "@/components/Loading";
+import BottomNav from "@/components/BottomNav";
+import Match from "@/components/Match";
 
 const homeSchema = z.object({
-  tab: z.enum(['todos', 'today', 'tomorrow', 'ayer', 'ante', 'pasado']).nullish(),
-})
+  tab: z
+    // .enum(["todos", "today", "tomorrow", "ayer", "ante", "pasado"])
+    .enum(["round1"])
+    .nullish(),
+});
 
-export const Route = createFileRoute('/tournaments/$tournamentId/')({
+export const Route = createFileRoute("/tournaments/$tournamentId/")({
   component: HomeTournament,
   validateSearch: homeSchema,
-})
+});
 
 function HomeTournament() {
-  const { tournamentId } = Route.useParams()
-  const { tab = JSON.parse(localStorage.getItem('tab') || '"today"') } = Route.useSearch()
+  const { tournamentId } = Route.useParams();
+  const { tab = JSON.parse(localStorage.getItem("tab") || '"round1"') } =
+    Route.useSearch();
 
   useEffect(() => {
-    localStorage.setItem('tab', JSON.stringify(tab))
-  }, [tab])
+    localStorage.setItem("tab", JSON.stringify(tab));
+  }, [tab]);
 
-  let today = tab === 'today' ? DateTime.now().toUTC() : DateTime.now().toUTC().plus({ days: 1 })
-  today = tab === 'ayer' ? DateTime.now().toUTC().minus({ days: 1 }) : today
-  today = tab === 'ante' ? DateTime.now().toUTC().minus({ days: 2 }) : today
-  today = tab === 'pasado' ? DateTime.now().toUTC().plus({ days: 2 }) : today
-  const nextDay = today.plus({ days: 1 })
-  const todayUtc = `${today.toSQLDate()} 00:00:00Z`
-  const nextDayUtc = `${nextDay.toSQLDate()} 00:00:00Z`
-  let filter = `tournament = '${tournamentId}' && startAtUtc > '${todayUtc}' && startAtUtc < '${nextDayUtc}'`
-  if (tab === 'todos') {
-    filter = `tournament = '${tournamentId}' && startAtUtc < '${todayUtc}'`
+  let today =
+    tab === "today"
+      ? DateTime.now().toUTC()
+      : DateTime.now().toUTC().plus({ days: 1 });
+  today = tab === "ayer" ? DateTime.now().toUTC().minus({ days: 1 }) : today;
+  today = tab === "ante" ? DateTime.now().toUTC().minus({ days: 2 }) : today;
+  today = tab === "pasado" ? DateTime.now().toUTC().plus({ days: 2 }) : today;
+  const nextDay = today.plus({ days: 1 });
+  const todayUtc = `${today.toSQLDate()} 00:00:00Z`;
+  const nextDayUtc = `${nextDay.toSQLDate()} 00:00:00Z`;
+  let filter = `tournament = '${tournamentId}' && startAtUtc > '${todayUtc}' && startAtUtc < '${nextDayUtc}'`;
+  if (tab === "todos") {
+    filter = `tournament = '${tournamentId}' && startAtUtc < '${todayUtc}'`;
+  }
+  if (tab === 'round1') {
+    filter = `tournament = '${tournamentId}'`
   }
 
   const { data: tournament, isLoading: isLoadingTournaments } = useQuery({
-    queryKey: ['get-one', Collections.Tournaments, tournamentId],
-    queryFn: () => pb.collection(Collections.Tournaments)
-      .getOne<TournamentsResponse>(tournamentId)
-  })
+    queryKey: ["get-one", Collections.Tournaments, tournamentId],
+    queryFn: () =>
+      pb
+        .collection(Collections.Tournaments)
+        .getOne<TournamentsResponse>(tournamentId),
+  });
 
   const { data: matches = [], isLoading: isLoadingMatches } = useQuery({
-    queryKey: ['get-all', Collections.Matches, tournamentId, `${todayUtc}-${nextDayUtc}`],
-    queryFn: () => pb.collection(Collections.Matches)
-      .getFullList<MatchesResponse>({
+    queryKey: [
+      "get-all",
+      Collections.Matches,
+      tournamentId,
+      `${todayUtc}-${nextDayUtc}`,
+    ],
+    queryFn: () =>
+      pb.collection(Collections.Matches).getFullList<MatchesResponse>({
         filter,
-        sort: 'startAtUtc'
-      })
-  })
+        sort: "startAtUtc",
+      }),
+  });
 
   const { data: bets = [] } = useQuery({
-    queryKey: ['get-all', Collections.MatchBets],
-    queryFn: () => pb.collection(Collections.MatchBets)
-      .getFullList<MatchBetsResponse<number, number, number>>()
-  })
+    queryKey: ["get-all", Collections.MatchBets],
+    queryFn: () =>
+      pb
+        .collection(Collections.MatchBets)
+        .getFullList<MatchBetsResponse<number, number, number>>(),
+  });
 
-  if (isLoadingMatches || isLoadingTournaments) return <Loading />
+  if (isLoadingMatches || isLoadingTournaments) return <Loading />;
 
   return (
     <>
-      <h1 style={{ fontWeight: 'bold', letterSpacing: '2px', fontSize: '20px', textAlign: 'center' }}>{tournament?.name}</h1>
+      <h1
+        style={{
+          fontWeight: "bold",
+          letterSpacing: "2px",
+          fontSize: "20px",
+          textAlign: "center",
+        }}
+      >
+        {tournament?.name}
+      </h1>
       <Flex gap="1" mt="5" justifyContent="center" overflow="auto">
-        <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'todos' }}>
-          <Button variant="ghost" isActive={tab === 'todos'}>Todos</Button></Link>
-        <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'ante' }}>
-          <Button variant="ghost" isActive={tab === 'ante'}>Ante</Button></Link>
-        <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'ayer' }}>
-          <Button variant="ghost" isActive={tab === 'ayer'}>Ayer</Button></Link>
-        <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'today' }}>
-          <Button variant="ghost" isActive={tab === 'today'}>Hoy</Button></Link>
-        <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'tomorrow' }}>
-          <Button variant="ghost" isActive={tab === 'tomorrow'}>Manana</Button></Link>
-        <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'pasado' }}>
-          <Button variant="ghost" isActive={tab === 'pasado'}>Pasado</Button></Link>
+        <Link
+          to="/tournaments/$tournamentId"
+          params={{ tournamentId }}
+          search={{ tab: "round1" }}
+        >
+          <Button variant="ghost" isActive={tab === "round1"}>
+            round 1
+          </Button>
+        </Link>
+        {/* <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'ante' }}> */}
+        {/*   <Button variant="ghost" isActive={tab === 'ante'}>Ante</Button></Link> */}
+        {/* <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'ayer' }}> */}
+        {/*   <Button variant="ghost" isActive={tab === 'ayer'}>Ayer</Button></Link> */}
+        {/* <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'today' }}> */}
+        {/*   <Button variant="ghost" isActive={tab === 'today'}>Hoy</Button></Link> */}
+        {/* <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'tomorrow' }}> */}
+        {/*   <Button variant="ghost" isActive={tab === 'tomorrow'}>Manana</Button></Link> */}
+        {/* <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'pasado' }}> */}
+        {/*   <Button variant="ghost" isActive={tab === 'pasado'}>Pasado</Button></Link> */}
       </Flex>
       <Flex flexDir="column" flex="1" overflow="auto">
-        {matches.map(match => {
-          const bet = bets.find(bet => bet.match_id === match.id)
-          return <Match key={match.id} match={match} bet={bet} tournamentId={tournamentId} />
+        {matches.map((match) => {
+          const bet = bets.find((bet) => bet.match_id === match.id);
+          return (
+            <Match
+              key={match.id}
+              match={match}
+              bet={bet}
+              tournamentId={tournamentId}
+            />
+          );
         })}
         {matches.length === 0 ? <>No hay partidos</> : null}
       </Flex>
-      <BottomNav state='vaticinios' tournamentId={tournamentId} />
+      <BottomNav state="vaticinios" tournamentId={tournamentId} />
     </>
-  )
+  );
 }
