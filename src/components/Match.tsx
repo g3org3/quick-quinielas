@@ -48,10 +48,6 @@ export default function Match({ match, tournamentId, bet }: Props) {
     e.preventDefault()
     if (isPending) return
 
-    if (DateTime.now().toMillis() > DateTime.fromSQL(match.startAtUtc).toMillis()) {
-      toaster.error('Ya ha empezado el partido!')
-      return
-    }
     const data = new FormData(e.currentTarget)
     const form: Record<string, number> = {}
     for (const [key, value] of data.entries()) {
@@ -70,7 +66,6 @@ export default function Match({ match, tournamentId, bet }: Props) {
 
   const isAnyPending = isLoading || isPending || uisPending
   const matchdate = DateTime.fromSQL(match.startAtUtc)
-  const isGameStarted = matchdate.toMillis() <= DateTime.now().toMillis()
 
   return (
     <form onSubmit={onUpdate}>
@@ -84,7 +79,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
             </Flex>
             <Input
               defaultValue={home}
-              disabled={isAnyPending || isGameStarted}
+              disabled={isAnyPending}
               p="1"
               name="home"
               textAlign="center"
@@ -95,7 +90,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
           <Flex flex="1" gap="3" alignItems="center">
             <Input
               defaultValue={away}
-              disabled={isAnyPending || isGameStarted}
+              disabled={isAnyPending}
               textAlign="center"
               p="1"
               name="away"
@@ -107,26 +102,23 @@ export default function Match({ match, tournamentId, bet }: Props) {
               <Flex color="gray.500" fontFamily="monospace">{Math.floor(100 * (bet?.away_per || 0) / 8)}%</Flex>
             </Flex>
           </Flex>
-          {!isGameStarted
-            ? <Button
+          <Button
+            disabled={isAnyPending}
+            type="submit"
+            size="sm"
+            variant="solid"
+            colorScheme="green"> save
+          </Button>
+          <Link
+            to="/tournaments/$tournamentId/matches/$matchId"
+            params={{ tournamentId, matchId: match.id }}>
+            <Button
               disabled={isAnyPending}
-              type="submit"
               size="sm"
               variant="solid"
-              colorScheme="green"> save
+              colorScheme="blue">ver
             </Button>
-            : (
-              <Link
-                to="/tournaments/$tournamentId/matches/$matchId"
-                params={{ tournamentId, matchId: match.id }}>
-                <Button
-                  disabled={isAnyPending}
-                  size="sm"
-                  variant="solid"
-                  colorScheme="blue">ver
-                </Button>
-              </Link>
-            )}
+          </Link>
         </Flex>
         <Flex color="gray.500" display="box" fontSize="14px" textAlign="center">
           {matchdate.toFormat('EEE MMM dd ')} - hora: {matchdate.toFormat('h:mm a')}
