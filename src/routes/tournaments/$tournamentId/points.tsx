@@ -11,13 +11,10 @@ import {
   Img,
   useColorModeValue,
 } from '@chakra-ui/react'
-import { datadogLogs } from '@datadog/browser-logs';
-
 import { Collections, LeaderboardResponse, TournamentsResponse, UsersRecord } from '@/pocketbase-types'
 import { pb } from '@/pb'
 import Loading from '@/components/Loading'
 import BottomNav from '@/components/BottomNav'
-import { useEffect } from 'react';
 
 export const Route = createFileRoute('/tournaments/$tournamentId/points')({
   component: Points,
@@ -26,10 +23,6 @@ export const Route = createFileRoute('/tournaments/$tournamentId/points')({
 function Points() {
   const { tournamentId } = Route.useParams()
   const blue = useColorModeValue('blue.100', 'blue.800')
-
-  useEffect(() => {
-    datadogLogs.logger.info('view-points', { user: pb.authStore.model?.email })
-  }, [])
 
   const { data: tournament, isLoading } = useQuery({
     queryKey: ['get-one', Collections.Tournaments, tournamentId],

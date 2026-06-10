@@ -3,8 +3,6 @@ import { Button, Flex, Img, Input, useColorModeValue } from '@chakra-ui/react'
 import { DateTime } from 'luxon'
 import { Link } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { datadogLogs } from '@datadog/browser-logs';
-
 import { Collections, MatchBetsResponse, MatchesResponse, PredictionsRecord, PredictionsResponse } from '@/pocketbase-types'
 import { getCountryCode } from '@/countries'
 import { pb } from '@/pb'
@@ -19,11 +17,9 @@ export default function Match({ match, tournamentId, bet }: Props) {
   const { mutate, isPending } = useMutation({
     mutationFn: (prediction: PredictionsRecord) => pb.collection(Collections.Predictions).create(prediction),
     onSuccess() {
-      datadogLogs.logger.error("Update-Prediction-Success", pb.authStore.model?.id)
       toaster.success('saved')
     },
     onError(err) {
-      datadogLogs.logger.error("Create-Prediction-Failed", { message: err.message })
       toaster.error('Something went wrong: ' + err.message)
     }
   })
@@ -31,11 +27,9 @@ export default function Match({ match, tournamentId, bet }: Props) {
     mutationFn: (params: { id: string, prediction: PredictionsRecord }) =>
       pb.collection(Collections.Predictions).update(params.id, params.prediction),
     onSuccess() {
-      datadogLogs.logger.error("Update-Prediction-Success", pb.authStore.model?.id)
       toaster.success('saved')
     },
     onError(err) {
-      datadogLogs.logger.error("Update-Prediction-Failed", { message: err.message })
       toaster.error('Something went wrong: ' + err.message)
     }
   })

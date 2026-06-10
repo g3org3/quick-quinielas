@@ -1,7 +1,6 @@
 import { Flex, Button, Input } from "@chakra-ui/react";
 import type { ClientResponseError } from "pocketbase";
 import { useState } from "react";
-import { datadogLogs } from '@datadog/browser-logs';
 import toaster from 'react-hot-toast'
 
 import { pb } from "@/pb";
@@ -13,19 +12,15 @@ export default function Login() {
   const onLogin = async () => {
     let res = null;
     try {
-      datadogLogs.logger.info("Login-Attemp")
       res = await pb.collection("users").authWithOAuth2({ provider: "google" });
-      const { id } = res.record
       if (res.meta?.avatarUrl) {
         const { avatarUrl } = res.meta;
         await pb.collection("users").update(res.record.id, { avatarUrl });
       }
       toaster.success("Bienvenido");
-      datadogLogs.logger.info("Login-Success", { id })
       document.location = "/";
     } catch (e) {
       const err = e as ClientResponseError;
-      datadogLogs.logger.error("Login-Failure", { message: err.message })
       toaster.error(err.message);
     }
   };
@@ -34,14 +29,11 @@ export default function Login() {
     e.preventDefault()
 
     try {
-      datadogLogs.logger.info("Login-Attemp", { account })
       await pb.collection("users").authWithPassword(account, "Ab123456!");
-      datadogLogs.logger.info("Login-Success", { account })
       toaster.success("Bienvenido");
       document.location = "/";
     } catch (e) {
       const err = e as ClientResponseError;
-      datadogLogs.logger.error("Login-Failure", { message: err.message })
       toaster.error(err.message);
     }
   }
