@@ -1,4 +1,4 @@
-import { Flex, Button, Input } from "@chakra-ui/react";
+import { Flex, Button, Input, useColorModeValue } from "@chakra-ui/react";
 import type { ClientResponseError } from "pocketbase";
 import { useState } from "react";
 import toaster from "react-hot-toast";
@@ -7,6 +7,9 @@ import { pb } from "@/pb";
 
 export default function Login() {
   const [account, setAccount] = useState("");
+  const bg = useColorModeValue('gray.100', 'gray.800')
+  const bgsoft = useColorModeValue('gray.50', 'gray.700')
+  const colorText = useColorModeValue('black', 'white')
 
   const onLogin = async () => {
     let res = null;
@@ -43,17 +46,17 @@ export default function Login() {
         h="100dvh"
         alignItems="center"
         justifyContent="center"
-        bg="gray.100"
+        bg={bg}
       >
         <Flex
           p="6"
           w="300px"
-          bg="gray.50"
+          bg={bgsoft}
           boxShadow="md"
           border="1px solid"
-          borderColor="gray.100"
+          borderColor={bg}
           flexDir="column"
-          color="black"
+          color={colorText}
           gap="4"
         >
           <Flex fontSize="xx-large">Quiniela | Login</Flex>
