@@ -18,8 +18,7 @@ import Match from "@/components/Match";
 
 const homeSchema = z.object({
   tab: z
-    // .enum(["todos", "today", "tomorrow", "ayer", "ante", "pasado"])
-    .enum(["round1"])
+    .enum(["todos", "today", "tomorrow", "ayer", "ante", "pasado"])
     .nullish(),
 });
 
@@ -30,8 +29,7 @@ export const Route = createFileRoute("/tournaments/$tournamentId/")({
 
 function HomeTournament() {
   const { tournamentId } = Route.useParams();
-  const { tab = JSON.parse(localStorage.getItem("tab") || '"round1"') } =
-    Route.useSearch();
+  const { tab = 'today' } = Route.useSearch();
 
   useEffect(() => {
     localStorage.setItem("tab", JSON.stringify(tab));
@@ -50,9 +48,6 @@ function HomeTournament() {
   let filter = `tournament = '${tournamentId}' && startAtUtc > '${todayUtc}' && startAtUtc < '${nextDayUtc}'`;
   if (tab === "todos") {
     filter = `tournament = '${tournamentId}' && startAtUtc < '${todayUtc}'`;
-  }
-  if (tab === 'round1') {
-    filter = `tournament = '${tournamentId}'`
   }
 
   const { data: tournament, isLoading: isLoadingTournaments } = useQuery({
@@ -103,22 +98,48 @@ function HomeTournament() {
         <Link
           to="/tournaments/$tournamentId"
           params={{ tournamentId }}
-          search={{ tab: "round1" }}
+          search={{ tab: "ante" }}
         >
-          <Button variant="ghost" isActive={tab === "round1"}>
-            round 1
+          <Button variant="ghost" isActive={tab === "ante"}>
+            Ante
           </Button>
         </Link>
-        {/* <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'ante' }}> */}
-        {/*   <Button variant="ghost" isActive={tab === 'ante'}>Ante</Button></Link> */}
-        {/* <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'ayer' }}> */}
-        {/*   <Button variant="ghost" isActive={tab === 'ayer'}>Ayer</Button></Link> */}
-        {/* <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'today' }}> */}
-        {/*   <Button variant="ghost" isActive={tab === 'today'}>Hoy</Button></Link> */}
-        {/* <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'tomorrow' }}> */}
-        {/*   <Button variant="ghost" isActive={tab === 'tomorrow'}>Manana</Button></Link> */}
-        {/* <Link to="/tournaments/$tournamentId" params={{ tournamentId }} search={{ tab: 'pasado' }}> */}
-        {/*   <Button variant="ghost" isActive={tab === 'pasado'}>Pasado</Button></Link> */}
+        <Link
+          to="/tournaments/$tournamentId"
+          params={{ tournamentId }}
+          search={{ tab: "ayer" }}
+        >
+          <Button variant="ghost" isActive={tab === "ayer"}>
+            Ayer
+          </Button>
+        </Link>
+        <Link
+          to="/tournaments/$tournamentId"
+          params={{ tournamentId }}
+          search={{ tab: "today" }}
+        >
+          <Button variant="ghost" isActive={tab === "today"}>
+            Hoy
+          </Button>
+        </Link>
+        <Link
+          to="/tournaments/$tournamentId"
+          params={{ tournamentId }}
+          search={{ tab: "tomorrow" }}
+        >
+          <Button variant="ghost" isActive={tab === "tomorrow"}>
+            Manana
+          </Button>
+        </Link>
+        <Link
+          to="/tournaments/$tournamentId"
+          params={{ tournamentId }}
+          search={{ tab: "pasado" }}
+        >
+          <Button variant="ghost" isActive={tab === "pasado"}>
+            Pasado
+          </Button>
+        </Link>
       </Flex>
       <Flex flexDir="column" flex="1" overflow="auto">
         {matches.map((match) => {

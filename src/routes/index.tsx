@@ -14,9 +14,9 @@ function Home() {
   const border = useColorModeValue('gray.200', 'gray.700')
   const btn = useColorModeValue('white', undefined)
   const { data = [], isLoading } = useQuery({
-    queryKey: ['get-all', Collections.Tournaments],
+    queryKey: ['get-all', Collections.Tournaments, '-sort'],
     queryFn: () => pb.collection(Collections.Tournaments)
-      .getFullList<TournamentsResponse>()
+      .getFullList<TournamentsResponse>({sort: '-created'})
   })
 
 

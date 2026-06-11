@@ -1,61 +1,98 @@
-import toaster from 'react-hot-toast'
-import { Button, Flex, Img, Input, useColorModeValue } from '@chakra-ui/react'
-import { DateTime } from 'luxon'
-import { Link } from '@tanstack/react-router'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { Collections, MatchBetsResponse, MatchesResponse, PredictionsRecord, PredictionsResponse } from '@/pocketbase-types'
-import { getCountryCode } from '@/countries'
-import { pb } from '@/pb'
+import toaster from "react-hot-toast";
+import {
+  Avatar,
+  AvatarGroup,
+  Button,
+  Flex,
+  Img,
+  Input,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import { DateTime } from "luxon";
+import { Link } from "@tanstack/react-router";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  Collections,
+  MatchBetsResponse,
+  MatchesResponse,
+  PredictionsRecord,
+  PredictionsResponse,
+  UsersResponse,
+} from "@/pocketbase-types";
+import { getCountryCode } from "@/countries";
+import { pb } from "@/pb";
 
 interface Props {
-  bet?: MatchBetsResponse<number, number, number>
-  match: MatchesResponse
-  tournamentId: string
+  bet?: MatchBetsResponse<number, number, number>;
+  match: MatchesResponse;
+  tournamentId: string;
 }
 export default function Match({ match, tournamentId, bet }: Props) {
-  const border = useColorModeValue('gray.200', 'gray.700')
+  const border = useColorModeValue("gray.200", "gray.700");
   const { mutate, isPending } = useMutation({
-    mutationFn: (prediction: PredictionsRecord) => pb.collection(Collections.Predictions).create(prediction),
+    mutationFn: (prediction: PredictionsRecord) =>
+      pb.collection(Collections.Predictions).create(prediction),
     onSuccess() {
-      toaster.success('saved')
+      toaster.success("saved");
     },
     onError(err) {
-      toaster.error('Something went wrong: ' + err.message)
-    }
-  })
+      toaster.error("Something went wrong: " + err.message);
+    },
+  });
   const { mutate: update, isPending: uisPending } = useMutation({
-    mutationFn: (params: { id: string, prediction: PredictionsRecord }) =>
-      pb.collection(Collections.Predictions).update(params.id, params.prediction),
+    mutationFn: (params: { id: string; prediction: PredictionsRecord }) =>
+      pb
+        .collection(Collections.Predictions)
+        .update(params.id, params.prediction),
     onSuccess() {
-      toaster.success('saved')
+      toaster.success("saved");
     },
     onError(err) {
-      toaster.error('Something went wrong: ' + err.message)
-    }
-  })
+      toaster.error("Something went wrong: " + err.message);
+    },
+  });
   const { data, isLoading } = useQuery({
-    queryKey: ['get-one', Collections.Predictions, `${pb.authStore.model?.id}-${match.id}`],
-    queryFn: () => pb.collection(Collections.Predictions)
-      .getFullList<PredictionsResponse>({
-        filter: `user = '${pb.authStore.model?.id}' && match = '${match.id}'`
-      })
-  })
-  const prediction = data && data[0]?.id ? data[0] : null
-  const home = data && data[0] ? data[0].homeScore.toString() : ''
-  const away = data && data[0] ? data[0].awayScore.toString() : ''
+    queryKey: [
+      "get-one",
+      Collections.Predictions,
+      `${pb.authStore.model?.id}-${match.id}`,
+    ],
+    queryFn: () =>
+      pb.collection(Collections.Predictions).getFullList<PredictionsResponse>({
+        filter: `user = '${pb.authStore.model?.id}' && match = '${match.id}'`,
+      }),
+  });
+  const { data: bets = [] } = useQuery({
+    queryKey: ["get-all", Collections.Predictions, match.id],
+    queryFn: () =>
+      pb
+        .collection(Collections.Predictions)
+        .getFullList<PredictionsResponse<{ user: UsersResponse }>>({
+          filter: `match = '${match.id}'`,
+          expand: "user",
+        }),
+  });
+  const images = bets.map((bet) =>
+    bet.expand?.user.img ? bet.expand?.user.img + "&thumb=20x20" : "",
+  );
+  const prediction = data && data[0]?.id ? data[0] : null;
+  const home = data && data[0] ? data[0].homeScore.toString() : "";
+  const away = data && data[0] ? data[0].awayScore.toString() : "";
 
   const onUpdate: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault()
-    if (isPending) return
+    e.preventDefault();
+    if (isPending) return;
 
-    if (DateTime.now().toMillis() > DateTime.fromSQL(match.startAtUtc).toMillis()) {
-      toaster.error('Ya ha empezado el partido!')
-      return
+    if (
+      DateTime.now().toMillis() > DateTime.fromSQL(match.startAtUtc).toMillis()
+    ) {
+      toaster.error("Ya ha empezado el partido!");
+      return;
     }
-    const data = new FormData(e.currentTarget)
-    const form: Record<string, number> = {}
+    const data = new FormData(e.currentTarget);
+    const form: Record<string, number> = {};
     for (const [key, value] of data.entries()) {
-      form[key] = Number(value) || 0
+      form[key] = Number(value) || 0;
     }
 
     const payload: PredictionsRecord = {
@@ -63,24 +100,38 @@ export default function Match({ match, tournamentId, bet }: Props) {
       homeScore: form.home,
       awayScore: form.away,
       match: match.id,
-    }
-    if (prediction?.id) update({ id: prediction.id, prediction: payload })
-    else mutate(payload)
-  }
+    };
+    if (prediction?.id) update({ id: prediction.id, prediction: payload });
+    else mutate(payload);
+  };
 
-  const isAnyPending = isLoading || isPending || uisPending
-  const matchdate = DateTime.fromSQL(match.startAtUtc)
-  const isGameStarted = matchdate.toMillis() <= DateTime.now().toMillis()
+  const isAnyPending = isLoading || isPending || uisPending;
+  const matchdate = DateTime.fromSQL(match.startAtUtc);
+  const isGameStarted = matchdate.toMillis() <= DateTime.now().toMillis();
 
   return (
     <form onSubmit={onUpdate}>
-      <Flex flexDir="column" borderBottom="1px solid" borderColor={border} py="5">
+      <Flex
+        flexDir="column"
+        borderBottom="1px solid"
+        borderColor={border}
+        py="5"
+      >
         <Flex alignItems="center" gap="3">
           <Flex flex="1" gap="3" alignItems="center">
-            <Flex flex="1" flexDir="column" alignItems="center" justifyContent="flex-end">
-              <Img src={`https://flagsapi.com/${getCountryCode(match.home)}/flat/64.png`} />
+            <Flex
+              flex="1"
+              flexDir="column"
+              alignItems="center"
+              justifyContent="flex-end"
+            >
+              <Img
+                src={`https://flagsapi.com/${getCountryCode(match.home)}/flat/64.png`}
+              />
               {match.home}
-              <Flex color="gray.500" fontFamily="monospace">{Math.floor(100 * (bet?.home_per || 0) / 8)}%</Flex>
+              <Flex color="gray.500" fontFamily="monospace">
+                {Math.floor((100 * (bet?.home_per || 0)) / 8)}%
+              </Flex>
             </Flex>
             <Input
               defaultValue={home}
@@ -89,7 +140,8 @@ export default function Match({ match, tournamentId, bet }: Props) {
               name="home"
               textAlign="center"
               placeholder="-"
-              w="40px" />
+              w="40px"
+            />
           </Flex>
           <Flex>vs</Flex>
           <Flex flex="1" gap="3" alignItems="center">
@@ -100,41 +152,60 @@ export default function Match({ match, tournamentId, bet }: Props) {
               p="1"
               name="away"
               placeholder="-"
-              w="40px" />
+              w="40px"
+            />
             <Flex flex="1" alignItems="center" flexDir="column">
-              <Img src={`https://flagsapi.com/${getCountryCode(match.away)}/flat/64.png`} />
+              <Img
+                src={`https://flagsapi.com/${getCountryCode(match.away)}/flat/64.png`}
+              />
               {match.away}
-              <Flex color="gray.500" fontFamily="monospace">{Math.floor(100 * (bet?.away_per || 0) / 8)}%</Flex>
+              <Flex color="gray.500" fontFamily="monospace">
+                {Math.floor((100 * (bet?.away_per || 0)) / 8)}%
+              </Flex>
             </Flex>
           </Flex>
-          {!isGameStarted
-            ? <Button
+          {!isGameStarted ? (
+            <Button
               disabled={isAnyPending}
               type="submit"
               size="sm"
               variant="solid"
-              colorScheme="green"> save
+              colorScheme="green"
+            >
+              {" "}
+              save
             </Button>
-            : (
-              <Link
-                to="/tournaments/$tournamentId/matches/$matchId"
-                params={{ tournamentId, matchId: match.id }}>
-                <Button
-                  disabled={isAnyPending}
-                  size="sm"
-                  variant="solid"
-                  colorScheme="blue">ver
-                </Button>
-              </Link>
-            )}
+          ) : (
+            <Link
+              to="/tournaments/$tournamentId/matches/$matchId"
+              params={{ tournamentId, matchId: match.id }}
+            >
+              <Button
+                disabled={isAnyPending}
+                size="sm"
+                variant="solid"
+                colorScheme="blue"
+              >
+                ver
+              </Button>
+            </Link>
+          )}
+        </Flex>
+        <Flex overflow="auto">
+        <AvatarGroup size="md">
+          {images.map((imgurl) => (
+            <Avatar key={imgurl} src={imgurl} />
+          ))}
+        </AvatarGroup>
         </Flex>
         <Flex color="gray.500" display="box" fontSize="14px" textAlign="center">
-          {matchdate.toFormat('EEE MMM dd ')} - hora: {matchdate.toFormat('h:mm a')}
+          {matchdate.toFormat("EEE MMM dd ")} - hora:{" "}
+          {matchdate.toFormat("h:mm a")}
           <br />
-          {match.location} {' - '}
+          {match.location} {" - "}
           {matchdate.toRelative()}
         </Flex>
       </Flex>
     </form>
-  )
+  );
 }
