@@ -1,4 +1,4 @@
-import { Button, Flex } from "@chakra-ui/react";
+import { Button, Flex, Heading, Text, useColorModeValue } from "@chakra-ui/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -27,9 +27,20 @@ export const Route = createFileRoute("/tournaments/$tournamentId/")({
   validateSearch: homeSchema,
 });
 
+const dayTabs = [
+  { tab: "ante", label: "Ante" },
+  { tab: "ayer", label: "Ayer" },
+  { tab: "today", label: "Hoy" },
+  { tab: "tomorrow", label: "Manana" },
+  { tab: "pasado", label: "Pasado" },
+] as const;
+
 function HomeTournament() {
   const { tournamentId } = Route.useParams();
   const { tab = 'today' } = Route.useSearch();
+  const inactiveColor = useColorModeValue("gray.500", "gray.400");
+  const hoverBg = useColorModeValue("green.50", "whiteAlpha.100");
+  const mutedText = useColorModeValue("gray.500", "gray.400");
 
   useEffect(() => {
     localStorage.setItem("tab", JSON.stringify(tab));
@@ -84,62 +95,40 @@ function HomeTournament() {
 
   return (
     <>
-      <h1
-        style={{
-          fontWeight: "bold",
-          letterSpacing: "2px",
-          fontSize: "20px",
-          textAlign: "center",
-        }}
-      >
+      <Heading size="md" letterSpacing="tight" textAlign="center">
         {tournament?.name}
-      </h1>
+      </Heading>
       <Flex gap="1" mt="5" justifyContent="center" overflow="auto">
-        <Link
-          to="/tournaments/$tournamentId"
-          params={{ tournamentId }}
-          search={{ tab: "ante" }}
-        >
-          <Button variant="ghost" isActive={tab === "ante"}>
-            Ante
-          </Button>
-        </Link>
-        <Link
-          to="/tournaments/$tournamentId"
-          params={{ tournamentId }}
-          search={{ tab: "ayer" }}
-        >
-          <Button variant="ghost" isActive={tab === "ayer"}>
-            Ayer
-          </Button>
-        </Link>
-        <Link
-          to="/tournaments/$tournamentId"
-          params={{ tournamentId }}
-          search={{ tab: "today" }}
-        >
-          <Button variant="ghost" isActive={tab === "today"}>
-            Hoy
-          </Button>
-        </Link>
-        <Link
-          to="/tournaments/$tournamentId"
-          params={{ tournamentId }}
-          search={{ tab: "tomorrow" }}
-        >
-          <Button variant="ghost" isActive={tab === "tomorrow"}>
-            Manana
-          </Button>
-        </Link>
-        <Link
-          to="/tournaments/$tournamentId"
-          params={{ tournamentId }}
-          search={{ tab: "pasado" }}
-        >
-          <Button variant="ghost" isActive={tab === "pasado"}>
-            Pasado
-          </Button>
-        </Link>
+        {dayTabs.map(({ tab: dayTab, label }) => {
+          const isActive = tab === dayTab;
+          return (
+            <Link
+              key={dayTab}
+              to="/tournaments/$tournamentId"
+              params={{ tournamentId }}
+              search={{ tab: dayTab }}
+            >
+              <Button
+                size="sm"
+                borderRadius="full"
+                fontWeight={isActive ? "semibold" : "medium"}
+                variant={isActive ? "solid" : "ghost"}
+                color={isActive ? "white" : inactiveColor}
+                bgGradient={isActive ? "linear(to-b, green.400, green.500)" : undefined}
+                boxShadow={isActive ? "0 8px 18px -8px rgba(56, 161, 105, 0.6)" : undefined}
+                _hover={
+                  isActive
+                    ? { bgGradient: "linear(to-b, green.500, green.600)" }
+                    : { bg: hoverBg, color: "green.500" }
+                }
+                _active={{ transform: "scale(0.97)" }}
+                transition="all 0.15s ease-out"
+              >
+                {label}
+              </Button>
+            </Link>
+          );
+        })}
       </Flex>
       <Flex flexDir="column" flex="1" overflow="auto">
         {matches.map((match) => {
@@ -153,7 +142,12 @@ function HomeTournament() {
             />
           );
         })}
-        {matches.length === 0 ? <>No hay partidos</> : null}
+        {matches.length === 0 ? (
+          <Flex flexDir="column" alignItems="center" gap="1" py="10">
+            <Text fontSize="3xl">🥅</Text>
+            <Text color={mutedText}>No hay partidos</Text>
+          </Flex>
+        ) : null}
       </Flex>
       <BottomNav state="vaticinios" tournamentId={tournamentId} />
     </>
