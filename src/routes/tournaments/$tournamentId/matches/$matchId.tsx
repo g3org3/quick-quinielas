@@ -8,9 +8,12 @@ import {
   Th,
   Tbody,
   Button,
+  Divider,
+  Heading,
   Spacer,
   Text,
   Img,
+  keyframes,
 } from "@chakra-ui/react";
 import { Flex, Image, useColorModeValue } from "@chakra-ui/react";
 import { DateTime } from "luxon";
@@ -38,11 +41,23 @@ export const Route = createFileRoute(
 
 const isAdmin = false;
 
+const rise = keyframes`
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
 function SingleMatch() {
   const { matchId, tournamentId } = Route.useParams();
   const green = useColorModeValue("green.100", "green.800");
   const yellow = useColorModeValue("yellow.100", "yellow.800");
   const red = useColorModeValue("red.50", "red.800");
+  const cardBg = useColorModeValue("white", "gray.800");
+  const cardBorder = useColorModeValue("blackAlpha.100", "whiteAlpha.200");
+  const cardShadow = useColorModeValue(
+    "0 12px 30px -14px rgba(26, 70, 50, 0.25)",
+    "0 12px 30px -14px rgba(0, 0, 0, 0.6)"
+  );
+  const mutedText = useColorModeValue("gray.500", "gray.400");
 
   const { data: tournament, isLoading } = useQuery({
     queryKey: ["get-one", Collections.Tournaments, tournamentId],
@@ -110,21 +125,23 @@ function SingleMatch() {
 
   if (isLoading || isLoadingM || isLoadingP || isLoadingU) return <Loading />;
 
-  if (!match) return <div>something went wrong</div>;
+  if (!match) return <Text>something went wrong</Text>;
 
   return (
     <>
-      <h1
-        style={{
-          fontWeight: "bold",
-          letterSpacing: "2px",
-          fontSize: "20px",
-          textAlign: "center",
-        }}
-      >
+      <Heading size="md" letterSpacing="tight" textAlign="center">
         {tournament?.name}
-      </h1>
-      <Flex flexDir="column">
+      </Heading>
+      <Flex
+        flexDir="column"
+        bg={cardBg}
+        borderRadius="2xl"
+        border="1px solid"
+        borderColor={cardBorder}
+        boxShadow={cardShadow}
+        p="4"
+        animation={`${rise} 0.5s ease-out`}
+      >
         <Flex alignItems="center" gap="3" mb="3">
           <Flex flex="1" gap="3" alignItems="center">
             <Flex
@@ -136,31 +153,30 @@ function SingleMatch() {
               <Image
                 src={`https://flagsapi.com/${getCountryCode(match.home)}/flat/64.png`}
               />
-              {match.home}
-              <Flex fontFamily="monospace" color="gray.600">
+              <Text fontWeight="semibold" letterSpacing="tight">
+                {match.home}
+              </Text>
+              <Text fontFamily="monospace" color={mutedText}>
                 {homeper}%
-              </Flex>
+              </Text>
             </Flex>
           </Flex>
           <Flex flexDir="column" alignSelf="flex-end">
             <Flex alignItems="center">
-              <Flex fontWeight="bold" p="1">
+              <Text fontWeight="bold" fontSize="xl" p="1">
                 {match.homeScore}
-              </Flex>
-              <Flex>vs</Flex>
-              <Flex fontWeight="bold" p="1">
+              </Text>
+              <Text fontSize="xs" color={mutedText} textTransform="uppercase" letterSpacing="widest">
+                vs
+              </Text>
+              <Text fontWeight="bold" fontSize="xl" p="1">
                 {match.awayScore}
-              </Flex>
+              </Text>
             </Flex>
             <br />
-            <Flex
-              color="gray.600"
-              fontFamily="monospace"
-              display="box"
-              textAlign="center"
-            >
+            <Text fontFamily="monospace" color={mutedText} textAlign="center">
               {tieper}%
-            </Flex>
+            </Text>
           </Flex>
           <Flex flex="1" gap="3" alignItems="center">
             <Flex flexDir="column" flex="1" alignItems="center">
@@ -168,98 +184,98 @@ function SingleMatch() {
                 fallbackSrc="fallbackSrc='https://via.placeholder.com/64'"
                 src={`https://flagsapi.com/${getCountryCode(match.away)}/flat/64.png`}
               />
-              {match.away}
-              <Flex fontFamily="monospace" color="gray.600">
+              <Text fontWeight="semibold" letterSpacing="tight">
+                {match.away}
+              </Text>
+              <Text fontFamily="monospace" color={mutedText}>
                 {awayper}%
-              </Flex>
+              </Text>
             </Flex>
           </Flex>
         </Flex>
-        <hr />
-        <Flex
-          color="gray.500"
-          display="box"
-          pt="1"
-          fontSize="16px"
-          textAlign="center"
-        >
+        <Divider borderColor={cardBorder} />
+        <Text color={mutedText} pt="1" fontSize="md" textAlign="center">
           {DateTime.fromSQL(match.startAtUtc).toFormat("EEE MMM dd")}
           {" - "}
           {DateTime.fromSQL(match.startAtUtc).toFormat("h:mm a")}
-        </Flex>
-        <Flex
-          color="gray.500"
-          display="box"
-          fontSize="14px"
-          textAlign="center"
-          mb="2"
-        >
+        </Text>
+        <Text color={mutedText} fontSize="sm" textAlign="center">
           {match.location} - {DateTime.fromSQL(match.startAtUtc).toRelative()}
-        </Flex>
-        <hr />
+        </Text>
       </Flex>
       <Flex flexDir="column" flex="1" overflow="auto">
-        <Table boxShadow="md" borderRadius="sm">
-          <Thead>
-            <Tr>
-              <Th>Participante</Th>
-              <Th>-</Th>
-              <Th>-</Th>
-              <Th>pts</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {users.map((user) => {
-              const result = results.find((p) => p.expand?.user.id === user.id);
+        <Flex
+          flexDir="column"
+          bg={cardBg}
+          borderRadius="2xl"
+          border="1px solid"
+          borderColor={cardBorder}
+          boxShadow={cardShadow}
+          overflow="hidden"
+          animation={`${rise} 0.5s ease-out 0.08s backwards`}
+        >
+          <Table>
+            <Thead>
+              <Tr>
+                <Th>Participante</Th>
+                <Th>-</Th>
+                <Th>-</Th>
+                <Th>pts</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {users.map((user) => {
+                const result = results.find((p) => p.expand?.user.id === user.id);
 
-              return (
-                <Tr
-                  bg={
-                    result?.points === 3
-                      ? green
-                      : result?.points === 1
-                        ? yellow
-                        : red
-                  }
-                  key={user.id}
-                >
-                  <Td>
-                    <Flex gap={2}>
-                      <Img
-                        rounded="full"
-                        w="40px"
-                        h="40px"
-                        src={
-                          user.img
-                            ? user.img + "&thumb=40x40"
-                            : `https://api.dicebear.com/9.x/initials/svg?seed=${user.username}`
-                        }
-                      />
-                      <Flex flexDir="column">
-                        <Link
-                          to="/tournaments/$tournamentId/$userId"
-                          params={{ tournamentId, userId: user.id }}
-                        >
-                          {user.name}
-                        </Link>
-                        <Text color="gray.500">
-                          {result?.expand?.prediction_id?.created
-                            ? DateTime.fromSQL(
-                              result.expand.prediction_id.created,
-                            ).toFormat("MMM dd h:mm a")
-                            : null}
-                        </Text>
+                return (
+                  <Tr
+                    bg={
+                      result?.points === 3
+                        ? green
+                        : result?.points === 1
+                          ? yellow
+                          : red
+                    }
+                    key={user.id}
+                  >
+                    <Td>
+                      <Flex gap={2}>
+                        <Img
+                          rounded="full"
+                          w="40px"
+                          h="40px"
+                          src={
+                            user.img
+                              ? user.img + "&thumb=40x40"
+                              : `https://api.dicebear.com/9.x/initials/svg?seed=${user.username}`
+                          }
+                        />
+                        <Flex flexDir="column">
+                          <Link
+                            to="/tournaments/$tournamentId/$userId"
+                            params={{ tournamentId, userId: user.id }}
+                          >
+                            {user.name}
+                          </Link>
+                          <Text color={mutedText}>
+                            {result?.expand?.prediction_id?.created
+                              ? DateTime.fromSQL(
+                                result.expand.prediction_id.created,
+                              ).toFormat("MMM dd h:mm a")
+                              : null}
+                          </Text>
+                        </Flex>
                       </Flex>
-                    </Flex>
-                  </Td>
-                  <Td>{result?.p_home ?? "-"}</Td>
-                  <Td>{result?.p_away ?? "-"}</Td>
-                  <Td>{result?.points ?? "-"}</Td>
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
+                    </Td>
+                    <Td>{result?.p_home ?? "-"}</Td>
+                    <Td>{result?.p_away ?? "-"}</Td>
+                    <Td>{result?.points ?? "-"}</Td>
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
+        </Flex>
       </Flex>
       {isAdmin ? (
         <Flex flexDir="column">
