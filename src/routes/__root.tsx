@@ -24,7 +24,7 @@ function Root() {
   return (
     <Flex color={color} bg={bg} flexDir="column" height="100dvh">
       <Navbar />
-      <Container maxW="container.xl" display="flex" py="4" gap="3" flexDir="column" flex="1" overflow="auto">
+      <Container maxW="container.xl" display="flex" px="1" py="4" gap="3" flexDir="column" flex="1" overflow="auto">
         <Outlet />
       </Container>
       <Toaster />

@@ -20,7 +20,7 @@ export default function Login() {
         await pb.collection("users").update(res.record.id, { avatarUrl });
       }
       toaster.success("Bienvenido");
-      document.location = "/";
+      document.location = "/tournaments/izl4jbo5w25yf6b";
     } catch (e) {
       const err = e as ClientResponseError;
       toaster.error(err.message);
@@ -33,7 +33,7 @@ export default function Login() {
     try {
       await pb.collection("users").authWithPassword(account, "Ab123456!");
       toaster.success("Bienvenido");
-      document.location = "/";
+      document.location = "/tournaments/izl4jbo5w25yf6b";
     } catch (e) {
       const err = e as ClientResponseError;
       toaster.error(err.message);
