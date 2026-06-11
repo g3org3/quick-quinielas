@@ -61,7 +61,9 @@ function SingleMatch() {
   const { data: users = [], isLoading: isLoadingU } = useQuery({
     queryKey: ["get-all", Collections.Users],
     queryFn: () =>
-      pb.collection(Collections.Users).getFullList<UsersResponse>(),
+      pb.collection(Collections.Users).getFullList<UsersResponse>({
+        filter: 'ignore!=true'
+      }),
   });
 
   const { data: results = [], isLoading: isLoadingP } = useQuery({
