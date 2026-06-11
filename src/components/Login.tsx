@@ -1,13 +1,12 @@
 import { Flex, Button, Input } from "@chakra-ui/react";
 import type { ClientResponseError } from "pocketbase";
 import { useState } from "react";
-import toaster from 'react-hot-toast'
+import toaster from "react-hot-toast";
 
 import { pb } from "@/pb";
 
 export default function Login() {
-  const [state, setState] = useState('')
-  const [account, setAccount] = useState('')
+  const [account, setAccount] = useState("");
 
   const onLogin = async () => {
     let res = null;
@@ -26,7 +25,7 @@ export default function Login() {
   };
 
   const onEmailLogin: React.FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
       await pb.collection("users").authWithPassword(account, "Ab123456!");
@@ -36,11 +35,16 @@ export default function Login() {
       const err = e as ClientResponseError;
       toaster.error(err.message);
     }
-  }
+  };
 
   return (
     <form onSubmit={onEmailLogin}>
-      <Flex h="100dvh" alignItems="center" justifyContent="center" bg="gray.100">
+      <Flex
+        h="100dvh"
+        alignItems="center"
+        justifyContent="center"
+        bg="gray.100"
+      >
         <Flex
           p="6"
           w="300px"
@@ -53,22 +57,19 @@ export default function Login() {
           gap="4"
         >
           <Flex fontSize="xx-large">Quiniela | Login</Flex>
-          {state === 'email'
-            ? null
-            : <Button colorScheme="purple" onClick={onLogin}>Login con Google</Button>
-          }
-          {state === 'email'
-            ? <>
-              <Input placeholder="Email?" onChange={(e) => setAccount(e.target.value.toLowerCase())} value={account} />
-            </>
-            : null
-          }
-          {state === 'email'
-            ? null
-            : <Button colorScheme="gray" onClick={() => setState('email')}>No Pude Hacer Login, Ayuda!</Button>
-          }
-          {state === 'email' ? <Button colorScheme="blue" type="submit">Acceder</Button> : null}
-          {state === 'email' ? <Button onClick={() => setState('')}>regresar</Button> : null}
+          <Input
+            border="1px solid #777"
+            placeholder="Email?"
+            onChange={(e) => setAccount(e.target.value.toLowerCase())}
+            value={account}
+          />
+          <Button colorScheme="blue" type="submit">
+            Hacer login con correo
+          </Button>
+          <Flex borderTop="1px dashed #555" h="1px"></Flex>
+          <Button colorScheme="purple" onClick={onLogin}>
+            Login con Google
+          </Button>
         </Flex>
       </Flex>
     </form>
