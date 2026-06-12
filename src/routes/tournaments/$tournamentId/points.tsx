@@ -85,7 +85,7 @@ function Points() {
                     h="40px"
                     src={
                       row.expand?.user.img
-                        ? row.expand?.user.img + "&thumb=40x40"
+                        ? row.expand?.user.img + "&thumb=100x100"
                         // @ts-expect-error we dont care
                         : `https://api.dicebear.com/9.x/initials/svg?seed=${row.expand?.user.username}`
                     }

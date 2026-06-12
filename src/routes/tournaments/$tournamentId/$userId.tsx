@@ -64,7 +64,7 @@ function UserPredictions() {
             h="120px"
             src={
               user.img
-                ? user.img + "&thumb=120x120"
+                ? user.img + "&thumb=100x100"
                 : `https://api.dicebear.com/9.x/initials/svg?seed=${user.username}`
             }
           />
