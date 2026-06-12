@@ -14,6 +14,7 @@ import {
   Text,
   Img,
   keyframes,
+  Box,
 } from "@chakra-ui/react";
 import { Flex, Image, useColorModeValue } from "@chakra-ui/react";
 import { DateTime } from "luxon";
@@ -211,9 +212,10 @@ function SingleMatch() {
           border="1px solid"
           borderColor={cardBorder}
           boxShadow={cardShadow}
-          overflow="hidden"
+          overflow="auto"
           animation={`${rise} 0.5s ease-out 0.08s backwards`}
         >
+        <Box overflowX="auto">
           <Table>
             <Thead>
               <Tr>
@@ -275,6 +277,7 @@ function SingleMatch() {
               })}
             </Tbody>
           </Table>
+        </Box>
         </Flex>
       </Flex>
       {isAdmin ? (

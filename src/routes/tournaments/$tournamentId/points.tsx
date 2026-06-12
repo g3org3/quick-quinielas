@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
+  Box,
   Flex,
   Heading,
   Table,
@@ -81,56 +82,60 @@ function Points() {
           border="1px solid"
           borderColor={cardBorder}
           boxShadow={cardShadow}
-          overflow="hidden"
+          overflow="auto"
           animation={`${rise} 0.5s ease-out`}
         >
-          <Table variant="simple">
-            <Thead>
-              <Tr>
-                <Th>Participante</Th>
-                <Th>Puntos</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {leaderboard.map((row, i) => (
-                <Tr
-                  key={row.id}
-                  bg={pb.authStore.model?.id === row.user ? highlight : undefined}
-                >
-                  <Td display="flex" alignItems="center" gap="3">
-                    <Text
-                      color={mutedText}
-                      fontFamily="monospace"
-                      minW="6"
-                      textAlign="center"
-                    >
-                      {medals[i] ?? `${i + 1}.`}
-                    </Text>
-                    <Img
-                      rounded="full"
-                      w="40px"
-                      h="40px"
-                      src={
-                        row.expand?.user.img
-                          ? row.expand?.user.img + "&thumb=40x40"
-                          // @ts-expect-error we dont care
-                          : `https://api.dicebear.com/9.x/initials/svg?seed=${row.expand?.user.username}`
-                      }
-                    />
-                    <Link
-                      to="/tournaments/$tournamentId/$userId"
-                      params={{ tournamentId, userId: row.user }}
-                    >
-                      {row.expand?.user.name}
-                    </Link>
-                  </Td>
-                  <Td>
-                    <Text fontWeight="semibold">{row.points}</Text>
-                  </Td>
+          <Box overflowX="auto">
+            <Table variant="simple">
+              <Thead>
+                <Tr>
+                  <Th>Participante</Th>
+                  <Th>Puntos</Th>
                 </Tr>
-              ))}
-            </Tbody>
-          </Table>
+              </Thead>
+              <Tbody>
+                {leaderboard.map((row, i) => (
+                  <Tr
+                    key={row.id}
+                    bg={
+                      pb.authStore.model?.id === row.user ? highlight : undefined
+                    }
+                  >
+                    <Td display="flex" alignItems="center" gap="3">
+                      <Text
+                        color={mutedText}
+                        fontFamily="monospace"
+                        minW="6"
+                        textAlign="center"
+                      >
+                        {medals[i] ?? `${i + 1}.`}
+                      </Text>
+                      <Img
+                        rounded="full"
+                        w="40px"
+                        h="40px"
+                        src={
+                          row.expand?.user.img
+                            ? row.expand?.user.img + "&thumb=40x40"
+                            // @ts-expect-error we dont care
+                            : `https://api.dicebear.com/9.x/initials/svg?seed=${row.expand?.user.username}`
+                        }
+                      />
+                      <Link
+                        to="/tournaments/$tournamentId/$userId"
+                        params={{ tournamentId, userId: row.user }}
+                      >
+                        {row.expand?.user.name}
+                      </Link>
+                    </Td>
+                    <Td>
+                      <Text fontWeight="semibold">{row.points}</Text>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </Box>
         </Flex>
       </Flex>
       <BottomNav tournamentId={tournamentId} state="puntos" />
