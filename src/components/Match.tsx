@@ -75,7 +75,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
         }),
   });
   const images = bets.map((bet) =>
-    bet.expand?.user.img ? bet.expand?.user.img + "&thumb=100x100" : "",
+    bet.expand?.user.img ? bet.expand?.user.img + "&thumb=100x100&cache=default" : "",
   );
   const prediction = data && data[0]?.id ? data[0] : null;
   const home = data && data[0] ? data[0].homeScore.toString() : "";
