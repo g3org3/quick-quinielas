@@ -18,6 +18,7 @@ import {
   UsersRecord,
 } from "@/pocketbase-types";
 import { pb } from "@/pb";
+import { posthog } from "@/posthog";
 import Loading from "@/components/Loading";
 import BottomNav from "@/components/BottomNav";
 
@@ -93,6 +94,13 @@ function Points() {
                   <Link
                     to="/tournaments/$tournamentId/$userId"
                     params={{ tournamentId, userId: row.user }}
+                    onClick={() =>
+                      posthog.capture("profile_clicked", {
+                        profileUserId: row.user,
+                        profileName: row.expand?.user.name,
+                        tournamentId,
+                      })
+                    }
                   >
                     {row.expand?.user.name}
                   </Link>

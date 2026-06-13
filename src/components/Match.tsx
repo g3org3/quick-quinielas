@@ -21,6 +21,7 @@ import {
 } from "@/pocketbase-types";
 import { getCountryCode } from "@/countries";
 import { pb } from "@/pb";
+import { posthog } from "@/posthog";
 
 interface Props {
   bet?: MatchBetsResponse<number, number, number>;
@@ -32,7 +33,16 @@ export default function Match({ match, tournamentId, bet }: Props) {
   const { mutate, isPending } = useMutation({
     mutationFn: (prediction: PredictionsRecord) =>
       pb.collection(Collections.Predictions).create(prediction),
-    onSuccess() {
+    onSuccess(_, prediction) {
+      posthog.capture("prediction_saved", {
+        action: "created",
+        match: match.id,
+        home: match.home,
+        away: match.away,
+        homeScore: prediction.homeScore,
+        awayScore: prediction.awayScore,
+        tournamentId,
+      });
       toaster.success("saved");
     },
     onError(err) {
@@ -44,7 +54,16 @@ export default function Match({ match, tournamentId, bet }: Props) {
       pb
         .collection(Collections.Predictions)
         .update(params.id, params.prediction),
-    onSuccess() {
+    onSuccess(_, params) {
+      posthog.capture("prediction_saved", {
+        action: "updated",
+        match: match.id,
+        home: match.home,
+        away: match.away,
+        homeScore: params.prediction.homeScore,
+        awayScore: params.prediction.awayScore,
+        tournamentId,
+      });
       toaster.success("saved");
     },
     onError(err) {
