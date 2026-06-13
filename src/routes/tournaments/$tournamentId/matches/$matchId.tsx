@@ -8,13 +8,12 @@ import {
   Th,
   Tbody,
   Button,
-  Divider,
-  Heading,
   Spacer,
   Text,
   Img,
   keyframes,
   Box,
+  Badge,
 } from "@chakra-ui/react";
 import { Flex, Image, useColorModeValue } from "@chakra-ui/react";
 import { DateTime } from "luxon";
@@ -47,11 +46,10 @@ const rise = keyframes`
   to { opacity: 1; transform: translateY(0); }
 `;
 
+const MEDALS = ["🥇", "🥈", "🥉"];
+
 function SingleMatch() {
   const { matchId, tournamentId } = Route.useParams();
-  const green = useColorModeValue("green.100", "green.800");
-  const yellow = useColorModeValue("yellow.100", "yellow.800");
-  const red = useColorModeValue("red.50", "red.800");
   const cardBg = useColorModeValue("white", "gray.800");
   const cardBorder = useColorModeValue("blackAlpha.100", "whiteAlpha.200");
   const cardShadow = useColorModeValue(
@@ -59,6 +57,12 @@ function SingleMatch() {
     "0 12px 30px -14px rgba(0, 0, 0, 0.6)"
   );
   const mutedText = useColorModeValue("gray.500", "gray.400");
+  const scoreBg = useColorModeValue("gray.50", "whiteAlpha.50");
+  const dividerColor = useColorModeValue("blackAlpha.100", "whiteAlpha.100");
+  const tableHeaderBg = useColorModeValue("gray.50", "whiteAlpha.50");
+  const green = useColorModeValue("green.50", "rgba(56, 161, 105, 0.12)");
+  const yellow = useColorModeValue("yellow.50", "rgba(214, 158, 46, 0.12)");
+  const red = useColorModeValue("red.50", "rgba(229, 62, 62, 0.08)");
 
   const { data: tournament, isLoading } = useQuery({
     queryKey: ["get-one", Collections.Tournaments, tournamentId],
@@ -128,11 +132,21 @@ function SingleMatch() {
 
   if (!match) return <Text>something went wrong</Text>;
 
+  // Medal map: results are sorted by -points, first 3 with points > 0 get medals
+  const medalMap = new Map<string, string>();
+  results.slice(0, 3).forEach((result, i) => {
+    if ((result.points ?? 0) > 0 && result.expand?.user?.id) {
+      medalMap.set(result.expand.user.id, MEDALS[i]);
+    }
+  });
+
   return (
     <>
-      <Heading size="md" letterSpacing="tight" textAlign="center">
+      <Text fontSize="sm" color={mutedText} fontWeight="medium" px="1">
         {tournament?.name}
-      </Heading>
+      </Text>
+
+      {/* Scoreboard card */}
       <Flex
         flexDir="column"
         bg={cardBg}
@@ -140,70 +154,94 @@ function SingleMatch() {
         border="1px solid"
         borderColor={cardBorder}
         boxShadow={cardShadow}
-        p="4"
+        overflow="hidden"
         animation={`${rise} 0.5s ease-out`}
       >
-        <Flex alignItems="center" gap="3" mb="3">
-          <Flex flex="1" gap="3" alignItems="center">
-            <Flex
-              flexDir="column"
-              flex="1"
-              alignItems="center"
-              justifyContent="flex-end"
-            >
+        <Box h="3px" bgGradient="linear(to-r, green.400, green.500, green.400)" />
+
+        <Flex flexDir="column" p="5" gap="4">
+          {/* Teams + score */}
+          <Flex alignItems="center" gap="3">
+            {/* Home team */}
+            <Flex flex="1" flexDir="column" alignItems="center" gap="2">
               <Image
+                w="52px"
+                h="52px"
                 src={`https://flagsapi.com/${getCountryCode(match.home)}/flat/64.png`}
+                filter="drop-shadow(0 4px 8px rgba(0,0,0,0.18))"
               />
-              <Text fontWeight="semibold" letterSpacing="tight">
+              <Text fontWeight="semibold" fontSize="sm" textAlign="center" letterSpacing="tight" noOfLines={2}>
                 {match.home}
               </Text>
-              <Text fontFamily="monospace" color={mutedText}>
+              <Text fontSize="xs" color={mutedText} fontFamily="monospace">
                 {homeper}%
               </Text>
             </Flex>
-          </Flex>
-          <Flex flexDir="column" alignSelf="flex-end">
-            <Flex alignItems="center">
-              <Text fontWeight="bold" fontSize="xl" p="1">
-                {match.homeScore}
-              </Text>
-              <Text fontSize="xs" color={mutedText} textTransform="uppercase" letterSpacing="widest">
-                vs
-              </Text>
-              <Text fontWeight="bold" fontSize="xl" p="1">
-                {match.awayScore}
+
+            {/* Score box */}
+            <Flex flexDir="column" alignItems="center" gap="1" flexShrink={0}>
+              <Flex
+                alignItems="center"
+                gap="1"
+                bg={scoreBg}
+                borderRadius="xl"
+                px="4"
+                py="2"
+                border="1px solid"
+                borderColor={dividerColor}
+              >
+                <Text fontWeight="bold" fontSize="2xl" fontFamily="monospace" minW="9" textAlign="center">
+                  {match.homeScore ?? "—"}
+                </Text>
+                <Text fontSize="sm" color={mutedText} fontWeight="semibold">
+                  :
+                </Text>
+                <Text fontWeight="bold" fontSize="2xl" fontFamily="monospace" minW="9" textAlign="center">
+                  {match.awayScore ?? "—"}
+                </Text>
+              </Flex>
+              <Text fontSize="xs" color={mutedText} fontFamily="monospace">
+                {tieper}% empate
               </Text>
             </Flex>
-            <br />
-            <Text fontFamily="monospace" color={mutedText} textAlign="center">
-              {tieper}%
-            </Text>
-          </Flex>
-          <Flex flex="1" gap="3" alignItems="center">
-            <Flex flexDir="column" flex="1" alignItems="center">
+
+            {/* Away team */}
+            <Flex flex="1" flexDir="column" alignItems="center" gap="2">
               <Image
-                fallbackSrc="fallbackSrc='https://via.placeholder.com/64'"
+                w="52px"
+                h="52px"
                 src={`https://flagsapi.com/${getCountryCode(match.away)}/flat/64.png`}
+                filter="drop-shadow(0 4px 8px rgba(0,0,0,0.18))"
               />
-              <Text fontWeight="semibold" letterSpacing="tight">
+              <Text fontWeight="semibold" fontSize="sm" textAlign="center" letterSpacing="tight" noOfLines={2}>
                 {match.away}
               </Text>
-              <Text fontFamily="monospace" color={mutedText}>
+              <Text fontSize="xs" color={mutedText} fontFamily="monospace">
                 {awayper}%
               </Text>
             </Flex>
           </Flex>
+
+          {/* Date / location */}
+          <Flex
+            flexDir="column"
+            alignItems="center"
+            gap="0.5"
+            pt="3"
+            borderTop="1px solid"
+            borderColor={dividerColor}
+          >
+            <Text color={mutedText} fontSize="sm" fontWeight="medium">
+              {DateTime.fromSQL(match.startAtUtc).toFormat("EEE, MMM dd · h:mm a")}
+            </Text>
+            <Text color={mutedText} fontSize="xs">
+              {match.location} · {DateTime.fromSQL(match.startAtUtc).toRelative()}
+            </Text>
+          </Flex>
         </Flex>
-        <Divider borderColor={cardBorder} />
-        <Text color={mutedText} pt="1" fontSize="md" textAlign="center">
-          {DateTime.fromSQL(match.startAtUtc).toFormat("EEE MMM dd")}
-          {" - "}
-          {DateTime.fromSQL(match.startAtUtc).toFormat("h:mm a")}
-        </Text>
-        <Text color={mutedText} fontSize="sm" textAlign="center">
-          {match.location} - {DateTime.fromSQL(match.startAtUtc).toRelative()}
-        </Text>
       </Flex>
+
+      {/* Results table */}
       <Flex flexDir="column" flex="1" overflow="auto">
         <Flex
           flexDir="column"
@@ -212,74 +250,114 @@ function SingleMatch() {
           border="1px solid"
           borderColor={cardBorder}
           boxShadow={cardShadow}
-          overflow="auto"
           animation={`${rise} 0.5s ease-out 0.08s backwards`}
         >
-        <Box overflowX="auto">
-          <Table>
-            <Thead>
-              <Tr>
-                <Th>Participante</Th>
-                <Th>-</Th>
-                <Th>-</Th>
-                <Th>pts</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {users.map((user) => {
-                const result = results.find((p) => p.expand?.user.id === user.id);
+          <Box px="4" py="3" borderBottom="1px solid" borderColor={dividerColor}>
+            <Text fontWeight="semibold" fontSize="sm" letterSpacing="tight">
+              Predicciones
+            </Text>
+          </Box>
+          <Box overflowX="auto">
+            <Table size="sm">
+              <Thead>
+                <Tr bg={tableHeaderBg}>
+                  <Th py="3" fontSize="xs" color={mutedText} fontWeight="semibold">
+                    Participante
+                  </Th>
+                  <Th py="3" fontSize="xs" color={mutedText} fontWeight="semibold" textAlign="center">
+                    Pred
+                  </Th>
+                  <Th py="3" fontSize="xs" color={mutedText} fontWeight="semibold" textAlign="center">
+                    Pts
+                  </Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {users.map((user) => {
+                  const result = results.find((p) => p.expand?.user.id === user.id);
+                  const medal = medalMap.get(user.id);
+                  const pts = result?.points;
+                  const rowBg = pts === 3 ? green : pts === 1 ? yellow : red;
 
-                return (
-                  <Tr
-                    bg={
-                      result?.points === 3
-                        ? green
-                        : result?.points === 1
-                          ? yellow
-                          : red
-                    }
-                    key={user.id}
-                  >
-                    <Td>
-                      <Flex gap={2}>
-                        <Img
-                          rounded="full"
-                          w="40px"
-                          h="40px"
-                          src={
-                            user.img
-                              ? user.img + "&thumb=40x40"
-                              : `https://api.dicebear.com/9.x/initials/svg?seed=${user.username}`
-                          }
-                        />
-                        <Flex flexDir="column">
-                          <Link
-                            to="/tournaments/$tournamentId/$userId"
-                            params={{ tournamentId, userId: user.id }}
-                          >
-                            {user.name}
-                          </Link>
-                          <Text color={mutedText}>
-                            {result?.expand?.prediction_id?.created
-                              ? DateTime.fromSQL(
-                                result.expand.prediction_id.created,
-                              ).toFormat("MMM dd h:mm a")
-                              : null}
-                          </Text>
+                  return (
+                    <Tr bg={rowBg} key={user.id} transition="background 0.15s ease">
+                      <Td py="2.5">
+                        <Flex gap="2.5" alignItems="center">
+                          <Img
+                            rounded="full"
+                            w="36px"
+                            h="36px"
+                            flexShrink={0}
+                            src={
+                              user.img
+                                ? user.img + "&thumb=40x40"
+                                : `https://api.dicebear.com/9.x/initials/svg?seed=${user.username}`
+                            }
+                          />
+                          <Flex flexDir="column" gap="0">
+                            <Flex alignItems="center" gap="1">
+                              {medal && (
+                                <Text fontSize="sm" lineHeight="1">
+                                  {medal}
+                                </Text>
+                              )}
+                              <Link
+                                to="/tournaments/$tournamentId/$userId"
+                                params={{ tournamentId, userId: user.id }}
+                              >
+                                <Text
+                                  fontSize="sm"
+                                  fontWeight="medium"
+                                  letterSpacing="tight"
+                                  _hover={{ color: "green.500" }}
+                                  transition="color 0.15s ease"
+                                >
+                                  {user.name}
+                                </Text>
+                              </Link>
+                            </Flex>
+                            {result?.expand?.prediction_id?.created && (
+                              <Text fontSize="xs" color={mutedText}>
+                                {DateTime.fromSQL(
+                                  result.expand.prediction_id.created,
+                                ).toFormat("MMM dd, h:mm a")}
+                              </Text>
+                            )}
+                          </Flex>
                         </Flex>
-                      </Flex>
-                    </Td>
-                    <Td>{result?.p_home ?? "-"}</Td>
-                    <Td>{result?.p_away ?? "-"}</Td>
-                    <Td>{result?.points ?? "-"}</Td>
-                  </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
-        </Box>
+                      </Td>
+                      <Td py="2.5" textAlign="center">
+                        <Text fontFamily="monospace" fontSize="sm" fontWeight="semibold">
+                          {result ? `${result.p_home} - ${result.p_away}` : "—"}
+                        </Text>
+                      </Td>
+                      <Td py="2.5" textAlign="center">
+                        {pts != null ? (
+                          <Badge
+                            borderRadius="full"
+                            px="2"
+                            py="0.5"
+                            fontSize="xs"
+                            fontWeight="bold"
+                            colorScheme={pts === 3 ? "green" : pts === 1 ? "yellow" : "red"}
+                          >
+                            {pts}
+                          </Badge>
+                        ) : (
+                          <Text fontSize="sm" color={mutedText}>
+                            —
+                          </Text>
+                        )}
+                      </Td>
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </Table>
+          </Box>
         </Flex>
       </Flex>
+
       {isAdmin ? (
         <Flex flexDir="column">
           {results.map((p) => (
