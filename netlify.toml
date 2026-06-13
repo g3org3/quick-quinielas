@@ -1,4 +1,26 @@
+# PostHog reverse proxy — mirrors the Vite dev-server proxy in vite.config.ts
+# so /ingest works in production too. These MUST come before the SPA catch-all
+# below, since Netlify applies the first matching redirect.
 
+[[redirects]]
+  from = "/ingest/static/*"
+  to = "https://eu-assets.i.posthog.com/static/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/ingest/array/*"
+  to = "https://eu-assets.i.posthog.com/array/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/ingest/*"
+  to = "https://eu.i.posthog.com/:splat"
+  status = 200
+  force = true
+
+# SPA fallback — keep last
 [[redirects]]
   from = "/*"
   to = "/index.html"
