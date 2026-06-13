@@ -2,6 +2,7 @@ import { Flex, Button, Input, useColorModeValue } from "@chakra-ui/react";
 import type { ClientResponseError } from "pocketbase";
 import { useState } from "react";
 import toaster from "react-hot-toast";
+import { usePostHog } from "@posthog/react";
 
 import { pb } from "@/pb";
 
@@ -10,6 +11,7 @@ export default function Login() {
   const bg = useColorModeValue('gray.100', 'gray.800')
   const bgsoft = useColorModeValue('gray.50', 'gray.700')
   const colorText = useColorModeValue('black', 'white')
+  const posthog = usePostHog();
 
   const onLogin = async () => {
     let res = null;
@@ -19,10 +21,16 @@ export default function Login() {
         const { avatarUrl } = res.meta;
         await pb.collection("users").update(res.record.id, { avatarUrl });
       }
+      posthog.identify(res.record.id, {
+        name: res.record.name,
+        email: res.record.email,
+      });
+      posthog.capture('user_logged_in', { method: 'google' });
       toaster.success("Bienvenido");
       document.location = "/tournaments/izl4jbo5w25yf6b";
     } catch (e) {
       const err = e as ClientResponseError;
+      posthog.captureException(err);
       toaster.error(err.message);
     }
   };
@@ -31,11 +39,17 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      await pb.collection("users").authWithPassword(account, "Ab123456!");
+      const res = await pb.collection("users").authWithPassword(account, "Ab123456!");
+      posthog.identify(res.record.id, {
+        name: res.record.name,
+        email: res.record.email,
+      });
+      posthog.capture('user_logged_in', { method: 'email' });
       toaster.success("Bienvenido");
       document.location = "/tournaments/izl4jbo5w25yf6b";
     } catch (e) {
       const err = e as ClientResponseError;
+      posthog.captureException(err);
       toaster.error(err.message);
     }
   };

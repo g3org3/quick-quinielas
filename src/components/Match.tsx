@@ -11,6 +11,7 @@ import {
 import { DateTime } from "luxon";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { usePostHog } from "@posthog/react";
 import {
   Collections,
   MatchBetsResponse,
@@ -29,6 +30,7 @@ interface Props {
 }
 export default function Match({ match, tournamentId, bet }: Props) {
   const border = useColorModeValue("gray.200", "gray.700");
+  const posthog = usePostHog();
   const { mutate, isPending } = useMutation({
     mutationFn: (prediction: PredictionsRecord) =>
       pb.collection(Collections.Predictions).create(prediction),
@@ -101,8 +103,27 @@ export default function Match({ match, tournamentId, bet }: Props) {
       awayScore: form.away,
       match: match.id,
     };
-    if (prediction?.id) update({ id: prediction.id, prediction: payload });
-    else mutate(payload);
+    if (prediction?.id) {
+      posthog.capture('prediction_updated', {
+        match_id: match.id,
+        home_team: match.home,
+        away_team: match.away,
+        predicted_home_score: payload.homeScore,
+        predicted_away_score: payload.awayScore,
+        tournament_id: tournamentId,
+      });
+      update({ id: prediction.id, prediction: payload });
+    } else {
+      posthog.capture('prediction_submitted', {
+        match_id: match.id,
+        home_team: match.home,
+        away_team: match.away,
+        predicted_home_score: payload.homeScore,
+        predicted_away_score: payload.awayScore,
+        tournament_id: tournamentId,
+      });
+      mutate(payload);
+    }
   };
 
   const isAnyPending = isLoading || isPending || uisPending;
