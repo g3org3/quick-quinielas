@@ -1,4 +1,4 @@
-import { Button, Container, Flex, Heading, Spacer, Text, useColorMode, useColorModeValue } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, Heading, Spacer, useColorMode, useColorModeValue } from '@chakra-ui/react'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 import { Toaster } from 'react-hot-toast'
 import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
@@ -50,10 +50,13 @@ function Root() {
 
 function Navbar() {
   const { colorMode, toggleColorMode } = useColorMode()
-  const bg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(12, 18, 15, 0.85)')
-  const borderColor = useColorModeValue('blackAlpha.100', 'whiteAlpha.200')
+  const bg = useColorModeValue('rgba(255, 255, 255, 0.70)', 'rgba(12, 18, 15, 0.76)')
+  const borderColor = useColorModeValue('blackAlpha.100', 'whiteAlpha.100')
   const mutedText = useColorModeValue('gray.500', 'gray.400')
   const hoverBg = useColorModeValue('green.50', 'whiteAlpha.100')
+  const toggleBg = useColorModeValue('gray.100', 'whiteAlpha.100')
+  const toggleBorderColor = useColorModeValue('gray.200', 'whiteAlpha.200')
+  const logoutBorderColor = useColorModeValue('gray.200', 'whiteAlpha.200')
 
   const onLogout = () => {
     pb.authStore.clear();
@@ -73,12 +76,13 @@ function Navbar() {
 
   return (
     <Flex
-      py="2"
+      py="2.5"
       bg={bg}
-      backdropFilter="blur(12px)"
+      backdropFilter="blur(20px) saturate(180%)"
       alignItems="center"
       borderBottom="1px solid"
       borderColor={borderColor}
+      position="relative"
     >
       <Container maxW="container.xl" gap="4" display="flex" alignItems="center">
         <Link to="/">
@@ -104,28 +108,61 @@ function Navbar() {
         <Button
           size="sm"
           variant="ghost"
-          borderRadius="lg"
+          borderRadius="full"
+          w="9"
+          h="9"
+          minW="9"
+          p="0"
+          fontSize="sm"
+          bg={toggleBg}
+          border="1px solid"
+          borderColor={toggleBorderColor}
           color={mutedText}
-          _hover={{ bg: hoverBg, color: 'green.500' }}
-          _active={{ transform: 'scale(0.97)' }}
-          transition="all 0.15s ease-out"
+          _hover={{
+            bg: hoverBg,
+            transform: 'scale(1.1) rotate(15deg)',
+            boxShadow: '0 0 14px rgba(56, 161, 105, 0.35)',
+            borderColor: 'green.400',
+          }}
+          _active={{ transform: 'scale(0.90)' }}
+          transition="all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)"
           onClick={onToggleColorMode}
         >
-          <Text>Toggle {colorMode === 'light' ? '🌚' : '☀️'}</Text>
+          {colorMode === 'light' ? '🌚' : '☀️'}
         </Button>
         <Button
           size="sm"
           variant="ghost"
           borderRadius="lg"
+          px="3"
+          fontSize="xs"
+          fontWeight="semibold"
+          letterSpacing="wide"
           color={mutedText}
-          _hover={{ bg: hoverBg, color: 'green.500' }}
-          _active={{ transform: 'scale(0.97)' }}
+          border="1px solid"
+          borderColor={logoutBorderColor}
+          _hover={{
+            bg: hoverBg,
+            color: 'green.500',
+            borderColor: 'green.300',
+          }}
+          _active={{ transform: 'scale(0.96)' }}
           transition="all 0.15s ease-out"
           onClick={onLogout}
         >
           Logout
         </Button>
       </Container>
+      {/* Green accent gradient line */}
+      <Box
+        position="absolute"
+        bottom="-1px"
+        left="0"
+        right="0"
+        h="1px"
+        bgGradient="linear(to-r, transparent 0%, green.400 25%, green.500 50%, green.400 75%, transparent 100%)"
+        opacity={0.75}
+      />
     </Flex>
   )
 }
