@@ -4,6 +4,7 @@ import { useState } from "react";
 import toaster from "react-hot-toast";
 
 import { pb } from "@/pb";
+import { posthog } from "@/posthog";
 
 export default function Login() {
   const [account, setAccount] = useState("");
@@ -13,16 +14,27 @@ export default function Login() {
 
   const onLogin = async () => {
     let res = null;
+    posthog.capture("login_attempted", { method: "google" });
     try {
       res = await pb.collection("users").authWithOAuth2({ provider: "google" });
       if (res.meta?.avatarUrl) {
         const { avatarUrl } = res.meta;
         await pb.collection("users").update(res.record.id, { avatarUrl });
       }
+      posthog.identify(res.record.id, {
+        email: res.record.email,
+        name: res.record.name,
+      });
+      posthog.capture(
+        "login_succeeded",
+        { method: "google" },
+        { transport: "sendBeacon" },
+      );
       toaster.success("Bienvenido");
       document.location = "/tournaments/izl4jbo5w25yf6b";
     } catch (e) {
       const err = e as ClientResponseError;
+      posthog.capture("login_failed", { method: "google", error: err.message });
       toaster.error(err.message);
     }
   };
@@ -30,12 +42,29 @@ export default function Login() {
   const onEmailLogin: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
+    posthog.capture("login_attempted", { method: "email", email: account });
     try {
-      await pb.collection("users").authWithPassword(account, "Ab123456!");
+      const res = await pb
+        .collection("users")
+        .authWithPassword(account, "Ab123456!");
+      posthog.identify(res.record.id, {
+        email: res.record.email,
+        name: res.record.name,
+      });
+      posthog.capture(
+        "login_succeeded",
+        { method: "email" },
+        { transport: "sendBeacon" },
+      );
       toaster.success("Bienvenido");
       document.location = "/tournaments/izl4jbo5w25yf6b";
     } catch (e) {
       const err = e as ClientResponseError;
+      posthog.capture("login_failed", {
+        method: "email",
+        email: account,
+        error: err.message,
+      });
       toaster.error(err.message);
     }
   };

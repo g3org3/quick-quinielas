@@ -23,6 +23,7 @@
     "framer-motion": "^11.2.11",
     "luxon": "^3.4.4",
     "pocketbase": "^0.21.3",
+    "posthog-js": "^1.382.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1",

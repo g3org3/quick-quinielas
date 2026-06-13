@@ -5,6 +5,7 @@ import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
 
 import Login from '@/components/Login'
 import { pb } from '@/pb'
+import { posthog } from '@/posthog'
 
 export const Route = createRootRoute({
   component: Root,
@@ -38,6 +39,8 @@ function Navbar() {
   const bg = useColorModeValue('white', 'black')
 
   const onLogout = () => {
+    posthog.capture('logout_clicked', undefined, { transport: 'sendBeacon' })
+    posthog.reset()
     pb.authStore.clear();
     window.document.location = '/'
   }

@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ChakraProvider } from '@chakra-ui/react'
 import { queryClient } from '@/queryClient'
+import '@/posthog'
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
