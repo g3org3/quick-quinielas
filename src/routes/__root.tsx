@@ -5,6 +5,7 @@ import {
   Flex,
   Spacer,
   useColorModeValue,
+  Text,
 } from "@chakra-ui/react";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { Toaster } from "react-hot-toast";
@@ -62,8 +63,8 @@ function Root() {
         <Container
           maxW="container.xl"
           display="flex"
-          px="1"
           py="4"
+          px="0"
           gap="3"
           flexDir="column"
           flex="1"
@@ -94,7 +95,10 @@ function Navbar() {
     <Flex py="2" bg={bg} alignItems="center" boxShadow="md">
       <Container maxW="container.xl" gap="4" display="flex" alignItems="center">
         <Link to="/">
-          <span style={{ fontWeight: "bold" }}>🏟️ Quiniela</span>
+          <Flex gap={1} alignItems="center">
+            <Text fontSize="x-large">🏟️</Text>
+            <Text fontWeight="bold" fontSize="large">Quiniela</Text>
+          </Flex>
         </Link>
         <Spacer />
         <ColorModeSwitcher />

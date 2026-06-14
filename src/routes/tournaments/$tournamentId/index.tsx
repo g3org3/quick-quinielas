@@ -29,7 +29,7 @@ export const Route = createFileRoute("/tournaments/$tournamentId/")({
 
 function HomeTournament() {
   const { tournamentId } = Route.useParams();
-  const { tab = 'today' } = Route.useSearch();
+  const { tab = "today" } = Route.useSearch();
 
   useEffect(() => {
     localStorage.setItem("tab", JSON.stringify(tab));
@@ -42,6 +42,7 @@ function HomeTournament() {
   today = tab === "ayer" ? DateTime.now().toUTC().minus({ days: 1 }) : today;
   today = tab === "ante" ? DateTime.now().toUTC().minus({ days: 2 }) : today;
   today = tab === "pasado" ? DateTime.now().toUTC().plus({ days: 2 }) : today;
+  today = tab === "todos" ? DateTime.now().toUTC() : today;
   const nextDay = today.plus({ days: 1 });
   const todayUtc = `${today.toSQLDate()} 00:00:00Z`;
   const nextDayUtc = `${nextDay.toSQLDate()} 00:00:00Z`;
@@ -63,6 +64,7 @@ function HomeTournament() {
       "get-all",
       Collections.Matches,
       tournamentId,
+      tab,
       `${todayUtc}-${nextDayUtc}`,
     ],
     queryFn: () =>
@@ -83,79 +85,81 @@ function HomeTournament() {
   if (isLoadingMatches || isLoadingTournaments) return <Loading />;
 
   return (
-    <>
-      <h1
-        style={{
-          fontWeight: "bold",
-          letterSpacing: "2px",
-          fontSize: "20px",
-          textAlign: "center",
-        }}
-      >
-        {tournament?.name}
-      </h1>
-      <Flex gap="1" mt="5" justifyContent="center" overflow="auto">
-        <Link
-          to="/tournaments/$tournamentId"
-          params={{ tournamentId }}
-          search={{ tab: "ante" }}
+    <Flex flexDir="column" flex="1" overflow="auto">
+      <Flex flexDir="column" flex="1" overflow="auto" px={4} mb={1}>
+        <h1
+          style={{
+            fontWeight: "bold",
+            letterSpacing: "2px",
+            fontSize: "20px",
+            textAlign: "center",
+          }}
         >
-          <Button variant="ghost" isActive={tab === "ante"}>
-            Ante
-          </Button>
-        </Link>
-        <Link
-          to="/tournaments/$tournamentId"
-          params={{ tournamentId }}
-          search={{ tab: "ayer" }}
-        >
-          <Button variant="ghost" isActive={tab === "ayer"}>
-            Ayer
-          </Button>
-        </Link>
-        <Link
-          to="/tournaments/$tournamentId"
-          params={{ tournamentId }}
-          search={{ tab: "today" }}
-        >
-          <Button variant="ghost" isActive={tab === "today"}>
-            Hoy
-          </Button>
-        </Link>
-        <Link
-          to="/tournaments/$tournamentId"
-          params={{ tournamentId }}
-          search={{ tab: "tomorrow" }}
-        >
-          <Button variant="ghost" isActive={tab === "tomorrow"}>
-            Manana
-          </Button>
-        </Link>
-        <Link
-          to="/tournaments/$tournamentId"
-          params={{ tournamentId }}
-          search={{ tab: "pasado" }}
-        >
-          <Button variant="ghost" isActive={tab === "pasado"}>
-            Pasado
-          </Button>
-        </Link>
-      </Flex>
-      <Flex flexDir="column" flex="1" overflow="auto">
-        {matches.map((match) => {
-          const bet = bets.find((bet) => bet.match_id === match.id);
-          return (
-            <Match
-              key={match.id}
-              match={match}
-              bet={bet}
-              tournamentId={tournamentId}
-            />
-          );
-        })}
-        {matches.length === 0 ? <>No hay partidos</> : null}
+          {tournament?.name}
+        </h1>
+        <Flex gap="1" mt="5" justifyContent="center">
+          <Link
+            to="/tournaments/$tournamentId"
+            params={{ tournamentId }}
+            search={{ tab: "todos" }}
+          >
+            <Button variant="ghost" isActive={tab === "todos"}>
+              Todos
+            </Button>
+          </Link>
+          <Link
+            to="/tournaments/$tournamentId"
+            params={{ tournamentId }}
+            search={{ tab: "ayer" }}
+          >
+            <Button variant="ghost" isActive={tab === "ayer"}>
+              Ayer
+            </Button>
+          </Link>
+          <Link
+            to="/tournaments/$tournamentId"
+            params={{ tournamentId }}
+            search={{ tab: "today" }}
+          >
+            <Button variant="ghost" isActive={tab === "today"}>
+              Hoy
+            </Button>
+          </Link>
+          <Link
+            to="/tournaments/$tournamentId"
+            params={{ tournamentId }}
+            search={{ tab: "tomorrow" }}
+          >
+            <Button variant="ghost" isActive={tab === "tomorrow"}>
+              Manana
+            </Button>
+          </Link>
+          <Link
+            to="/tournaments/$tournamentId"
+            params={{ tournamentId }}
+            search={{ tab: "pasado" }}
+          >
+            <Button variant="ghost" isActive={tab === "pasado"}>
+              Pasado
+            </Button>
+          </Link>
+        </Flex>
+        <Flex flexDir="column" flex="1">
+          {matches.map((match) => {
+            const bet = bets.find((bet) => bet.match_id === match.id);
+            return (
+              <Match
+                key={match.id}
+                match={match}
+                bet={bet}
+                tournamentId={tournamentId}
+              />
+            );
+          })}
+          {matches.length === 0 ? <>No hay partidos</> : null}
+        </Flex>
       </Flex>
       <BottomNav state="vaticinios" tournamentId={tournamentId} />
-    </>
+    </Flex>
   );
 }

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
+  Text,
   Flex,
   Table,
   Tbody,
@@ -77,27 +78,32 @@ function Points() {
                 key={row.id}
                 bg={pb.authStore.model?.id === row.user ? blue : undefined}
               >
-                <Td display="flex" alignItems="center" gap="3">
-                  <span>{i + 1}.</span>
-                  <Img
-                    rounded="full"
-                    w="40px"
-                    h="40px"
-                    src={
-                      row.expand?.user.img
-                        ? row.expand?.user.img + "&thumb=100x100&cache=default"
-                        // @ts-expect-error we dont care
-                        : `https://api.dicebear.com/9.x/initials/svg?seed=${row.expand?.user.username}`
-                    }
-                  />
+                <Td>
                   <Link
                     to="/tournaments/$tournamentId/$userId"
                     params={{ tournamentId, userId: row.user }}
                   >
-                    {row.expand?.user.name}
+                    <Flex alignItems="center" gap={3}>
+                      <Text fontFamily="monospace" fontSize={i + 1 <= 3 ? "xx-large" : "large"}>
+                        {displayPoints(i + 1)}
+                      </Text>
+                      <Img
+                        rounded="full"
+                        w="40px"
+                        h="40px"
+                        src={
+                          row.expand?.user.img
+                            ? row.expand?.user.img +
+                              "&thumb=100x100&cache=default"
+                            : // @ts-expect-error we dont care
+                              `https://api.dicebear.com/9.x/initials/svg?seed=${row.expand?.user.username}`
+                        }
+                      />
+                      {row.expand?.user.name}
+                    </Flex>
                   </Link>
                 </Td>
-                <Td>{row.points}</Td>
+                <Td fontWeight="bold">{row.points}</Td>
               </Tr>
             ))}
           </Tbody>
@@ -106,4 +112,17 @@ function Points() {
       <BottomNav tournamentId={tournamentId} state="puntos" />
     </>
   );
+}
+
+function displayPoints(points: number) {
+  if (points === 1) {
+    return "🏆";
+  }
+  if (points === 2) {
+    return "🥈";
+  }
+  if (points === 3) {
+    return "🥉";
+  }
+  return points + ".";
 }

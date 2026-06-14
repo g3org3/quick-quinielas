@@ -133,7 +133,7 @@ function UserPredictions() {
           </Table>
         </Flex>
       </Flex>
-      <BottomNav tournamentId={tournamentId} />
+      <BottomNav tournamentId={tournamentId} state="perfil" />
     </>
   );
 }
