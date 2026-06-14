@@ -18,7 +18,7 @@ import Match from "@/components/Match";
 
 const homeSchema = z.object({
   tab: z
-    .enum(["todos", "today", "tomorrow", "ayer", "ante", "pasado"])
+    .enum(["todos", "today", "tomorrow", "ayer", "ante", "pasado", "proximos"])
     .nullish(),
 });
 
@@ -49,6 +49,11 @@ function HomeTournament() {
   let filter = `tournament = '${tournamentId}' && startAtUtc > '${todayUtc}' && startAtUtc < '${nextDayUtc}'`;
   if (tab === "todos") {
     filter = `tournament = '${tournamentId}' && startAtUtc < '${todayUtc}'`;
+  }
+  if (tab === "proximos") {
+    const startat = DateTime.now().toUTC().plus({ day: 1 }).toISODate();
+    const endat = DateTime.now().toUTC().plus({ day: 4 }).toISODate();
+    filter = `tournament = '${tournamentId}' && startAtUtc > '${startat}' && startAtUtc < '${endat}'`;
   }
 
   const { data: tournament, isLoading: isLoadingTournaments } = useQuery({
@@ -128,19 +133,10 @@ function HomeTournament() {
           <Link
             to="/tournaments/$tournamentId"
             params={{ tournamentId }}
-            search={{ tab: "tomorrow" }}
+            search={{ tab: "proximos" }}
           >
-            <Button variant="ghost" isActive={tab === "tomorrow"}>
-              Manana
-            </Button>
-          </Link>
-          <Link
-            to="/tournaments/$tournamentId"
-            params={{ tournamentId }}
-            search={{ tab: "pasado" }}
-          >
-            <Button variant="ghost" isActive={tab === "pasado"}>
-              Pasado
+            <Button variant="ghost" isActive={tab === "proximos"}>
+              Proximos
             </Button>
           </Link>
         </Flex>
