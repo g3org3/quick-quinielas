@@ -189,7 +189,7 @@ export const countries: Record<
   },
   Scotland: {
     name: "Scotland",
-    iso3: "sco",
+    iso3: "sct",
     iso2: "gb",
   },
   Senegal: {

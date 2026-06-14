@@ -4,7 +4,6 @@ import {
   AvatarGroup,
   Button,
   Flex,
-  Img,
   Input,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -20,7 +19,6 @@ import {
   PredictionsResponse,
   UsersResponse,
 } from "@/pocketbase-types";
-import { getCountryCode } from "@/countries";
 import { pb } from "@/pb";
 import Flag from "./Flag";
 

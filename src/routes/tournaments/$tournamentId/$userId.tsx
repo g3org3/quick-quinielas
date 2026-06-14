@@ -22,7 +22,6 @@ import {
 } from "@/pocketbase-types";
 import Loading from "@/components/Loading";
 import BottomNav from "@/components/BottomNav";
-import { getCountryCode } from "@/countries";
 import Flag from "@/components/Flag";
 
 export const Route = createFileRoute("/tournaments/$tournamentId/$userId")({

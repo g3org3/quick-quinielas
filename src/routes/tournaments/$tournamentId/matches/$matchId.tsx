@@ -12,7 +12,7 @@ import {
   Text,
   Img,
 } from "@chakra-ui/react";
-import { Flex, Image, useColorModeValue } from "@chakra-ui/react";
+import { Flex, useColorModeValue } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import toaster from "react-hot-toast";
 
@@ -26,9 +26,9 @@ import {
 } from "@/pocketbase-types";
 import { pb } from "@/pb";
 import Loading from "@/components/Loading";
-import { getCountryCode } from "@/countries";
 import BottomNav from "@/components/BottomNav";
 import { queryClient } from "@/queryClient";
+import Flag from "@/components/Flag";
 
 export const Route = createFileRoute(
   "/tournaments/$tournamentId/matches/$matchId",
@@ -62,7 +62,7 @@ function SingleMatch() {
     queryKey: ["get-all", Collections.Users],
     queryFn: () =>
       pb.collection(Collections.Users).getFullList<UsersResponse>({
-        filter: 'ignore!=true'
+        filter: "ignore!=true",
       }),
   });
 
@@ -133,9 +133,7 @@ function SingleMatch() {
               alignItems="center"
               justifyContent="flex-end"
             >
-              <Image
-                src={`https://flagsapi.com/${getCountryCode(match.home)}/flat/64.png`}
-              />
+              <Flag height="50px" country={match.home} />
               {match.home}
               <Flex fontFamily="monospace" color="gray.600">
                 {homeper}%
@@ -164,10 +162,7 @@ function SingleMatch() {
           </Flex>
           <Flex flex="1" gap="3" alignItems="center">
             <Flex flexDir="column" flex="1" alignItems="center">
-              <Image
-                fallbackSrc="fallbackSrc='https://via.placeholder.com/64'"
-                src={`https://flagsapi.com/${getCountryCode(match.away)}/flat/64.png`}
-              />
+              <Flag height="40px" country={match.away} />
               {match.away}
               <Flex fontFamily="monospace" color="gray.600">
                 {awayper}%
