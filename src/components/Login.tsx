@@ -40,8 +40,8 @@ export default function Login() {
     e.preventDefault();
 
     if (!account) {
-      toaster.error("Tienes que llenar tu correo primero")
-      return
+      toaster.error("Tienes que llenar tu correo primero");
+      return;
     }
 
     try {
@@ -57,10 +57,11 @@ export default function Login() {
       document.location = "/tournaments/izl4jbo5w25yf6b";
     } catch (e) {
       const err = e as ClientResponseError;
-      posthog.captureException(`email: ` + err.message);
       if (err.message === "Failed to authenticate.") {
         toaster.error("Contacta a Jorge Adolfo para activar ese modo de login");
+        posthog.captureException(`auth email: ${account} ` + err.message);
       } else {
+        posthog.captureException(`email: ${account}` + err.message);
         toaster.error(err.message);
       }
     }
@@ -68,7 +69,13 @@ export default function Login() {
 
   return (
     <form onSubmit={onEmailLogin}>
-      <Flex h="100dvh" flexDirection="column" pt="38.2%" alignItems="center" bg={bg}>
+      <Flex
+        h="100dvh"
+        flexDirection="column"
+        pt="38.2%"
+        alignItems="center"
+        bg={bg}
+      >
         <Flex
           p="8"
           w="400px"
