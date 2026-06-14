@@ -143,12 +143,12 @@ function SingleMatch() {
             </Flex>
           </Flex>
           <Flex flexDir="column" alignSelf="flex-end">
-            <Flex alignItems="center">
-              <Flex fontWeight="bold" p="1">
+            <Flex alignItems="center" gap={2}>
+              <Flex fontSize="xxx-large" fontWeight="bold" p="1">
                 {match.homeScore}
               </Flex>
-              <Flex>vs</Flex>
-              <Flex fontWeight="bold" p="1">
+              <Flex fontSize="xx-large">-</Flex>
+              <Flex fontSize="xxx-large" fontWeight="bold" p="1">
                 {match.awayScore}
               </Flex>
             </Flex>
