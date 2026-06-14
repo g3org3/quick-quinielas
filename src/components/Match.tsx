@@ -161,19 +161,21 @@ export default function Match({ match, tournamentId, bet }: Props) {
               name="home"
               textAlign="center"
               placeholder="-"
-              w="40px"
+              fontSize="x-large"
+              w="50px"
             />
           </Flex>
-          <Flex>vs</Flex>
+          <Flex>-</Flex>
           <Flex flex="1" gap="3" alignItems="center">
             <Input
               defaultValue={away}
               disabled={isAnyPending || isGameStarted}
               textAlign="center"
-              p="1"
+              fontSize="x-large"
+              p={1}
               name="away"
               placeholder="-"
-              w="40px"
+              w="50px"
             />
             <Flex flex="1" alignItems="center" flexDir="column">
               <Img
