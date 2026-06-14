@@ -22,6 +22,7 @@ import {
 } from "@/pocketbase-types";
 import { getCountryCode } from "@/countries";
 import { pb } from "@/pb";
+import Flag from "./Flag";
 
 interface Props {
   bet?: MatchBetsResponse<number, number, number>;
@@ -75,7 +76,9 @@ export default function Match({ match, tournamentId, bet }: Props) {
         }),
   });
   const images = bets.map((bet) =>
-    bet.expand?.user.img ? bet.expand?.user.img + "&thumb=100x100&cache=default" : "",
+    bet.expand?.user.img
+      ? bet.expand?.user.img + "&thumb=100x100&cache=default"
+      : "",
   );
   const prediction = data && data[0]?.id ? data[0] : null;
   const home = data && data[0] ? data[0].homeScore.toString() : "";
@@ -104,7 +107,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
       match: match.id,
     };
     if (prediction?.id) {
-      posthog.capture('prediction_updated', {
+      posthog.capture("prediction_updated", {
         match_id: match.id,
         home_team: match.home,
         away_team: match.away,
@@ -114,7 +117,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
       });
       update({ id: prediction.id, prediction: payload });
     } else {
-      posthog.capture('prediction_submitted', {
+      posthog.capture("prediction_submitted", {
         match_id: match.id,
         home_team: match.home,
         away_team: match.away,
@@ -146,9 +149,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
               alignItems="center"
               justifyContent="flex-end"
             >
-              <Img
-                src={`https://flagsapi.com/${getCountryCode(match.home)}/flat/64.png`}
-              />
+              <Flag height="40px" country={match.home} />
               {match.home}
               <Flex color="gray.500" fontFamily="monospace">
                 {Math.floor((100 * (bet?.home_per || 0)) / 8)}%
@@ -178,9 +179,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
               w="50px"
             />
             <Flex flex="1" alignItems="center" flexDir="column">
-              <Img
-                src={`https://flagsapi.com/${getCountryCode(match.away)}/flat/64.png`}
-              />
+              <Flag height="40px" country={match.away} />
               {match.away}
               <Flex color="gray.500" fontFamily="monospace">
                 {Math.floor((100 * (bet?.away_per || 0)) / 8)}%
@@ -215,11 +214,11 @@ export default function Match({ match, tournamentId, bet }: Props) {
           )}
         </Flex>
         <Flex overflow="auto">
-        <AvatarGroup size="md">
-          {images.map((imgurl) => (
-            <Avatar key={imgurl} src={imgurl} />
-          ))}
-        </AvatarGroup>
+          <AvatarGroup size="md">
+            {images.map((imgurl) => (
+              <Avatar key={imgurl} src={imgurl} />
+            ))}
+          </AvatarGroup>
         </Flex>
         <Flex color="gray.500" display="box" fontSize="14px" textAlign="center">
           {matchdate.toFormat("EEE MMM dd ")} - hora:{" "}

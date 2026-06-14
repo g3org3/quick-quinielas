@@ -23,6 +23,7 @@ import {
 import Loading from "@/components/Loading";
 import BottomNav from "@/components/BottomNav";
 import { getCountryCode } from "@/countries";
+import Flag from "@/components/Flag";
 
 export const Route = createFileRoute("/tournaments/$tournamentId/$userId")({
   component: UserPredictions,
@@ -114,15 +115,17 @@ function UserPredictions() {
                       </Link>
                     </Td>
                     <Td>
-                      <Image
-                        src={`https://flagsapi.com/${getCountryCode(result.expand?.match_id.home)}/flat/32.png`}
+                      <Flag
+                        height="20px"
+                        country={result.expand?.match_id.home}
                       />
                     </Td>
                     <Td>{result?.p_home ?? "-"}</Td>
                     <Td>{result?.p_away ?? "-"}</Td>
                     <Td>
-                      <Image
-                        src={`https://flagsapi.com/${getCountryCode(result.expand?.match_id.away)}/flat/32.png`}
+                      <Flag
+                        height="20px"
+                        country={result.expand?.match_id.away}
                       />
                     </Td>
                     <Td>{result?.points ?? "-"}</Td>
