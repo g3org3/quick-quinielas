@@ -10,7 +10,7 @@ import { GoogleIcon } from "./GoogleIcon";
 export default function Login() {
   const [account, setAccount] = useState("");
   const bg = useColorModeValue("gray.100", "gray.800");
-  const bgsoft = useColorModeValue("gray.50", "gray.700");
+  const bgsoft = useColorModeValue("gray.50", "gray.900");
   const colorText = useColorModeValue("black", "white");
   const posthog = usePostHog();
 
@@ -39,6 +39,11 @@ export default function Login() {
   const onEmailLogin: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
+    if (!account) {
+      toaster.error("Tienes que llenar tu correo primero")
+      return
+    }
+
     try {
       const res = await pb
         .collection("users")
@@ -52,14 +57,18 @@ export default function Login() {
       document.location = "/tournaments/izl4jbo5w25yf6b";
     } catch (e) {
       const err = e as ClientResponseError;
-      posthog.captureException(err);
-      toaster.error(err.message);
+      posthog.captureException(`email: ` + err.message);
+      if (err.message === "Failed to authenticate.") {
+        toaster.error("Contacta a Jorge Adolfo para activar ese modo de login");
+      } else {
+        toaster.error(err.message);
+      }
     }
   };
 
   return (
     <form onSubmit={onEmailLogin}>
-      <Flex h="100dvh" alignItems="center" justifyContent="center" bg={bg}>
+      <Flex h="100dvh" flexDirection="column" pt="38.2%" alignItems="center" bg={bg}>
         <Flex
           p="8"
           w="400px"
@@ -79,17 +88,24 @@ export default function Login() {
             fontWeight="bold"
             flexDirection="column"
           >
-            🏟️
-            <br /> Quiniela
+            <Text px={4} rounded="full" bg="green.200">
+              🏟️
+            </Text>
+            <Text mt="-10px">Quiniela</Text>
           </Flex>
-          <Text mt="-20px" alignSelf="center" color="gray.500">Predice los marcadores. Gana la porra</Text>
+          <Text mt="-20px" alignSelf="center" color="gray.500">
+            Predice los marcadores. Gana la porra
+          </Text>
+          <Text color="gray.600">Escribe tu correo</Text>
           <Input
+            mt="-15px"
+            border="1px solid #000"
             fontSize="18px"
-            placeholder="Correo electronico"
+            placeholder="ejemplo@gmail.com"
             onChange={(e) => setAccount(e.target.value.toLowerCase())}
             value={account}
           />
-          <Button colorScheme="green" type="submit">
+          <Button bg="green.600" color="white" type="submit">
             Hacer login con correo
           </Button>
           <Flex borderTop="1px dashed #aaa" h="1px"></Flex>
