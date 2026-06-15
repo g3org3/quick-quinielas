@@ -145,7 +145,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
               flex="1"
               flexDir="column"
               alignItems="center"
-              justifyContent="flex-end"
+              justifyContent="center"
             >
               <Flag height="40px" country={match.home} />
               {match.home}
@@ -184,16 +184,23 @@ export default function Match({ match, tournamentId, bet }: Props) {
               </Flex>
             </Flex>
           </Flex>
+        </Flex>
+        <Flex gap={3} p={1} alignItems="center">
+          <Flex flex="1" overflow="auto">
+            <AvatarGroup size="md">
+              {images.map((imgurl) => (
+                <Avatar key={imgurl} src={imgurl} />
+              ))}
+            </AvatarGroup>
+          </Flex>
           {!isGameStarted ? (
             <Button
               disabled={isAnyPending}
               type="submit"
-              size="sm"
               variant="solid"
               colorScheme="green"
             >
-              {" "}
-              save
+              guardar
             </Button>
           ) : (
             <Link
@@ -202,21 +209,13 @@ export default function Match({ match, tournamentId, bet }: Props) {
             >
               <Button
                 disabled={isAnyPending}
-                size="sm"
                 variant="solid"
                 colorScheme="blue"
               >
-                ver
+                ver resultados
               </Button>
             </Link>
           )}
-        </Flex>
-        <Flex overflow="auto">
-          <AvatarGroup size="md">
-            {images.map((imgurl) => (
-              <Avatar key={imgurl} src={imgurl} />
-            ))}
-          </AvatarGroup>
         </Flex>
         <Flex color="gray.500" display="box" fontSize="14px" textAlign="center">
           {matchdate.toFormat("EEE MMM dd ")} - hora:{" "}
