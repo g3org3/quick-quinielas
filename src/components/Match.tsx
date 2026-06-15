@@ -1,5 +1,6 @@
 import toaster from "react-hot-toast";
 import {
+  Text,
   Avatar,
   AvatarGroup,
   Button,
@@ -11,6 +12,7 @@ import { DateTime } from "luxon";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { usePostHog } from "@posthog/react";
+import { FaLock, FaLockOpen } from "react-icons/fa";
 import {
   Collections,
   MatchBetsResponse,
@@ -153,29 +155,71 @@ export default function Match({ match, tournamentId, bet }: Props) {
                 {Math.floor((100 * (bet?.home_per || 0)) / 8)}%
               </Flex>
             </Flex>
-            <Input
-              defaultValue={home}
-              disabled={isAnyPending || isGameStarted}
-              p="1"
-              name="home"
-              textAlign="center"
-              placeholder="-"
-              fontSize="x-large"
-              w="50px"
-            />
           </Flex>
-          <Flex>-</Flex>
+          <Flex flexDirection="column" gap={2} alignSelf="flex-start">
+            {isGameStarted ? (
+              <Flex
+                justifyContent="center"
+                alignSelf="center"
+                alignItems="center"
+                gap={1}
+                px={3}
+                py={0.5}
+                rounded="md"
+                fontWeight="bold"
+                bg="orange.100"
+                fontSize="small"
+                color="orange.600"
+              >
+                <FaLock />
+                <Text>Cerrado</Text>
+              </Flex>
+            ) : (
+              <Flex
+                justifyContent="center"
+                alignSelf="center"
+                alignItems="center"
+                gap={1}
+                px={3}
+                py={0.5}
+                rounded="md"
+                fontWeight="bold"
+                bg="green.100"
+                fontSize="small"
+                color="green.600"
+              >
+                <FaLockOpen />
+                <Text>Abierto</Text>
+              </Flex>
+            )}
+
+            <Flex gap={1}>
+              <Input
+                defaultValue={home}
+                disabled={isAnyPending || isGameStarted}
+                p="1"
+                name="home"
+                textAlign="center"
+                placeholder="-"
+                fontSize="x-large"
+                w="50px"
+              />
+              <Flex color="gray.400" fontSize="x-large">
+                -
+              </Flex>
+              <Input
+                defaultValue={away}
+                disabled={isAnyPending || isGameStarted}
+                textAlign="center"
+                fontSize="x-large"
+                p={1}
+                name="away"
+                placeholder="-"
+                w="50px"
+              />
+            </Flex>
+          </Flex>
           <Flex flex="1" gap="3" alignItems="center">
-            <Input
-              defaultValue={away}
-              disabled={isAnyPending || isGameStarted}
-              textAlign="center"
-              fontSize="x-large"
-              p={1}
-              name="away"
-              placeholder="-"
-              w="50px"
-            />
             <Flex flex="1" alignItems="center" flexDir="column">
               <Flag height="40px" country={match.away} />
               {match.away}
