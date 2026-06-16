@@ -24,8 +24,8 @@ export const Route = createRootRoute({
 const isDev = false;
 
 function Root() {
-  const bg = useColorModeValue("white", "black");
-  const color = useColorModeValue("black", "white");
+  const bg = useColorModeValue("white", "gray.900");
+  const color = useColorModeValue("gray.900", "white");
 
   if (!pb.authStore.isValid)
     return (
