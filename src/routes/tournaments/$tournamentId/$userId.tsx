@@ -79,7 +79,7 @@ function UserPredictions() {
         </Flex>
         <hr />
         <Flex flexDir="column" flex="1" overflow="auto">
-          <Table boxShadow="md" borderRadius="sm">
+          <Table>
             <Thead>
               <Tr>
                 <Th></Th>

@@ -12,7 +12,7 @@ import { DateTime } from "luxon";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { usePostHog } from "@posthog/react";
-import { FaLock, FaLockOpen } from "react-icons/fa";
+import { FaEye, FaLock, FaLockOpen, FaSave } from "react-icons/fa";
 import {
   Collections,
   MatchBetsResponse,
@@ -133,6 +133,9 @@ export default function Match({ match, tournamentId, bet }: Props) {
   const matchdate = DateTime.fromSQL(match.startAtUtc);
   const isGameStarted = matchdate.toMillis() <= DateTime.now().toMillis();
 
+  const btnBlue = useColorModeValue("blue.500", "blue.700");
+  const btnGreen = useColorModeValue("green.500", "green.700");
+
   return (
     <form onSubmit={onUpdate}>
       <Flex
@@ -242,9 +245,11 @@ export default function Match({ match, tournamentId, bet }: Props) {
               disabled={isAnyPending}
               type="submit"
               variant="solid"
-              colorScheme="green"
+              color="white"
+              bg={btnGreen}
+              leftIcon={<FaSave />}
             >
-              guardar
+              Guardar
             </Button>
           ) : (
             <Link
@@ -254,9 +259,11 @@ export default function Match({ match, tournamentId, bet }: Props) {
               <Button
                 disabled={isAnyPending}
                 variant="solid"
-                colorScheme="blue"
+                color="white"
+                bg={btnBlue}
+                leftIcon={<FaEye />}
               >
-                ver resultados
+                Ver resultados
               </Button>
             </Link>
           )}
