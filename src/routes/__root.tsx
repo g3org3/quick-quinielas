@@ -80,7 +80,7 @@ function Root() {
 }
 
 function Navbar() {
-  const bg = useColorModeValue("whitesmoke", "gray.800");
+  const bg = useColorModeValue("white", "gray.800");
   const posthog = usePostHog();
   const user = pb.authStore.model as UsersResponse;
 
