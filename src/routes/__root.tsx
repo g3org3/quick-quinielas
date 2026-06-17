@@ -100,7 +100,7 @@ function Navbar() {
             <Text fontWeight="bold" fontSize="large">
               Quiniela
             </Text>
-            <Text fontFamily="monospace">v0.2</Text>
+            <Text fontFamily="monospace">v0.3</Text>
           </Flex>
         </Link>
         <Spacer />
