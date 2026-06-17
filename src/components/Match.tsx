@@ -189,7 +189,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
               <Flag height="40px" country={match.home} />
               {match.home}
               <Flex color="gray.500" fontFamily="monospace">
-                {Math.floor((100 * (bet?.home_per || 0)) / 8)}%
+                {Math.floor((100 * (bet?.home_per || 0)) / 17)}%
               </Flex>
             </Flex>
           </Flex>
@@ -275,7 +275,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
               <Flag height="40px" country={match.away} />
               {match.away}
               <Flex color="gray.500" fontFamily="monospace">
-                {Math.floor((100 * (bet?.away_per || 0)) / 8)}%
+                {Math.floor((100 * (bet?.away_per || 0)) / 17)}%
               </Flex>
             </Flex>
           </Flex>
@@ -293,6 +293,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
               disabled={isAnyPending}
               type="submit"
               variant="primary"
+              size="sm"
               leftIcon={<FaSave />}
             >
               Guardar
@@ -305,6 +306,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
               <Button
                 disabled={isAnyPending}
                 variant="secondary"
+                size="sm"
                 leftIcon={<FaEye />}
               >
                 Ver resultados
