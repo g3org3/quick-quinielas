@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { pb } from "./pb";
+import { usePocketBaseRealtime } from "./useRealtime";
 
 type FeatFlag = { id: string; isActive: boolean; feature: string };
 export function useFeatFlags() {
+  usePocketBaseRealtime("flags", ["flags"]);
   const { data = {} } = useQuery({
-    queryKey: ["flags", '2'],
+    queryKey: ["flags"],
     async queryFn() {
       const flags = await pb.collection("flags").getFullList<FeatFlag>();
       const byName: Record<string, boolean> = {};
