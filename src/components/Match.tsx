@@ -7,6 +7,7 @@ import {
   Flex,
   Input,
   useColorModeValue,
+  Badge,
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import { Link } from "@tanstack/react-router";
@@ -23,6 +24,7 @@ import {
 } from "@/pocketbase-types";
 import { pb } from "@/pb";
 import Flag from "./Flag";
+import { useFeatFlags } from "@/featureFlags";
 
 interface Props {
   bet?: MatchBetsResponse<number, number, number>;
@@ -30,6 +32,7 @@ interface Props {
   tournamentId: string;
 }
 export default function Match({ match, tournamentId, bet }: Props) {
+  const { fflags } = useFeatFlags();
   const border = useColorModeValue("gray.200", "gray.700");
   const posthog = usePostHog();
   const { mutate, isPending } = useMutation({
@@ -54,7 +57,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
       toaster.error("Something went wrong: " + err.message);
     },
   });
-  const { data, isLoading } = useQuery({
+  const { data = [], isLoading } = useQuery({
     queryKey: [
       "get-one",
       Collections.Predictions,
@@ -132,9 +135,27 @@ export default function Match({ match, tournamentId, bet }: Props) {
   const isAnyPending = isLoading || isPending || uisPending;
   const matchdate = DateTime.fromSQL(match.startAtUtc);
   const isGameStarted = matchdate.toMillis() <= DateTime.now().toMillis();
-
-  const btnBlue = useColorModeValue("blue.500", "blue.700");
-  const btnGreen = useColorModeValue("green.500", "green.700");
+  let _points = "";
+  let _pointsColor = "red";
+  if (data[0] && isGameStarted) {
+    if (
+      match.homeScore === data[0].homeScore &&
+      match.awayScore === data[0].awayScore
+    ) {
+      _points = "+3";
+      _pointsColor = "green";
+    } else if (
+      (match.homeScore > match.awayScore &&
+        data[0].homeScore > data[0].awayScore) ||
+      (match.homeScore < match.awayScore &&
+        data[0].homeScore < data[0].awayScore) ||
+      (match.homeScore === match.awayScore &&
+        data[0].homeScore === data[0].awayScore)
+    ) {
+      _points = "+1";
+      _pointsColor = "blue";
+    }
+  }
 
   return (
     <form onSubmit={onUpdate}>
@@ -144,7 +165,20 @@ export default function Match({ match, tournamentId, bet }: Props) {
         borderColor={border}
         py="5"
       >
-        <Flex alignItems="center" gap="3">
+        <Flex alignItems="center" position="relative" gap="3">
+          {fflags.show_points ? (
+            <Badge
+              rounded="full"
+              px={2}
+              hidden={isLoading}
+              colorScheme={_pointsColor}
+              position="absolute"
+              top={-2}
+              right={0}
+            >
+              {_points}
+            </Badge>
+          ) : null}
           <Flex flex="1" gap="3" alignItems="center">
             <Flex
               flex="1"
@@ -200,6 +234,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
               <Input
                 defaultValue={home}
                 disabled={isAnyPending || isGameStarted}
+                border={isGameStarted ? "0" : undefined}
                 p="1"
                 name="home"
                 textAlign="center"
@@ -213,6 +248,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
               <Input
                 defaultValue={away}
                 disabled={isAnyPending || isGameStarted}
+                border={isGameStarted ? "0" : undefined}
                 textAlign="center"
                 fontSize="x-large"
                 p={1}
@@ -221,6 +257,18 @@ export default function Match({ match, tournamentId, bet }: Props) {
                 w="50px"
               />
             </Flex>
+            {fflags.show_match_score ? (
+              <Flex
+                gap={1}
+                mt="-15px"
+                hidden={!isGameStarted}
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Badge colorScheme="red">{match.homeScore}</Badge>-
+                <Badge colorScheme="red">{match.awayScore}</Badge>
+              </Flex>
+            ) : null}
           </Flex>
           <Flex flex="1" gap="3" alignItems="center">
             <Flex flex="1" alignItems="center" flexDir="column">
@@ -244,9 +292,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
             <Button
               disabled={isAnyPending}
               type="submit"
-              variant="solid"
-              color="white"
-              bg={btnGreen}
+              variant="primary"
               leftIcon={<FaSave />}
             >
               Guardar
@@ -258,9 +304,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
             >
               <Button
                 disabled={isAnyPending}
-                variant="solid"
-                color="white"
-                bg={btnBlue}
+                variant="secondary"
                 leftIcon={<FaEye />}
               >
                 Ver resultados

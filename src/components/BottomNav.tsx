@@ -15,7 +15,7 @@ export default function BottomNav({
   return (
     <>
       <hr />
-      <Flex alignItems="center" gap="2" mb="3">
+      <Flex flexShrink={0} alignItems="center" gap="2" mb="3">
         <Link
           style={{ width: "100%" }}
           to="/tournaments/$tournamentId/$userId"

@@ -98,6 +98,7 @@ function Navbar() {
           <Flex gap={1} alignItems="center">
             <Text fontSize="x-large">🏟️</Text>
             <Text fontWeight="bold" fontSize="large">Quiniela</Text>
+            <Text fontFamily="monospace">v0.1</Text>
           </Flex>
         </Link>
         <Spacer />
