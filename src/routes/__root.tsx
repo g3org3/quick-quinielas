@@ -97,11 +97,15 @@ function Navbar() {
         <Link to="/">
           <Flex gap={1} alignItems="center">
             <Text fontSize="x-large">🏟️</Text>
-            <Text fontWeight="bold" fontSize="large">Quiniela</Text>
-            <Text fontFamily="monospace">v0.1</Text>
+            <Text fontWeight="bold" fontSize="large">
+              Quiniela
+            </Text>
+            <Text fontFamily="monospace">v0.2</Text>
           </Flex>
         </Link>
         <Spacer />
+        {/* @ts-expect-error bla bla bla*/}
+        {user.isAdmin && <Link to="/admin">A</Link>}
         <ColorModeSwitcher />
         <Button
           size="sm"

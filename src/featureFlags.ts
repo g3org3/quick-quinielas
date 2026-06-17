@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { pb } from "./pb";
 import { usePocketBaseRealtime } from "./useRealtime";
 
-type FeatFlag = { id: string; isActive: boolean; feature: string };
+export type FeatFlag = { id: string; isActive: boolean; feature: string };
 export function useFeatFlags() {
   usePocketBaseRealtime("flags", ["flags"]);
   const { data = {} } = useQuery({

@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as AdminImport } from './routes/admin'
 import { Route as IndexImport } from './routes/index'
 import { Route as TournamentsTournamentIdIndexImport } from './routes/tournaments/$tournamentId/index'
 import { Route as TournamentsTournamentIdPointsImport } from './routes/tournaments/$tournamentId/points'
@@ -18,6 +19,11 @@ import { Route as TournamentsTournamentIdUserIdImport } from './routes/tournamen
 import { Route as TournamentsTournamentIdMatchesMatchIdImport } from './routes/tournaments/$tournamentId/matches/$matchId'
 
 // Create/Update Routes
+
+const AdminRoute = AdminImport.update({
+  path: '/admin',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   path: '/',
@@ -59,6 +65,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminImport
+      parentRoute: typeof rootRoute
+    }
     '/tournaments/$tournamentId/$userId': {
       id: '/tournaments/$tournamentId/$userId'
       path: '/tournaments/$tournamentId/$userId'
@@ -94,6 +107,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
+  AdminRoute,
   TournamentsTournamentIdUserIdRoute,
   TournamentsTournamentIdPointsRoute,
   TournamentsTournamentIdIndexRoute,
@@ -109,6 +123,7 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/admin",
         "/tournaments/$tournamentId/$userId",
         "/tournaments/$tournamentId/points",
         "/tournaments/$tournamentId/",
@@ -117,6 +132,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/admin": {
+      "filePath": "admin.tsx"
     },
     "/tournaments/$tournamentId/$userId": {
       "filePath": "tournaments/$tournamentId/$userId.tsx"
