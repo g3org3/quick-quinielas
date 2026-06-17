@@ -36,24 +36,25 @@ function HomeTournament() {
   }, [tab]);
 
   let today =
-    tab === "today"
-      ? DateTime.now().toUTC()
-      : DateTime.now().toUTC().plus({ days: 1 });
-  today = tab === "ayer" ? DateTime.now().toUTC().minus({ days: 1 }) : today;
-  today = tab === "ante" ? DateTime.now().toUTC().minus({ days: 2 }) : today;
-  today = tab === "pasado" ? DateTime.now().toUTC().plus({ days: 2 }) : today;
-  today = tab === "todos" ? DateTime.now().toUTC() : today;
-  const nextDay = today.plus({ days: 1 });
-  const todayUtc = `${today.toSQLDate()} 00:00:00Z`;
-  const nextDayUtc = `${nextDay.toSQLDate()} 00:00:00Z`;
-  let filter = `tournament = '${tournamentId}' && startAtUtc > '${todayUtc}' && startAtUtc < '${nextDayUtc}'`;
+    tab === "today" ? DateTime.now() : DateTime.now().plus({ days: 1 });
+  today = tab === "ayer" ? DateTime.now().minus({ days: 1 }) : today;
+  today = tab === "ante" ? DateTime.now().minus({ days: 2 }) : today;
+  today = tab === "pasado" ? DateTime.now().plus({ days: 2 }) : today;
+  today = tab === "todos" ? DateTime.now() : today;
+  const nextDayUtc = today.plus({ days: 1 }).startOf("day").toUTC().toSQL();
+  const todayUtc = today.startOf("day").toUTC().toSQL();
+  let filter = `tournament = '${tournamentId}' && startAtUtc >= '${todayUtc}' && startAtUtc < '${nextDayUtc}'`;
   if (tab === "todos") {
     filter = `tournament = '${tournamentId}' && startAtUtc < '${todayUtc}'`;
   }
   if (tab === "proximos") {
-    const startat = DateTime.now().toUTC().plus({ day: 1 }).toISODate();
-    const endat = DateTime.now().toUTC().plus({ day: 4 }).toISODate();
-    filter = `tournament = '${tournamentId}' && startAtUtc > '${startat}' && startAtUtc < '${endat}'`;
+    const startat = DateTime.now()
+      .plus({ day: 1 })
+      .startOf("day")
+      .toUTC()
+      .toSQL();
+    const endat = DateTime.now().plus({ day: 4 }).endOf("day").toUTC().toSQL();
+    filter = `tournament = '${tournamentId}' && startAtUtc >= '${startat}' && startAtUtc < '${endat}'`;
   }
 
   const { data: tournament, isLoading: isLoadingTournaments } = useQuery({
