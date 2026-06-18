@@ -91,8 +91,8 @@ function HomeTournament() {
   if (isLoadingMatches || isLoadingTournaments) return <Loading />;
 
   return (
-    <Flex flexDir="column" flex="1" overflow="auto">
-      <Flex flexDir="column" flex="1" overflow="auto" px={4} mb={1}>
+    <>
+      <Flex flexDir="column" flex="1" overflow="auto" px={4} mb={1} overscrollBehavior="contain">
         <h1
           style={{
             fontWeight: "bold",
@@ -157,6 +157,6 @@ function HomeTournament() {
         </Flex>
       </Flex>
       <BottomNav state="vaticinios" tournamentId={tournamentId} />
-    </Flex>
+    </>
   );
 }

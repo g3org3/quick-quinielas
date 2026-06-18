@@ -78,7 +78,7 @@ function UserPredictions() {
           </Flex>
         </Flex>
         <hr />
-        <Flex flexDir="column" flex="1" overflow="auto">
+        <Flex flexDir="column" flex="1" overflow="auto" overscrollBehavior="contain">
           <Table>
             <Thead>
               <Tr>

@@ -193,7 +193,7 @@ function SingleMatch() {
         </Flex>
         <hr />
       </Flex>
-      <Flex flexDir="column" flex="1" overflow="auto">
+      <Flex flexDir="column" flex="1" overflow="auto" overscrollBehavior="contain">
         <Table boxShadow="md" borderRadius="sm">
           <Thead>
             <Tr>

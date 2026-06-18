@@ -64,7 +64,7 @@ function Points() {
       >
         {tournament?.name}
       </h1>
-      <Flex flex="1" flexDir="column" overflow="auto">
+      <Flex flex="1" flexDir="column" overflow="auto" overscrollBehavior="contain">
         <Table variant="simple">
           <Thead>
             <Tr>
