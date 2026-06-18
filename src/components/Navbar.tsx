@@ -13,19 +13,39 @@ import { usePostHog } from "@posthog/react";
 import { Link } from "@tanstack/react-router";
 import ColorModeSwitcher from "./ColorModeSwitcher";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useFeatFlag } from "@/featureFlags";
 
 export default function Navbar() {
   const bg = useColorModeValue("white", "gray.800");
   const posthog = usePostHog();
   const user = pb.authStore.model as UsersResponse;
+  const [version, setVersion] = useState<number | undefined>(undefined);
 
   const { data, isLoading } = useQuery({
     queryKey: ["version"],
     async queryFn() {
       const res = await fetch("/.netlify/functions/hello");
-      return (await res.json()) as { version: string };
+      return (await res.json()) as { version: number };
     },
   });
+  const flag_showUpdateApp = useFeatFlag("show_update_app");
+
+  useEffect(() => {
+    if (data?.version === undefined) {
+      return;
+    }
+    if (version === undefined) {
+      setVersion(data.version);
+      return;
+    }
+    if (!flag_showUpdateApp) return;
+    if (data.version > version && confirm("Actualizar la app?")) {
+      posthog.capture("user_reload_page");
+      window.document.location.reload();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.version]);
 
   const onLogout = () => {
     posthog.capture("user_logged_out");
@@ -44,7 +64,9 @@ export default function Navbar() {
               Quiniela
             </Text>
             {isLoading ? null : (
-              <Text fontFamily="monospace">{data?.version}</Text>
+              <Text fontFamily="monospace" fontSize="smaller">
+                v{data?.version}
+              </Text>
             )}
           </Flex>
         </Link>

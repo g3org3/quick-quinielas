@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Flex, Button } from "@chakra-ui/react";
+import { Flex, Button, useColorModeValue } from "@chakra-ui/react";
 import { pb } from "@/pb";
 import { UsersResponse } from "@/pocketbase-types";
 
@@ -11,11 +11,11 @@ export default function BottomNav({
   state?: "vaticinios" | "puntos" | "perfil";
 }) {
   const userId = (pb.authStore.model as UsersResponse).id;
+  const borderColor = useColorModeValue('gray.200', 'gray.600')
 
   return (
     <>
-      <hr />
-      <Flex flexShrink={0} alignItems="center" gap="2" mb="3">
+      <Flex borderTop="1px solid" borderColor={borderColor} pt={2} flexShrink={0} alignItems="center" gap="2" mb="3">
         <Link
           style={{ width: "100%" }}
           to="/tournaments/$tournamentId/$userId"

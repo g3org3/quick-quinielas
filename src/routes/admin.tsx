@@ -1,5 +1,5 @@
 import Loading from "@/components/Loading";
-import { FeatFlag } from "@/featureFlags";
+import { FeatFlagResponse } from "@/featureFlags";
 import { pb } from "@/pb";
 import { queryClient } from "@/queryClient";
 import { Button, Flex, Table, Td, Tr } from "@chakra-ui/react";
@@ -14,7 +14,7 @@ function Component() {
   const { data, isLoading } = useQuery({
     queryKey: ["flags"],
     async queryFn() {
-      return await pb.collection("flags").getFullList<FeatFlag>();
+      return await pb.collection("flags").getFullList<FeatFlagResponse>();
     },
   });
   const { mutate } = useMutation({

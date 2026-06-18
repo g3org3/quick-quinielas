@@ -24,7 +24,7 @@ import {
 } from "@/pocketbase-types";
 import { pb } from "@/pb";
 import Flag from "./Flag";
-import { useFeatFlags } from "@/featureFlags";
+import { FeatFlagComponent } from "@/featureFlags";
 
 interface Props {
   bet?: MatchBetsResponse<number, number, number>;
@@ -32,7 +32,6 @@ interface Props {
   tournamentId: string;
 }
 export default function Match({ match, tournamentId, bet }: Props) {
-  const { fflags } = useFeatFlags();
   const border = useColorModeValue("gray.200", "gray.700");
   const posthog = usePostHog();
   const { mutate, isPending } = useMutation({
@@ -166,7 +165,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
         py="5"
       >
         <Flex alignItems="center" position="relative" gap="3">
-          {fflags.show_points ? (
+          <FeatFlagComponent feature="show_points">
             <Badge
               rounded="full"
               px={2}
@@ -178,7 +177,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
             >
               {_points}
             </Badge>
-          ) : null}
+          </FeatFlagComponent>
           <Flex flex="1" gap="3" alignItems="center">
             <Flex
               flex="1"
@@ -257,7 +256,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
                 w="50px"
               />
             </Flex>
-            {fflags.show_match_score ? (
+            <FeatFlagComponent feature="show_match_score">
               <Flex
                 gap={1}
                 mt="-15px"
@@ -268,7 +267,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
                 <Badge colorScheme="red">{match.homeScore}</Badge>-
                 <Badge colorScheme="red">{match.awayScore}</Badge>
               </Flex>
-            ) : null}
+            </FeatFlagComponent>
           </Flex>
           <Flex flex="1" gap="3" alignItems="center">
             <Flex flex="1" alignItems="center" flexDir="column">
