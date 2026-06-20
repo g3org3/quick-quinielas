@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import { Link } from "@tanstack/react-router";
-import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
+import { QueryKey, queryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { usePostHog } from "@posthog/react";
 import { FaEye, FaLock, FaLockOpen, FaSave } from "react-icons/fa";
 import {
@@ -32,7 +32,7 @@ interface Props {
   bet?: MatchBetsResponse<number, number, number>;
   match: MatchesResponse;
   tournamentId: string;
-  getMatchesQueryKey: string[];
+  getMatchesQueryKey: QueryKey;
 }
 export default function Match({
   match,
@@ -484,7 +484,7 @@ function BonusButton({ isActive, predictionId, queryKey }: BonusProps) {
 interface AdminEnableProps {
   matchId: string;
   enableBonus?: boolean;
-  getMatchesQueryKey: string[];
+  getMatchesQueryKey: QueryKey
 }
 function AdminEnableBonus(props: AdminEnableProps) {
   const { mutate } = useMutation({

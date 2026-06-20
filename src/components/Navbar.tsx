@@ -71,7 +71,6 @@ export default function Navbar() {
           </Flex>
         </Link>
         <Spacer />
-        {/* @ts-expect-error bla bla bla*/}
         {user.isAdmin && <Link to="/admin">A</Link>}
         <ColorModeSwitcher />
         <Button
