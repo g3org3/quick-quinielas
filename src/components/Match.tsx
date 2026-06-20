@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import { Link } from "@tanstack/react-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { usePostHog } from "@posthog/react";
 import { FaEye, FaLock, FaLockOpen, FaSave } from "react-icons/fa";
 import {
@@ -24,39 +24,25 @@ import {
 } from "@/pocketbase-types";
 import { pb } from "@/pb";
 import Flag from "./Flag";
-import { FeatFlagComponent } from "@/featureFlags";
+import { FeatFlagComponent, useFeatFlag } from "@/featureFlags";
+import { queryClient } from "@/queryClient";
+import { useEffect, useState } from "react";
 
 interface Props {
   bet?: MatchBetsResponse<number, number, number>;
   match: MatchesResponse;
   tournamentId: string;
+  getMatchesQueryKey: string[];
 }
-export default function Match({ match, tournamentId, bet }: Props) {
+export default function Match({
+  match,
+  tournamentId,
+  bet,
+  getMatchesQueryKey,
+}: Props) {
   const border = useColorModeValue("gray.200", "gray.700");
   const posthog = usePostHog();
-  const { mutate, isPending } = useMutation({
-    mutationFn: (prediction: PredictionsRecord) =>
-      pb.collection(Collections.Predictions).create(prediction),
-    onSuccess() {
-      toaster.success("saved");
-    },
-    onError(err) {
-      toaster.error("Something went wrong: " + err.message);
-    },
-  });
-  const { mutate: update, isPending: uisPending } = useMutation({
-    mutationFn: (params: { id: string; prediction: PredictionsRecord }) =>
-      pb
-        .collection(Collections.Predictions)
-        .update(params.id, params.prediction),
-    onSuccess() {
-      toaster.success("saved");
-    },
-    onError(err) {
-      toaster.error("Something went wrong: " + err.message);
-    },
-  });
-  const { data = [], isLoading } = useQuery({
+  const getPredictionQueryOptions = queryOptions({
     queryKey: [
       "get-one",
       Collections.Predictions,
@@ -66,6 +52,47 @@ export default function Match({ match, tournamentId, bet }: Props) {
       pb.collection(Collections.Predictions).getFullList<PredictionsResponse>({
         filter: `user = '${pb.authStore.model?.id}' && match = '${match.id}'`,
       }),
+  });
+  const { data = [], isLoading } = useQuery(getPredictionQueryOptions);
+  const { mutate, isPending } = useMutation({
+    mutationFn(prediction: Partial<PredictionsRecord>) {
+      return pb.collection(Collections.Predictions).create(prediction);
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: getPredictionQueryOptions.queryKey,
+      });
+      toaster.success("saved");
+    },
+    onError(err) {
+      toaster.error("Something went wrong: " + err.message);
+    },
+  });
+  const { mutate: update, isPending: uisPending } = useMutation({
+    mutationFn: (params: {
+      id: string;
+      prediction: Partial<PredictionsRecord>;
+    }) =>
+      pb
+        .collection(Collections.Predictions)
+        .update(params.id, params.prediction),
+    onSuccess() {
+      toaster.success("saved");
+      queryClient.invalidateQueries({
+        queryKey: getPredictionQueryOptions.queryKey,
+      });
+    },
+    onError(err) {
+      toaster.error("Something went wrong: " + err.message);
+      posthog.captureException(err);
+      if (
+        confirm(
+          "Hubo un problem al guardar. Quisieres refrescar la pagina para arreglarlo?",
+        )
+      ) {
+        window.document.location.reload();
+      }
+    },
   });
   const { data: bets = [] } = useQuery({
     queryKey: ["get-all", Collections.Predictions, match.id],
@@ -93,6 +120,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
     if (
       DateTime.now().toMillis() > DateTime.fromSQL(match.startAtUtc).toMillis()
     ) {
+      posthog.capture('try_to_save_after_match_started')
       toaster.error("Ya ha empezado el partido!");
       return;
     }
@@ -102,7 +130,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
       form[key] = Number(value) || 0;
     }
 
-    const payload: PredictionsRecord = {
+    const payload: Partial<PredictionsRecord> = {
       user: pb.authStore.model?.id,
       homeScore: form.home,
       awayScore: form.away,
@@ -133,10 +161,26 @@ export default function Match({ match, tournamentId, bet }: Props) {
 
   const isAnyPending = isLoading || isPending || uisPending;
   const matchdate = DateTime.fromSQL(match.startAtUtc);
-  const isGameStarted = matchdate.toMillis() <= DateTime.now().toMillis();
+  const [isGameStarted2, setGameStarted] = useState(
+    matchdate.toMillis() <= DateTime.now().toMillis(),
+  );
+  const _isGameStarted = matchdate.toMillis() <= DateTime.now().toMillis();
+  useEffect(() => {
+    if (isGameStarted2) return;
+    const id = setInterval(() => {
+      const isGameStarted = matchdate.toMillis() <= DateTime.now().toMillis();
+      if (isGameStarted) {
+        setGameStarted(true);
+      }
+    }, 1000);
+
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isGameStarted2]);
   let _points = "";
   let _pointsColor = "red";
-  if (data[0] && isGameStarted) {
+  // TODO: this should come up from results it seems
+  if (data[0] && isGameStarted2) {
     if (
       match.homeScore === data[0].homeScore &&
       match.awayScore === data[0].awayScore
@@ -155,6 +199,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
       _pointsColor = "blue";
     }
   }
+  const showLimitAvatars = useFeatFlag("show_limit_avatars");
 
   return (
     <form onSubmit={onUpdate}>
@@ -162,6 +207,12 @@ export default function Match({ match, tournamentId, bet }: Props) {
         flexDir="column"
         borderBottom="1px solid"
         borderColor={border}
+        bgGradient={
+          !prediction?.isBonusActive
+            ? undefined
+            : "linear(to-br, red.600, red.900, orange.500)"
+        }
+        color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
         py="5"
       >
         <Flex alignItems="center" position="relative" gap="3">
@@ -187,13 +238,16 @@ export default function Match({ match, tournamentId, bet }: Props) {
             >
               <Flag height="40px" country={match.home} />
               {match.home}
-              <Flex color="gray.500" fontFamily="monospace">
+              <Flex
+                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                fontFamily="monospace"
+              >
                 {Math.floor((100 * (bet?.home_per || 0)) / 17)}%
               </Flex>
             </Flex>
           </Flex>
           <Flex flexDirection="column" gap={2} alignSelf="flex-start">
-            {isGameStarted ? (
+            {isGameStarted2 ? (
               <Flex
                 justifyContent="center"
                 alignSelf="center"
@@ -232,8 +286,8 @@ export default function Match({ match, tournamentId, bet }: Props) {
             <Flex gap={1}>
               <Input
                 defaultValue={home}
-                disabled={isAnyPending || isGameStarted}
-                border={isGameStarted ? "0" : undefined}
+                disabled={isAnyPending || isGameStarted2}
+                border={isGameStarted2 ? "0" : undefined}
                 p="1"
                 name="home"
                 textAlign="center"
@@ -241,13 +295,16 @@ export default function Match({ match, tournamentId, bet }: Props) {
                 fontSize="x-large"
                 w="50px"
               />
-              <Flex color="gray.400" fontSize="x-large">
+              <Flex
+                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                fontSize="x-large"
+              >
                 -
               </Flex>
               <Input
                 defaultValue={away}
-                disabled={isAnyPending || isGameStarted}
-                border={isGameStarted ? "0" : undefined}
+                disabled={isAnyPending || isGameStarted2}
+                border={isGameStarted2 ? "0" : undefined}
                 textAlign="center"
                 fontSize="x-large"
                 p={1}
@@ -260,7 +317,7 @@ export default function Match({ match, tournamentId, bet }: Props) {
               <Flex
                 gap={1}
                 mt="-15px"
-                hidden={!isGameStarted}
+                hidden={!isGameStarted2}
                 alignItems="center"
                 justifyContent="center"
               >
@@ -273,21 +330,44 @@ export default function Match({ match, tournamentId, bet }: Props) {
             <Flex flex="1" alignItems="center" flexDir="column">
               <Flag height="40px" country={match.away} />
               {match.away}
-              <Flex color="gray.500" fontFamily="monospace">
+              <Flex
+                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                fontFamily="monospace"
+              >
                 {Math.floor((100 * (bet?.away_per || 0)) / 17)}%
               </Flex>
             </Flex>
           </Flex>
         </Flex>
         <Flex gap={3} p={1} alignItems="center">
+          <FeatFlagComponent
+            showIfAdmin
+            feature="show_admin_bonus_enable_button"
+          >
+            <AdminEnableBonus
+              matchId={match.id}
+              enableBonus={match.enableBonus}
+              getMatchesQueryKey={getMatchesQueryKey}
+            />
+          </FeatFlagComponent>
           <Flex flex="1" overflow="auto">
-            <AvatarGroup size="md">
+            <AvatarGroup size="md" max={showLimitAvatars ? 4 : undefined}>
               {images.map((imgurl) => (
                 <Avatar key={imgurl} src={imgurl} />
               ))}
             </AvatarGroup>
           </Flex>
-          {!isGameStarted ? (
+          <FeatFlagComponent
+            showIf={!_isGameStarted && match.enableBonus}
+            feature="show_bonus"
+          >
+            <BonusButton
+              isActive={!!prediction?.isBonusActive}
+              predictionId={prediction?.id}
+              queryKey={getPredictionQueryOptions.queryKey}
+            />
+          </FeatFlagComponent>
+          {!isGameStarted2 ? (
             <Button
               disabled={isAnyPending}
               type="submit"
@@ -313,7 +393,12 @@ export default function Match({ match, tournamentId, bet }: Props) {
             </Link>
           )}
         </Flex>
-        <Flex color="gray.500" display="box" fontSize="14px" textAlign="center">
+        <Flex
+          color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+          display="box"
+          fontSize="14px"
+          textAlign="center"
+        >
           {matchdate.toFormat("EEE MMM dd ")} - hora:{" "}
           {matchdate.toFormat("h:mm a")}
           <br />
@@ -322,5 +407,103 @@ export default function Match({ match, tournamentId, bet }: Props) {
         </Flex>
       </Flex>
     </form>
+  );
+}
+
+interface BonusProps {
+  isActive: boolean;
+  predictionId?: null | string;
+  queryKey: string[];
+}
+
+function BonusButton({ isActive, predictionId, queryKey }: BonusProps) {
+  const posthog = usePostHog();
+  const { isPending, mutate } = useMutation({
+    mutationFn(isBonusActive: boolean) {
+      if (predictionId) {
+        return pb
+          .collection(Collections.Predictions)
+          .update<
+            Partial<PredictionsResponse>
+          >(predictionId, { isBonusActive });
+      }
+      throw new Error("Tienes que guardar un resultado primero");
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey });
+      toaster.success("X2 activado!");
+    },
+    onError(err) {
+      posthog.captureException(err);
+      toaster.error(err.message);
+    },
+  });
+  return (
+    <>
+      {isActive ? (
+        <Button
+          disabled={isPending}
+          onClick={() => mutate(false)}
+          bg="white"
+          color="black"
+          size="sm"
+          fontWeight="bold"
+          _hover={{
+            bg: "gray.200",
+          }}
+          _active={{
+            bg: "gray.400",
+          }}
+        >
+          x2
+        </Button>
+      ) : (
+        <Button
+          color="white"
+          bgGradient="linear(to-br, red.800, red.800, orange.900)"
+          _hover={{
+            bgGradient: "linear(to-br, red.800, red.800, orange.900)",
+            color: "white",
+          }}
+          _active={{
+            bgGradient: "linear(to-br, red.900, red.900, orange.900)",
+            color: "white",
+          }}
+          size="sm"
+          disabled={isPending}
+          onClick={() => mutate(true)}
+          variant="outline"
+        >
+          Activar x2
+        </Button>
+      )}
+    </>
+  );
+}
+
+interface AdminEnableProps {
+  matchId: string;
+  enableBonus?: boolean;
+  getMatchesQueryKey: string[];
+}
+function AdminEnableBonus(props: AdminEnableProps) {
+  const { mutate } = useMutation({
+    mutationFn(enableBonus: boolean) {
+      return pb
+        .collection(Collections.Matches)
+        .update(props.matchId, { enableBonus });
+    },
+    onSuccess() {
+      toaster.success("saved");
+      queryClient.invalidateQueries({ queryKey: props.getMatchesQueryKey });
+    },
+    onError() {
+      toaster.error("failed");
+    },
+  });
+  return (
+    <Button onClick={() => mutate(!props.enableBonus)} size="sm">
+      E: {String(props.enableBonus).substring(0, 2)}
+    </Button>
   );
 }

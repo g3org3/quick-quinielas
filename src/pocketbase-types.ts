@@ -75,6 +75,7 @@ export type MatchesRecord = {
   roundNumber?: number
   startAtUtc?: IsoDateString
   tournament?: RecordIdString
+  enableBonus?: boolean
 }
 
 export type PredictionsRecord = {
@@ -82,6 +83,7 @@ export type PredictionsRecord = {
   homeScore?: number
   match?: RecordIdString
   user?: RecordIdString
+  isBonusActive: boolean
 }
 
 export type ResultsRecord<Tpoints = unknown> = {
@@ -97,6 +99,7 @@ export type ResultsRecord<Tpoints = unknown> = {
   prediction_id?: RecordIdString
   tournament_id?: RecordIdString
   user?: RecordIdString
+  isBonusActive?: boolean
 }
 
 export type SnapshotsRecord = {
@@ -129,6 +132,7 @@ export type UsersRecord = {
   avatar?: string
   img?: string
   name?: string
+  isAdmin?: boolean
 }
 
 // Response types include system fields and match responses from the PocketBase API

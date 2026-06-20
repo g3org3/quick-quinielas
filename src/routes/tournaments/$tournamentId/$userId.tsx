@@ -78,7 +78,12 @@ function UserPredictions() {
           </Flex>
         </Flex>
         <hr />
-        <Flex flexDir="column" flex="1" overflow="auto" overscrollBehavior="contain">
+        <Flex
+          flexDir="column"
+          flex="1"
+          overflow="auto"
+          overscrollBehavior="contain"
+        >
           <Table>
             <Thead>
               <Tr>
@@ -94,12 +99,24 @@ function UserPredictions() {
               {results.map((result) => {
                 return (
                   <Tr
+                    bgGradient={
+                      result?.points === 6 || result?.points === 2
+                        ? "linear(to-br, red.600, red.900, orange.500)"
+                        : undefined
+                    }
+                    color={
+                      result?.points === 6 || result?.points === 2
+                        ? "white"
+                        : undefined
+                    }
                     bg={
-                      result?.points === 3
-                        ? green
-                        : result?.points === 1
-                          ? undefined
-                          : red
+                      result?.points === 6 || result?.points === 2
+                        ? undefined
+                        : result?.points === 3
+                          ? green
+                          : result?.points === 1
+                            ? undefined
+                            : red
                     }
                     key={result.id}
                   >

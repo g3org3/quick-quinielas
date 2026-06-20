@@ -11,6 +11,7 @@ import {
   Spacer,
   Text,
   Img,
+  Badge,
 } from "@chakra-ui/react";
 import { Flex, useColorModeValue } from "@chakra-ui/react";
 import { DateTime } from "luxon";
@@ -108,6 +109,23 @@ function SingleMatch() {
     (100 * results.filter((p) => p.p_home === p.p_away).length) / total,
   );
 
+  const predictionUpdatedAt = (userId: string) => {
+    const result = results.find((p) => p.expand?.user.id === userId);
+    const updated = result?.expand?.prediction_id?.updated ?? result?.updated;
+    return updated ? DateTime.fromSQL(updated).toMillis() : null;
+  };
+
+  const sortedUsers = [...users].sort((a, b) => {
+    const ta = predictionUpdatedAt(a.id);
+    const tb = predictionUpdatedAt(b.id);
+    // users without a prediction go to the bottom
+    if (ta === null && tb === null) return 0;
+    if (ta === null) return 1;
+    if (tb === null) return -1;
+    // both have a prediction: newest updated first
+    return tb - ta;
+  });
+
   if (isLoading || isLoadingM || isLoadingP || isLoadingU) return <Loading />;
 
   if (!match) return <div>something went wrong</div>;
@@ -193,7 +211,12 @@ function SingleMatch() {
         </Flex>
         <hr />
       </Flex>
-      <Flex flexDir="column" flex="1" overflow="auto" overscrollBehavior="contain">
+      <Flex
+        flexDir="column"
+        flex="1"
+        overflow="auto"
+        overscrollBehavior="contain"
+      >
         <Table boxShadow="md" borderRadius="sm">
           <Thead>
             <Tr>
@@ -204,17 +227,29 @@ function SingleMatch() {
             </Tr>
           </Thead>
           <Tbody>
-            {users.map((user) => {
+            {sortedUsers.map((user) => {
               const result = results.find((p) => p.expand?.user.id === user.id);
 
               return (
                 <Tr
+                  bgGradient={
+                    result?.points === 6 || result?.points === 2
+                      ? "linear(to-br, red.600, red.900, orange.500)"
+                      : undefined
+                  }
+                  color={
+                    result?.points === 6 || result?.points === 2
+                      ? "white"
+                      : undefined
+                  }
                   bg={
-                    result?.points === 3
-                      ? green
-                      : result?.points === 1
-                        ? yellow
-                        : red
+                    result?.points === 6 || result?.points === 2
+                      ? undefined
+                      : result?.points === 3
+                        ? green
+                        : result?.points === 1
+                          ? yellow
+                          : red
                   }
                   key={user.id}
                 >
@@ -237,14 +272,19 @@ function SingleMatch() {
                         >
                           {user.name}
                         </Link>
-                        <Text color="gray.500">
+                        <Text fontFamily="monospace">
                           {result?.expand?.prediction_id?.created
                             ? DateTime.fromSQL(
-                              result.expand.prediction_id.created,
-                            ).toFormat("MMM dd h:mm a")
+                                result.expand.prediction_id.updated,
+                              ).toFormat("MMM dd h:mm a")
                             : null}
                         </Text>
                       </Flex>
+                      {result?.isBonusActive ? (
+                        <Badge alignSelf="center" colorScheme="red">
+                          x2
+                        </Badge>
+                      ) : null}
                     </Flex>
                   </Td>
                   <Td>{result?.p_home ?? "-"}</Td>

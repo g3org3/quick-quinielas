@@ -1,7 +1,7 @@
 import { Button, Flex } from "@chakra-ui/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { DateTime } from "luxon";
 
@@ -65,7 +65,7 @@ function HomeTournament() {
         .getOne<TournamentsResponse>(tournamentId),
   });
 
-  const { data: matches = [], isLoading: isLoadingMatches } = useQuery({
+  const getMatchesQueryOptions = queryOptions({
     queryKey: [
       "get-all",
       Collections.Matches,
@@ -79,6 +79,7 @@ function HomeTournament() {
         sort: "startAtUtc",
       }),
   });
+  const { data: matches = [], isLoading: isLoadingMatches } = useQuery(getMatchesQueryOptions);
 
   const { data: bets = [] } = useQuery({
     queryKey: ["get-all", Collections.MatchBets],
@@ -92,7 +93,14 @@ function HomeTournament() {
 
   return (
     <>
-      <Flex flexDir="column" flex="1" overflow="auto" px={4} mb={1} overscrollBehavior="contain">
+      <Flex
+        flexDir="column"
+        flex="1"
+        overflow="auto"
+        px={4}
+        mb={1}
+        overscrollBehavior="contain"
+      >
         <h1
           style={{
             fontWeight: "bold",
@@ -150,6 +158,7 @@ function HomeTournament() {
                 match={match}
                 bet={bet}
                 tournamentId={tournamentId}
+                getMatchesQueryKey={getMatchesQueryOptions.queryKey}
               />
             );
           })}

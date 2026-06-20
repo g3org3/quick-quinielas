@@ -38,7 +38,7 @@ function Component() {
           return (
             <Tr key={flag.id}>
               <Td>{flag.feature}</Td>
-              <Td>{String(flag.isActive)}</Td>
+              <Td>{flag.isActive ? "✅" : "❌"}</Td>
               <Td>
                 <Button onClick={() => mutate({ id, isActive: !isActive })}>
                   toggle

@@ -31,7 +31,7 @@ if (!rootElement.innerHTML) {
       <ChakraProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
-          {isDev ? <ReactQueryDevtools initialIsOpen={false} /> : null}
+          {isDev ? <ReactQueryDevtools initialIsOpen={true} /> : null}
         </QueryClientProvider>
       </ChakraProvider>
     </StrictMode>,
