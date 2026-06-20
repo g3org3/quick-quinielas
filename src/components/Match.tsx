@@ -185,7 +185,7 @@ export default function Match({
       match.homeScore === data[0].homeScore &&
       match.awayScore === data[0].awayScore
     ) {
-      _points = "+3";
+      _points = data[0].isBonusActive?'+6':'+3';
       _pointsColor = "green";
     } else if (
       (match.homeScore > match.awayScore &&
@@ -195,7 +195,7 @@ export default function Match({
       (match.homeScore === match.awayScore &&
         data[0].homeScore === data[0].awayScore)
     ) {
-      _points = "+1";
+      _points = data[0].isBonusActive?'+2':'+1';
       _pointsColor = "blue";
     }
   }
