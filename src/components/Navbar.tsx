@@ -15,6 +15,7 @@ import ColorModeSwitcher from "./ColorModeSwitcher";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useFeatFlag } from "@/featureFlags";
+import Swal from "sweetalert2";
 
 export default function Navbar() {
   const bg = useColorModeValue("white", "gray.800");
@@ -30,7 +31,7 @@ export default function Navbar() {
     },
   });
   const flag_showUpdateApp = useFeatFlag("show_update_app");
-  posthog.identify(user.email)
+  posthog.identify(user.email);
 
   useEffect(() => {
     if (data?.version === undefined) {
@@ -41,9 +42,14 @@ export default function Navbar() {
       return;
     }
     if (!flag_showUpdateApp) return;
-    if (data.version > version && confirm("Actualizar la app?")) {
-      posthog.capture("user_reload_page");
-      window.document.location.reload();
+    if (data.version > version) {
+      Swal.fire({
+        title: "Hay una nueva actualizacion",
+        confirmButtonText: "Actualizar",
+      }).then(() => {
+        posthog.capture("user_reload_page");
+        window.document.location.reload();
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.version]);
@@ -52,6 +58,7 @@ export default function Navbar() {
     posthog.capture("user_logged_out");
     posthog.reset();
     pb.authStore.clear();
+    localStorage.clear()
     window.document.location = "/";
   };
 
