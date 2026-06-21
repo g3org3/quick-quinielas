@@ -30,6 +30,7 @@ export default function Navbar() {
     },
   });
   const flag_showUpdateApp = useFeatFlag("show_update_app");
+  posthog.identify(user.email)
 
   useEffect(() => {
     if (data?.version === undefined) {
