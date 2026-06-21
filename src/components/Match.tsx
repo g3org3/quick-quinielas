@@ -11,7 +11,12 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import { Link } from "@tanstack/react-router";
-import { QueryKey, queryOptions, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  QueryKey,
+  queryOptions,
+  useMutation,
+  useQuery,
+} from "@tanstack/react-query";
 import { usePostHog } from "@posthog/react";
 import { FaEye, FaLock, FaLockOpen, FaSave } from "react-icons/fa";
 import {
@@ -120,7 +125,7 @@ export default function Match({
     if (
       DateTime.now().toMillis() > DateTime.fromSQL(match.startAtUtc).toMillis()
     ) {
-      posthog.capture('try_to_save_after_match_started')
+      posthog.capture("try_to_save_after_match_started");
       toaster.error("Ya ha empezado el partido!");
       return;
     }
@@ -185,7 +190,7 @@ export default function Match({
       match.homeScore === data[0].homeScore &&
       match.awayScore === data[0].awayScore
     ) {
-      _points = data[0].isBonusActive?'+6':'+3';
+      _points = data[0].isBonusActive ? "+6" : "+3";
       _pointsColor = "green";
     } else if (
       (match.homeScore > match.awayScore &&
@@ -195,7 +200,7 @@ export default function Match({
       (match.homeScore === match.awayScore &&
         data[0].homeScore === data[0].awayScore)
     ) {
-      _points = data[0].isBonusActive?'+2':'+1';
+      _points = data[0].isBonusActive ? "+2" : "+1";
       _pointsColor = "blue";
     }
   }
@@ -420,9 +425,9 @@ function BonusButton({ isActive, predictionId, queryKey }: BonusProps) {
   const posthog = usePostHog();
   const { isPending, mutate } = useMutation({
     mutationFn(isBonusActive: boolean) {
-      const user = pb.authStore.model as UsersResponse
+      const user = pb.authStore.model as UsersResponse;
       if (user.name === "Esteban")
-        throw new Error("vas primero no puedes activar el x2")
+        throw new Error("vas primero no puedes activar el x2");
       if (predictionId) {
         return pb
           .collection(Collections.Predictions)
@@ -434,7 +439,7 @@ function BonusButton({ isActive, predictionId, queryKey }: BonusProps) {
     },
     onSuccess() {
       queryClient.invalidateQueries({ queryKey });
-      toaster.success("X2 activado!");
+      toaster.success(isActive ? "Desactivado" : "X2 activado!");
     },
     onError(err) {
       posthog.captureException(err);
@@ -487,7 +492,7 @@ function BonusButton({ isActive, predictionId, queryKey }: BonusProps) {
 interface AdminEnableProps {
   matchId: string;
   enableBonus?: boolean;
-  getMatchesQueryKey: QueryKey
+  getMatchesQueryKey: QueryKey;
 }
 function AdminEnableBonus(props: AdminEnableProps) {
   const { mutate } = useMutation({
