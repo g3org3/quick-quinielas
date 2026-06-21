@@ -420,6 +420,9 @@ function BonusButton({ isActive, predictionId, queryKey }: BonusProps) {
   const posthog = usePostHog();
   const { isPending, mutate } = useMutation({
     mutationFn(isBonusActive: boolean) {
+      const user = pb.authStore.model as UsersResponse
+      if (user.name === "Esteban")
+        throw new Error("vas primero no puedes activar el x2")
       if (predictionId) {
         return pb
           .collection(Collections.Predictions)

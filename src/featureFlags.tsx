@@ -44,7 +44,10 @@ export function FeatFlagComponent(props: Props) {
   const { isAdmin } = pb.authStore.model as UsersResponse;
   const isActive = useFeatFlag(props.feature);
 
-  if (!isActive || showIf === false) {
+  if (!isActive) {
+    return null
+  }
+  if (!showIf) {
     return null;
   }
 
