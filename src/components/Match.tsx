@@ -438,6 +438,7 @@ function BonusButton({ isActive, predictionId, queryKey }: BonusProps) {
       throw new Error("Tienes que guardar un resultado primero");
     },
     onSuccess() {
+      posthog.capture(isActive ? "deactivated_x2" : "activated_x2");
       queryClient.invalidateQueries({ queryKey });
       toaster.success(isActive ? "Desactivado" : "X2 activado!");
     },
