@@ -29,43 +29,47 @@ import {
 } from "@/pocketbase-types";
 import { pb } from "@/pb";
 import Flag from "./Flag";
-import { FeatFlagComponent, useFeatFlag } from "@/featureFlags";
+import { useFeatFlag } from "@/featureFlags";
+import FeatFlagComponent from "@/components/FeatFlagComponent";
 import { queryClient } from "@/queryClient";
 import { useEffect, useState } from "react";
 
 interface Props {
   bet?: MatchBetsResponse<number, number, number>;
   match: MatchesResponse;
+  tab?: string | null;
+  prediction?: PredictionsResponse;
   tournamentId: string;
   getMatchesQueryKey: QueryKey;
+  predictionsQueryKey: QueryKey;
 }
-export default function Match({
-  match,
-  tournamentId,
-  bet,
-  getMatchesQueryKey,
-}: Props) {
+
+const getPredictionQuery = (filter: string) =>
+  queryOptions({
+    queryKey: [Collections.Predictions, filter],
+    queryFn: () =>
+      pb
+        .collection(Collections.Predictions)
+        .getFirstListItem<PredictionsResponse>(filter),
+  });
+
+export default function Match(props: Props) {
+  const { match, tournamentId, bet, getMatchesQueryKey } = props;
   const border = useColorModeValue("gray.200", "gray.700");
   const posthog = usePostHog();
-  const getPredictionQueryOptions = queryOptions({
-    queryKey: [
-      "get-one",
-      Collections.Predictions,
-      `${pb.authStore.model?.id}-${match.id}`,
-    ],
-    queryFn: () =>
-      pb.collection(Collections.Predictions).getFullList<PredictionsResponse>({
-        filter: `user = '${pb.authStore.model?.id}' && match = '${match.id}'`,
-      }),
-  });
-  const { data = [], isLoading } = useQuery(getPredictionQueryOptions);
+
+  const { data: prediction } = useQuery(
+    getPredictionQuery(
+      `user = '${pb.authStore.model?.id}' && match = '${match.id}'`,
+    ),
+  );
   const { mutate, isPending } = useMutation({
     mutationFn(prediction: Partial<PredictionsRecord>) {
       return pb.collection(Collections.Predictions).create(prediction);
     },
     onSuccess() {
       queryClient.invalidateQueries({
-        queryKey: getPredictionQueryOptions.queryKey,
+        queryKey: props.predictionsQueryKey,
       });
       toaster.success("saved");
     },
@@ -84,7 +88,7 @@ export default function Match({
     onSuccess() {
       toaster.success("saved");
       queryClient.invalidateQueries({
-        queryKey: getPredictionQueryOptions.queryKey,
+        queryKey: props.predictionsQueryKey,
       });
     },
     onError(err) {
@@ -99,6 +103,8 @@ export default function Match({
       }
     },
   });
+
+  // CHAPUZ BELOW
   const { data: bets = [] } = useQuery({
     queryKey: ["get-all", Collections.Predictions, match.id],
     queryFn: () =>
@@ -114,9 +120,8 @@ export default function Match({
       ? bet.expand?.user.img + "&thumb=100x100&cache=default"
       : "",
   );
-  const prediction = data && data[0]?.id ? data[0] : null;
-  const home = data && data[0] ? data[0].homeScore.toString() : "";
-  const away = data && data[0] ? data[0].awayScore.toString() : "";
+  const home = prediction?.homeScore.toString() ?? "";
+  const away = prediction?.awayScore.toString() ?? "";
 
   const onUpdate: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -164,7 +169,7 @@ export default function Match({
     }
   };
 
-  const isAnyPending = isLoading || isPending || uisPending;
+  const isAnyPending = isPending || uisPending;
   const matchdate = DateTime.fromSQL(match.startAtUtc);
   const [isGameStarted2, setGameStarted] = useState(
     matchdate.toMillis() <= DateTime.now().toMillis(),
@@ -185,22 +190,22 @@ export default function Match({
   let _points = "";
   let _pointsColor = "red";
   // TODO: this should come up from results it seems
-  if (data[0] && isGameStarted2) {
+  if (prediction && isGameStarted2) {
     if (
-      match.homeScore === data[0].homeScore &&
-      match.awayScore === data[0].awayScore
+      match.homeScore === prediction.homeScore &&
+      match.awayScore === prediction.awayScore
     ) {
-      _points = data[0].isBonusActive ? "+6" : "+3";
+      _points = prediction.isBonusActive ? "+6" : "+3";
       _pointsColor = "green";
     } else if (
       (match.homeScore > match.awayScore &&
-        data[0].homeScore > data[0].awayScore) ||
+        prediction.homeScore > prediction.awayScore) ||
       (match.homeScore < match.awayScore &&
-        data[0].homeScore < data[0].awayScore) ||
+        prediction.homeScore < prediction.awayScore) ||
       (match.homeScore === match.awayScore &&
-        data[0].homeScore === data[0].awayScore)
+        prediction.homeScore === prediction.awayScore)
     ) {
-      _points = data[0].isBonusActive ? "+2" : "+1";
+      _points = prediction.isBonusActive ? "+2" : "+1";
       _pointsColor = "blue";
     }
   }
@@ -225,7 +230,6 @@ export default function Match({
             <Badge
               rounded="full"
               px={2}
-              hidden={isLoading}
               colorScheme={_pointsColor}
               position="absolute"
               top={-2}
@@ -244,7 +248,9 @@ export default function Match({
               <Flag height="40px" country={match.home} />
               {match.home}
               <Flex
-                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                color={
+                  prediction?.isBonusActive ? "whiteAlpha.800" : undefined
+                }
                 fontFamily="monospace"
               >
                 {Math.floor((100 * (bet?.home_per || 0)) / 17)}%
@@ -301,7 +307,9 @@ export default function Match({
                 w="50px"
               />
               <Flex
-                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                color={
+                  prediction?.isBonusActive ? "whiteAlpha.800" : undefined
+                }
                 fontSize="x-large"
               >
                 -
@@ -336,7 +344,9 @@ export default function Match({
               <Flag height="40px" country={match.away} />
               {match.away}
               <Flex
-                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                color={
+                  prediction?.isBonusActive ? "whiteAlpha.800" : undefined
+                }
                 fontFamily="monospace"
               >
                 {Math.floor((100 * (bet?.away_per || 0)) / 17)}%
@@ -369,7 +379,9 @@ export default function Match({
             <BonusButton
               isActive={!!prediction?.isBonusActive}
               predictionId={prediction?.id}
-              queryKey={getPredictionQueryOptions.queryKey}
+              matchId={match.id}
+              label={`${match.home}-${match.away}`}
+              queryKey={props.predictionsQueryKey}
             />
           </FeatFlagComponent>
           {!isGameStarted2 ? (
@@ -418,15 +430,18 @@ export default function Match({
 interface BonusProps {
   isActive: boolean;
   predictionId?: null | string;
-  queryKey: string[];
+  queryKey: QueryKey;
+  matchId: string;
+  label: string;
 }
 
-function BonusButton({ isActive, predictionId, queryKey }: BonusProps) {
+function BonusButton(props: BonusProps) {
+  const { isActive, matchId, label, predictionId, queryKey } = props;
   const posthog = usePostHog();
   const { isPending, mutate } = useMutation({
     mutationFn(isBonusActive: boolean) {
       const user = pb.authStore.model as UsersResponse;
-      if (user.name === "Esteban")
+      if (user.name === "JAG")
         throw new Error("vas primero no puedes activar el x2");
       if (predictionId) {
         return pb
@@ -438,7 +453,10 @@ function BonusButton({ isActive, predictionId, queryKey }: BonusProps) {
       throw new Error("Tienes que guardar un resultado primero");
     },
     onSuccess() {
-      posthog.capture(isActive ? "deactivated_x2" : "activated_x2");
+      posthog.capture(isActive ? "deactivated_x2" : "activated_x2", {
+        matchId,
+        label,
+      });
       queryClient.invalidateQueries({ queryKey });
       toaster.success(isActive ? "Desactivado" : "X2 activado!");
     },

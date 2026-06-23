@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { pb } from "./pb";
 import { usePocketBaseRealtime } from "./useRealtime";
-import { UsersResponse } from "./pocketbase-types";
 
 const featureFlags = {
   show_points: "dq830ycm247w1a0",
@@ -19,13 +18,6 @@ export interface FeatFlagResponse {
   feature: FeatureFlag;
 }
 
-interface Props {
-  feature: FeatureFlag;
-  children: React.ReactNode;
-  showIf?: boolean;
-  showIfAdmin?: boolean;
-}
-
 export function useFeatFlag(feature: FeatureFlag) {
   usePocketBaseRealtime("flags", ["flags", feature]);
   const { data } = useQuery({
@@ -37,22 +29,4 @@ export function useFeatFlag(feature: FeatureFlag) {
     },
   });
   return data?.isActive;
-}
-
-export function FeatFlagComponent(props: Props) {
-  const { showIf = true, showIfAdmin } = props;
-  const { isAdmin } = pb.authStore.model as UsersResponse;
-  const isActive = useFeatFlag(props.feature);
-
-  if (!isActive) {
-    return null
-  }
-  if (!showIf) {
-    return null;
-  }
-
-  if (!isAdmin && showIfAdmin) {
-    return null;
-  }
-  return <>{props.children}</>;
 }
