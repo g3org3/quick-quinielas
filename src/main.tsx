@@ -18,7 +18,6 @@ const router = createRouter({
   context: { queryClient },
   defaultPreloadStaleTime: 0,
   // defaultPreload: "intent",
-  defaultPendingComponent: () => <TournamentLoading />,
   defaultErrorComponent: ErrorComponent,
 });
 
