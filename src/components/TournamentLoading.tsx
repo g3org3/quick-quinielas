@@ -3,17 +3,18 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 // Funny World Cup themed messages shown while the tournament loads.
+// Each message has its own emoji, shown as the main animated icon.
 const MESSAGES = [
-  "Inflando los balones... ⚽",
-  "Cortando el césped del estadio... 🌱",
-  "Calentando al portero... 🧤",
-  "Revisando el VAR... 📺",
-  "Cantando el himno... 🎤",
-  "Vendiendo palomitas... 🍿",
-  "Pintando las líneas de la cancha... 🖌️",
-  "Buscando la pelota fuera del estadio... 🔭",
-  "Preparando la ola en las gradas... 🌊",
-  "Sobornando al árbitro... 🤫",
+  { emoji: "⚽", text: "Inflando los balones..." },
+  { emoji: "🌱", text: "Cortando el césped del estadio..." },
+  { emoji: "🧤", text: "Calentando al portero..." },
+  { emoji: "📺", text: "Revisando el VAR..." },
+  { emoji: "🎤", text: "Cantando el himno..." },
+  { emoji: "🍿", text: "Vendiendo palomitas..." },
+  { emoji: "🖌️", text: "Pintando las líneas de la cancha..." },
+  { emoji: "🔭", text: "Buscando la pelota fuera del estadio..." },
+  { emoji: "🌊", text: "Preparando la ola en las gradas..." },
+  { emoji: "🤫", text: "Sobornando al árbitro..." },
 ];
 
 const MotionText = motion(Text);
@@ -41,14 +42,14 @@ export default function TournamentLoading() {
       px="4"
     >
       <motion.div
-        animate={{ rotate: 360, y: [0, -16, 0] }}
+        key={index}
+        animate={{ y: [0, -16, 0] }}
         transition={{
-          rotate: { repeat: Infinity, duration: 2, ease: "linear" },
           y: { repeat: Infinity, duration: 1, ease: "easeInOut" },
         }}
         style={{ fontSize: "72px", lineHeight: 1 }}
       >
-        ⚽
+        {MESSAGES[index].emoji}
       </motion.div>
       <MotionText
         key={index}
@@ -61,7 +62,7 @@ export default function TournamentLoading() {
         fontSize="xl"
         textAlign="center"
       >
-        {MESSAGES[index]}
+        {MESSAGES[index].text}
       </MotionText>
     </Flex>
   );
