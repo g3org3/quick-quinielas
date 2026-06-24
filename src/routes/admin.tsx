@@ -87,13 +87,13 @@ function FeatureFlags() {
           const { id, isActive } = flag;
           return (
             <Tr key={flag.id}>
-              <Td>{flag.feature}</Td>
-              <Td>{flag.isActive ? "✅" : "❌"}</Td>
-              <Td>
-                <Button onClick={() => mutate({ id, isActive: !isActive })}>
-                  toggle
-                </Button>
+              <Td
+                onClick={() => mutate({ id, isActive: !isActive })}
+                style={{ cursor: "pointer" }}
+              >
+                {flag.feature}
               </Td>
+              <Td>{flag.isActive ? "✅" : "❌"}</Td>
             </Tr>
           );
         })}
