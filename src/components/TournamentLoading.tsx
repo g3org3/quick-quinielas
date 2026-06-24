@@ -20,7 +20,9 @@ const MotionText = motion(Text);
 
 export default function TournamentLoading() {
   const color = useColorModeValue("gray.600", "gray.300");
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(() =>
+    Math.floor(Math.random() * MESSAGES.length),
+  );
 
   useEffect(() => {
     const id = setInterval(() => {
