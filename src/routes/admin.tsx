@@ -8,6 +8,7 @@ import {
 import { pb } from "@/pb";
 import { UsersResponse } from "@/pocketbase-types";
 import { queryClient } from "@/queryClient";
+import TournamentLoading from "@/components/TournamentLoading";
 import {
   Button,
   Flex,
@@ -30,6 +31,7 @@ const adminSearchSchema = z.object({
 
 export const Route = createFileRoute("/admin")({
   component: Component,
+  pendingComponent: TournamentLoading,
   validateSearch: adminSearchSchema,
   loaderDeps: ({ search: { tab = "matches", tournamentId } }) => ({
     tab,

@@ -9,7 +9,6 @@ import { theme } from "@/theme";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
-import TournamentLoading from "./components/TournamentLoading";
 import ErrorComponent from "./components/ErrorComponent";
 
 // Create a new router instance
