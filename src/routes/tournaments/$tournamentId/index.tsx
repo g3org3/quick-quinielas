@@ -115,8 +115,8 @@ function HomeTournament() {
                 bet={bet}
                 prediction={prediction}
                 tab={tab}
-                predictionQueryKey={predictionsQuery.queryKey}
                 tournamentId={tournamentId}
+                predictionsQueryKey={predictionsQuery.queryKey}
                 getMatchesQueryKey={matchesQuery.queryKey}
               />
             );
