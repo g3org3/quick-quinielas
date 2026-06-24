@@ -79,8 +79,8 @@ export default function AvatarListDrawer({ users, max }: Props) {
             bg={bg}
             borderTopRadius="2xl"
             maxH="70vh"
-            overflowY="auto"
-            pb={6}
+            display="flex"
+            flexDirection="column"
           >
             <Flex justifyContent="center" pt={3} pb={2}>
               <Box w="40px" h="6px" borderRadius="full" bg={handleColor} />
@@ -88,27 +88,29 @@ export default function AvatarListDrawer({ users, max }: Props) {
             <Text fontWeight="bold" fontSize="lg" px={4} py={2}>
               Participantes ({users.length})
             </Text>
-            {sortedUsers.map((user, i) => (
-              <Flex
-                key={user.img || user.name || i}
-                alignItems="center"
-                gap={3}
-                px={4}
-                py={2}
-                borderTopWidth="1px"
-                borderColor={itemBorder}
-              >
-                <Avatar size="md" src={user.img} name={user.name} />
-                <Text>{user.name || "Anónimo"}</Text>
-                <Text ml="auto" fontSize="sm" color={dateColor}>
-                  {user.updatedAt
-                    ? DateTime.fromSQL(user.updatedAt).toLocaleString(
-                        DateTime.DATETIME_SHORT,
-                      )
-                    : ""}
-                </Text>
-              </Flex>
-            ))}
+            <Box overflowY="auto" pb={6}>
+              {sortedUsers.map((user, i) => (
+                <Flex
+                  key={user.img || user.name || i}
+                  alignItems="center"
+                  gap={3}
+                  px={4}
+                  py={2}
+                  borderTopWidth="1px"
+                  borderColor={itemBorder}
+                >
+                  <Avatar size="md" src={user.img} name={user.name} />
+                  <Text>{user.name || "Anónimo"}</Text>
+                  <Text ml="auto" fontSize="sm" color={dateColor}>
+                    {user.updatedAt
+                      ? DateTime.fromSQL(user.updatedAt).toLocaleString(
+                          DateTime.DATETIME_SHORT,
+                        )
+                      : ""}
+                  </Text>
+                </Flex>
+              ))}
+            </Box>
           </Box>
         </Drawer.Content>
       </Drawer.Portal>
