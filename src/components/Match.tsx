@@ -366,7 +366,7 @@ export default function Match(props: Props) {
             />
           </FeatFlagComponent>
           <Flex flex="1" overflow="auto">
-            <AvatarGroup size="md" max={showLimitAvatars ? 4 : undefined}>
+            <AvatarGroup size="md" max={showLimitAvatars ? 3 : undefined}>
               {images.map((imgurl) => (
                 <Avatar key={imgurl} src={imgurl} />
               ))}
