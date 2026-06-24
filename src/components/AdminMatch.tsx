@@ -4,7 +4,6 @@ import {
   Button,
   Flex,
   FormControl,
-  FormLabel,
   Input,
   Text,
   useColorModeValue,
@@ -103,56 +102,45 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
         alignItems="flex-start"
         flexWrap="wrap"
       >
-        <Flex flex="1 1 220px" direction="column" gap={3} minW={0}>
+        <Flex flex="1 1 320px" direction="column" gap={3} minW={0}>
           <Flex alignItems="center" gap={3} minW={0}>
-            <Flag height="32px" country={match.home} />
-            <Text fontWeight="bold" noOfLines={1}>
-              {match.home}
-            </Text>
+            <Flex alignItems="center" gap={3} flex="1" minW={0}>
+              <Flag height="32px" country={match.home} />
+              <Text fontWeight="bold" noOfLines={1}>
+                {match.home}
+              </Text>
+            </Flex>
+            <FormControl w="92px" flex="0 0 92px">
+              <Input
+                type="number"
+                min={0}
+                name="homeScore"
+                defaultValue={match.homeScore}
+                disabled={isPending}
+                textAlign="center"
+                fontWeight="bold"
+              />
+            </FormControl>
           </Flex>
           <Flex alignItems="center" gap={3} minW={0}>
-            <Flag height="32px" country={match.away} />
-            <Text fontWeight="bold" noOfLines={1}>
-              {match.away}
-            </Text>
+            <Flex alignItems="center" gap={3} flex="1" minW={0}>
+              <Flag height="32px" country={match.away} />
+              <Text fontWeight="bold" noOfLines={1}>
+                {match.away}
+              </Text>
+            </Flex>
+            <FormControl w="92px" flex="0 0 92px">
+              <Input
+                type="number"
+                min={0}
+                name="awayScore"
+                defaultValue={match.awayScore}
+                disabled={isPending}
+                textAlign="center"
+                fontWeight="bold"
+              />
+            </FormControl>
           </Flex>
-        </Flex>
-
-        <Flex
-          direction="column"
-          alignItems="stretch"
-          gap={2}
-          flex="0 0 92px"
-          maxW="92px"
-        >
-          <FormControl>
-            <FormLabel fontSize="xs" color={muted} mb={1}>
-              Local
-            </FormLabel>
-            <Input
-              type="number"
-              min={0}
-              name="homeScore"
-              defaultValue={match.homeScore}
-              disabled={isPending}
-              textAlign="center"
-              fontWeight="bold"
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel fontSize="xs" color={muted} mb={1}>
-              Visita
-            </FormLabel>
-            <Input
-              type="number"
-              min={0}
-              name="awayScore"
-              defaultValue={match.awayScore}
-              disabled={isPending}
-              textAlign="center"
-              fontWeight="bold"
-            />
-          </FormControl>
         </Flex>
 
         <Flex
