@@ -8,11 +8,16 @@ import { matchesQuery } from "@/api";
 import Flag from "./Flag";
 
 interface Props {
+  tournamentId: string;
   country: string;
   children: React.ReactNode;
 }
 
-export default function GameHistoryDrawer({ country, children }: Props) {
+export default function GameHistoryDrawer({
+  tournamentId,
+  country,
+  children,
+}: Props) {
   const posthog = usePostHog();
   const bg = useColorModeValue("white", "gray.800");
   const itemBorder = useColorModeValue("gray.100", "gray.700");
@@ -21,7 +26,7 @@ export default function GameHistoryDrawer({ country, children }: Props) {
 
   const [open, setOpen] = useState(false);
   const { data: matches = [] } = useQuery({
-    ...matchesQuery(country),
+    ...matchesQuery(tournamentId, country),
     enabled: open,
   });
 

@@ -247,7 +247,7 @@ export default function Match(props: Props) {
               alignItems="center"
               justifyContent="center"
             >
-              <GameHistoryDrawer country={match.home}>
+              <GameHistoryDrawer tournamentId={tournamentId} country={match.home}>
                 <Flag height="40px" country={match.home} />
               </GameHistoryDrawer>
               {match.home}
@@ -341,7 +341,7 @@ export default function Match(props: Props) {
           </Flex>
           <Flex flex="1" gap="3" alignItems="center">
             <Flex flex="1" alignItems="center" flexDir="column">
-              <GameHistoryDrawer country={match.away}>
+              <GameHistoryDrawer tournamentId={tournamentId} country={match.away}>
                 <Flag height="40px" country={match.away} />
               </GameHistoryDrawer>
               {match.away}

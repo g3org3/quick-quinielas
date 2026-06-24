@@ -74,9 +74,8 @@ export const getMatchesQuery = (tournamentId: string, tab?: string | null) => {
   });
 };
 
-export const matchesQuery = (countryName: string) => {
-  const nowUtc = DateTime.now().toUTC().toSQL();
-  const filter = `(home = '${countryName}' || away = '${countryName}') && startAtUtc < '${nowUtc}'`;
+export const matchesQuery = (tournamentId: string, countryName: string) => {
+  const filter = `tournament = '${tournamentId}' && (home = '${countryName}' || away = '${countryName}') && startAtUtc < @now`;
   return queryOptions({
     queryKey: [Collections.Matches, "history", filter],
     queryFn: () =>
