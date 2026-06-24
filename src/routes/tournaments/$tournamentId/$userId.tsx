@@ -20,7 +20,7 @@ import {
   ResultsResponse,
   UsersResponse,
 } from "@/pocketbase-types";
-import Loading from "@/components/Loading";
+import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
 import Flag from "@/components/Flag";
 
@@ -48,7 +48,7 @@ function UserPredictions() {
   const green = useColorModeValue("green.100", "green.800");
   const red = useColorModeValue("red.50", "red.800");
 
-  if (isLoading || !user || isLoadingUser) return <Loading />;
+  if (isLoading || !user || isLoadingUser) return <TournamentLoading />;
 
   const total = results.reduce((sum, p) => sum + (p.points || 0), 0);
   const perfect_count = results.filter((p) => p.points === 3).length;

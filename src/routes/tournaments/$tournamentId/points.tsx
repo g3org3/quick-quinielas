@@ -19,7 +19,7 @@ import {
   UsersRecord,
 } from "@/pocketbase-types";
 import { pb } from "@/pb";
-import Loading from "@/components/Loading";
+import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
 
 export const Route = createFileRoute("/tournaments/$tournamentId/points")({
@@ -50,7 +50,7 @@ function Points() {
         }),
   });
 
-  if (isLoading || lisLoading) return <Loading />;
+  if (isLoading || lisLoading) return <TournamentLoading />;
 
   return (
     <>
