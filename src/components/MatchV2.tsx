@@ -138,15 +138,17 @@ export default function MatchV2(props: Props) {
       return;
     }
     const data = new FormData(e.currentTarget);
-    const firstGoal = data.get("first_goal")?.toString() || undefined;
-    const firstGoalFrom = data.get("first_goal_from")?.toString() || undefined;
+    // Send "" (not undefined) so picking "Sin definir" clears the field.
+    // PocketBase omits undefined values from the update, leaving the old one.
+    const firstGoal = data.get("first_goal")?.toString() ?? "";
+    const firstGoalFrom = data.get("first_goal_from")?.toString() ?? "";
 
     const payload: Partial<PredictionsRecord> = {
       user: pb.authStore.model?.id,
       homeScore: Number(data.get("home")) || 0,
       awayScore: Number(data.get("away")) || 0,
-      first_goal: firstGoal as PredictionsFirstGoalOptions | undefined,
-      first_goal_from: firstGoalFrom as PredictionsFirstGoalFromOptions | undefined,
+      first_goal: firstGoal as PredictionsFirstGoalOptions,
+      first_goal_from: firstGoalFrom as PredictionsFirstGoalFromOptions,
       match: match.id,
     };
     if (prediction?.id) {
