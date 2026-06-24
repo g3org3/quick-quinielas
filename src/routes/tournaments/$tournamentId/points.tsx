@@ -38,6 +38,16 @@ function Points() {
     getLeaderboardQuery(tournamentId),
   );
 
+  let position = 0;
+  let previousPoints: number | null = null;
+  const rankedLeaderboard = leaderboard.map((row) => {
+    if (row.points !== previousPoints) {
+      position += 1;
+      previousPoints = row.points;
+    }
+    return { row, position };
+  });
+
   return (
     <>
       <h1
@@ -59,7 +69,7 @@ function Points() {
             </Tr>
           </Thead>
           <Tbody>
-            {leaderboard.map((row, i) => (
+            {rankedLeaderboard.map(({ row, position }) => (
               <Tr
                 key={row.id}
                 bg={pb.authStore.model?.id === row.user ? blue : undefined}
@@ -70,8 +80,8 @@ function Points() {
                     params={{ tournamentId, userId: row.user }}
                   >
                     <Flex alignItems="center" gap={3}>
-                      <Text fontFamily="monospace" fontSize={i + 1 <= 3 ? "xx-large" : "large"}>
-                        {displayPoints(i + 1)}
+                      <Text fontFamily="monospace" fontSize={position <= 3 ? "xx-large" : "large"}>
+                        {displayPoints(position)}
                       </Text>
                       <Img
                         rounded="full"
