@@ -38,7 +38,7 @@ export default function FavoriteTeam({ userId, favoriteTeam }: Props) {
       onSuccess() {
         posthog.capture("set_favorite_team", { team });
         toaster.success(
-          team ? "Equipo favorito guardado!" : "Equipo favorito eliminado!",
+          team ? "Equipo favorito guardado!" : "Equipo favorito eliminado!"
         );
       },
       onError(err) {
@@ -51,15 +51,16 @@ export default function FavoriteTeam({ userId, favoriteTeam }: Props) {
   return (
     <FeatFlagComponent feature="set_favorite_team" fallback={readOnly}>
       <Flex gap="2" alignItems="center">
-        {favoriteTeam && <TeamDisplay team={favoriteTeam} />}
         <CountryDrawer
           value={favoriteTeam}
           isApplying={isPending}
           onApply={setTeam}
           trigger={
-            <Button as="span" size="sm" colorScheme="blue">
-              {favoriteTeam ? "Cambiar equipo" : "Elegir equipo favorito"}
-            </Button>
+            favoriteTeam ? (
+              <TeamDisplay team={favoriteTeam} />
+            ) : (
+              <Text>Sin Favorito</Text>
+            )
           }
         />
         {favoriteTeam && (
