@@ -12,6 +12,14 @@ import {
 } from "./pocketbase-types";
 import { DateTime } from "luxon";
 
+export const tournamentsQuery = queryOptions({
+  queryKey: [Collections.Tournaments, "-sort"],
+  queryFn: () =>
+    pb
+      .collection(Collections.Tournaments)
+      .getFullList<TournamentsResponse>({ sort: "-created" }),
+});
+
 export const getFlagsQuery = queryOptions({
   queryKey: ["flags"],
   async queryFn() {
