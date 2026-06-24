@@ -112,22 +112,31 @@ function HomeTournament() {
           {matches.map((match) => {
             const bet = bets.find((bet) => bet.match_id === match.id);
             const prediction = predictions.find((p) => p.match === match.id);
-            const matchProps = {
-              match,
-              bet,
-              prediction,
-              tab,
-              tournamentId,
-              predictionsQueryKey: predictionsQuery.queryKey,
-              getMatchesQueryKey: matchesQuery.queryKey,
-            };
             return (
               <FeatFlagComponent
                 key={match.id}
                 feature="show_new_matchcard"
-                fallback={<Match {...matchProps} />}
+                fallback={
+                  <Match
+                    match={match}
+                    bet={bet}
+                    prediction={prediction}
+                    tab={tab}
+                    tournamentId={tournamentId}
+                    predictionsQueryKey={predictionsQuery.queryKey}
+                    getMatchesQueryKey={matchesQuery.queryKey}
+                  />
+                }
               >
-                <MatchV2 {...matchProps} />
+                <MatchV2
+                  match={match}
+                  bet={bet}
+                  prediction={prediction}
+                  tab={tab}
+                  tournamentId={tournamentId}
+                  predictionsQueryKey={predictionsQuery.queryKey}
+                  getMatchesQueryKey={matchesQuery.queryKey}
+                />
               </FeatFlagComponent>
             );
           })}
