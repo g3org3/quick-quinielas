@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import BottomNav from "@/components/BottomNav";
 import Match from "@/components/Match";
+import TournamentLoading from "@/components/TournamentLoading";
 import {
   getMatchesQuery,
   getPredictionsQuery,
@@ -19,6 +20,7 @@ const homeSchema = z.object({
 
 export const Route = createFileRoute("/tournaments/$tournamentId/")({
   component: HomeTournament,
+  pendingComponent: TournamentLoading,
   validateSearch: homeSchema,
   loaderDeps: ({ search: { tab } }) => ({ tab }),
   loader: async ({ params, deps }) => {

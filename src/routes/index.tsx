@@ -3,7 +3,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 
 import { tournamentsQuery } from "@/api";
-import Loading from "@/components/Loading";
+import TournamentLoading from "@/components/TournamentLoading";
 import { useEffect } from "react";
 
 export const Route = createFileRoute("/")({
@@ -21,7 +21,7 @@ function Home() {
     navigate({ to: "/tournaments/$tournamentId", params: { tournamentId } });
   }, [navigate]);
 
-  if (isLoading) return <Loading />;
+  if (isLoading) return <TournamentLoading />;
 
   return (
     <>

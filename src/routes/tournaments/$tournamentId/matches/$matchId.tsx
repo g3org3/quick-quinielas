@@ -26,7 +26,7 @@ import {
   UsersResponse,
 } from "@/pocketbase-types";
 import { pb } from "@/pb";
-import Loading from "@/components/Loading";
+import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
 import { queryClient } from "@/queryClient";
 import Flag from "@/components/Flag";
@@ -126,7 +126,7 @@ function SingleMatch() {
     return tb - ta;
   });
 
-  if (isLoading || isLoadingM || isLoadingP || isLoadingU) return <Loading />;
+  if (isLoading || isLoadingM || isLoadingP || isLoadingU) return <TournamentLoading />;
 
   if (!match) return <div>something went wrong</div>;
 

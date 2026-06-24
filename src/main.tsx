@@ -9,7 +9,6 @@ import { theme } from "@/theme";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
-import Loading from "./components/Loading";
 import ErrorComponent from "./components/ErrorComponent";
 
 // Create a new router instance
@@ -18,7 +17,6 @@ const router = createRouter({
   context: { queryClient },
   defaultPreloadStaleTime: 0,
   // defaultPreload: "intent",
-  defaultPendingComponent: () => <Loading />,
   defaultErrorComponent: ErrorComponent,
 });
 
