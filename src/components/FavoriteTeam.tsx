@@ -1,10 +1,9 @@
-import { useState } from "react";
-import { Button, Flex, Select, Text } from "@chakra-ui/react";
+import { Button, Flex, Text } from "@chakra-ui/react";
 import { usePostHog } from "@posthog/react";
 import toaster from "react-hot-toast";
 
 import { useSetFavoriteTeam } from "@/api";
-import { countries } from "@/components/countries";
+import CountryDrawer from "@/components/CountryDrawer";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
 import Flag from "@/components/Flag";
 import { pb } from "@/pb";
@@ -14,68 +13,67 @@ interface Props {
   favoriteTeam?: string;
 }
 
+function TeamDisplay({ team }: { team: string }) {
+  return (
+    <Flex alignItems="center" gap="2">
+      <Flag height="24px" country={team} />
+      <Text>{team}</Text>
+    </Flex>
+  );
+}
+
 export default function FavoriteTeam({ userId, favoriteTeam }: Props) {
   const posthog = usePostHog();
-  const [team, setTeam] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
   const { mutate, isPending } = useSetFavoriteTeam(userId);
 
-  if (favoriteTeam) {
-    return (
-      <Flex alignItems="center" gap="2">
-        <Flag height="24px" country={favoriteTeam} />
-        <Text>{favoriteTeam}</Text>
-      </Flex>
-    );
+  const readOnly = favoriteTeam ? <TeamDisplay team={favoriteTeam} /> : null;
+
+  // Other users only ever see the team, never the editing controls.
+  if (pb.authStore.model?.id !== userId) {
+    return readOnly;
   }
 
-  if (pb.authStore.model?.id !== userId) {
-    return null;
-  }
+  const setTeam = (team: string) => {
+    mutate(team, {
+      onSuccess() {
+        posthog.capture("set_favorite_team", { team });
+        toaster.success(
+          team ? "Equipo favorito guardado!" : "Equipo favorito eliminado!",
+        );
+      },
+      onError(err) {
+        posthog.captureException(err);
+        toaster.error(err.message);
+      },
+    });
+  };
 
   return (
-    <FeatFlagComponent feature="set_favorite_team">
-      {isEditing ? (
-        <Flex gap="2" alignItems="center">
-          <Select
-            size="sm"
-            maxW="200px"
-            placeholder="Selecciona tu equipo"
-            value={team}
-            onChange={(event) => setTeam(event.target.value)}
-          >
-            {Object.keys(countries).map((name) => (
-              <option key={name} value={name}>
-                {name}
-              </option>
-            ))}
-          </Select>
+    <FeatFlagComponent feature="set_favorite_team" fallback={readOnly}>
+      <Flex gap="2" alignItems="center">
+        {favoriteTeam && <TeamDisplay team={favoriteTeam} />}
+        <CountryDrawer
+          value={favoriteTeam}
+          isApplying={isPending}
+          onApply={setTeam}
+          trigger={
+            <Button as="span" size="sm" colorScheme="blue">
+              {favoriteTeam ? "Cambiar equipo" : "Elegir equipo favorito"}
+            </Button>
+          }
+        />
+        {favoriteTeam && (
           <Button
             size="sm"
-            colorScheme="blue"
-            isDisabled={!team}
+            variant="ghost"
+            colorScheme="red"
             isLoading={isPending}
-            onClick={() => {
-              mutate(team, {
-                onSuccess() {
-                  posthog.capture("set_favorite_team", { team });
-                  toaster.success("Equipo favorito guardado!");
-                },
-                onError(err) {
-                  posthog.captureException(err);
-                  toaster.error(err.message);
-                },
-              });
-            }}
+            onClick={() => setTeam("")}
           >
-            Guardar
+            Quitar
           </Button>
-        </Flex>
-      ) : (
-        <Button size="sm" colorScheme="blue" onClick={() => setIsEditing(true)}>
-          Elegir equipo favorito
-        </Button>
-      )}
+        )}
+      </Flex>
     </FeatFlagComponent>
   );
 }
