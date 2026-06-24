@@ -63,10 +63,21 @@ export type MatchBetsRecord<
   tie_per?: null | Ttie_per;
 };
 
+export enum MatchesFirstGoalOptions {
+  "primer_tiempo" = "primer_tiempo",
+  "segundo_tiempo" = "segundo_tiempo",
+}
+
+export enum MatchesFirstGoalFromOptions {
+  "home" = "home",
+  "away" = "away",
+}
 export type MatchesRecord = {
   away?: string;
   awayScore?: number;
   enableBonus?: boolean;
+  first_goal?: MatchesFirstGoalOptions;
+  first_goal_from?: MatchesFirstGoalFromOptions;
   home?: string;
   homeScore?: number;
   location?: string;
