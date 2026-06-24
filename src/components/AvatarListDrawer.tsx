@@ -28,6 +28,10 @@ export default function AvatarListDrawer({ users, max }: Props) {
   const handleColor = useColorModeValue("gray.300", "gray.600");
   const dateColor = useColorModeValue("gray.500", "gray.400");
 
+  const sortedUsers = [...users].sort((a, b) =>
+    (b.updatedAt ?? "").localeCompare(a.updatedAt ?? ""),
+  );
+
   return (
     <Drawer.Root
       onOpenChange={(open) => {
@@ -43,7 +47,7 @@ export default function AvatarListDrawer({ users, max }: Props) {
         }}
       >
         <AvatarGroup size="md" max={max}>
-          {users.map((user, i) => (
+          {sortedUsers.map((user, i) => (
             <Avatar
               key={user.img || user.name || i}
               src={user.img}
@@ -84,7 +88,7 @@ export default function AvatarListDrawer({ users, max }: Props) {
             <Text fontWeight="bold" fontSize="lg" px={4} py={2}>
               Participantes ({users.length})
             </Text>
-            {users.map((user, i) => (
+            {sortedUsers.map((user, i) => (
               <Flex
                 key={user.img || user.name || i}
                 alignItems="center"
