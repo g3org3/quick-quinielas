@@ -4,7 +4,9 @@ import {
   Button,
   Flex,
   FormControl,
+  FormLabel,
   Input,
+  Select,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -17,6 +19,8 @@ import Flag from "@/components/Flag";
 import { pb } from "@/pb";
 import {
   Collections,
+  MatchesFirstGoalFromOptions,
+  MatchesFirstGoalOptions,
   MatchesRecord,
   MatchesResponse,
 } from "@/pocketbase-types";
@@ -35,8 +39,13 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
   const matchDate = DateTime.fromSQL(match.startAtUtc);
 
   const { mutate, isPending } = useMutation({
-    mutationFn(score: Pick<MatchesRecord, "homeScore" | "awayScore">) {
-      return pb.collection(Collections.Matches).update(match.id, score);
+    mutationFn(
+      data: Pick<
+        MatchesRecord,
+        "homeScore" | "awayScore" | "first_goal" | "first_goal_from"
+      >,
+    ) {
+      return pb.collection(Collections.Matches).update(match.id, data);
     },
     onSuccess(_data, score) {
       posthog.capture("admin_match_score_updated", {
@@ -46,6 +55,8 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
         away_team: match.away,
         home_score: score.homeScore,
         away_score: score.awayScore,
+        first_goal: score.first_goal,
+        first_goal_from: score.first_goal_from,
       });
       toaster.success("Marcador guardado");
       queryClient.invalidateQueries({ queryKey });
@@ -88,7 +99,17 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
       return;
     }
 
-    mutate({ homeScore, awayScore });
+    const first_goal = data.get("first_goal") as MatchesFirstGoalOptions | "";
+    const first_goal_from = data.get(
+      "first_goal_from",
+    ) as MatchesFirstGoalFromOptions | "";
+
+    mutate({
+      homeScore,
+      awayScore,
+      first_goal: first_goal || undefined,
+      first_goal_from: first_goal_from || undefined,
+    });
   };
 
   return (
@@ -141,6 +162,45 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
               />
             </FormControl>
           </Flex>
+        </Flex>
+
+        <Flex width="100%" gap={3} flexWrap="wrap">
+          <FormControl flex="1 1 160px" minW={0}>
+            <FormLabel fontSize="sm" mb={1} color={muted}>
+              Primer gol
+            </FormLabel>
+            <Select
+              name="first_goal"
+              defaultValue={match.first_goal ?? ""}
+              disabled={isPending}
+            >
+              <option value="">Sin definir</option>
+              <option value={MatchesFirstGoalOptions.primer_tiempo}>
+                Primer tiempo
+              </option>
+              <option value={MatchesFirstGoalOptions.segundo_tiempo}>
+                Segundo tiempo
+              </option>
+            </Select>
+          </FormControl>
+          <FormControl flex="1 1 160px" minW={0}>
+            <FormLabel fontSize="sm" mb={1} color={muted}>
+              Primer gol de
+            </FormLabel>
+            <Select
+              name="first_goal_from"
+              defaultValue={match.first_goal_from ?? ""}
+              disabled={isPending}
+            >
+              <option value="">Sin definir</option>
+              <option value={MatchesFirstGoalFromOptions.home}>
+                {match.home}
+              </option>
+              <option value={MatchesFirstGoalFromOptions.away}>
+                {match.away}
+              </option>
+            </Select>
+          </FormControl>
         </Flex>
 
         <Flex
