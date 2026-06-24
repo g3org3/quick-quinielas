@@ -99,16 +99,18 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
       return;
     }
 
-    const first_goal = data.get("first_goal") as MatchesFirstGoalOptions | "";
-    const first_goal_from = data.get(
-      "first_goal_from",
-    ) as MatchesFirstGoalFromOptions | "";
+    // Send "" (not undefined) so picking "Sin definir" clears the field.
+    // PocketBase omits undefined values from the update, leaving the old one.
+    const first_goal = (data.get("first_goal")?.toString() ??
+      "") as MatchesFirstGoalOptions;
+    const first_goal_from = (data.get("first_goal_from")?.toString() ??
+      "") as MatchesFirstGoalFromOptions;
 
     mutate({
       homeScore,
       awayScore,
-      first_goal: first_goal || undefined,
-      first_goal_from: first_goal_from || undefined,
+      first_goal,
+      first_goal_from,
     });
   };
 
