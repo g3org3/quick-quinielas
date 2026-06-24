@@ -156,7 +156,7 @@ export const getMatchQuery = (matchId: string) =>
       pb.collection(Collections.Matches).getOne<MatchesResponse>(matchId),
   });
 
-export const getUsersQuery = queryOptions({
+export const usersQuery = queryOptions({
   queryKey: ["get-all", Collections.Users],
   queryFn: () =>
     pb.collection(Collections.Users).getFullList<UsersResponse>({

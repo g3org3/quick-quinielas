@@ -23,7 +23,7 @@ import {
   getMatchQuery,
   getMatchResultsQuery,
   getTournamentQuery,
-  getUsersQuery,
+  usersQuery,
 } from "@/api";
 import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
@@ -40,7 +40,7 @@ export const Route = createFileRoute(
   loader: async ({ params }) => {
     await queryClient.ensureQueryData(getTournamentQuery(params.tournamentId));
     await queryClient.ensureQueryData(getMatchQuery(params.matchId));
-    await queryClient.ensureQueryData(getUsersQuery);
+    await queryClient.ensureQueryData(usersQuery);
     await queryClient.ensureQueryData(getMatchResultsQuery(params.matchId));
   },
 });
@@ -57,7 +57,7 @@ function SingleMatch() {
     getTournamentQuery(tournamentId),
   );
   const { data: match } = useSuspenseQuery(getMatchQuery(matchId));
-  const { data: users } = useSuspenseQuery(getUsersQuery);
+  const { data: users } = useSuspenseQuery(usersQuery);
   const { data: results } = useSuspenseQuery(getMatchResultsQuery(matchId));
 
   const { mutate: onDelete } = useMutation({
