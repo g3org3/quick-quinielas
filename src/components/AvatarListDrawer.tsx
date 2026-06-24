@@ -8,10 +8,12 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { usePostHog } from "@posthog/react";
+import { DateTime } from "luxon";
 
 export interface AvatarUser {
   img: string;
   name: string;
+  updatedAt: string;
 }
 
 interface Props {
@@ -24,6 +26,7 @@ export default function AvatarListDrawer({ users, max }: Props) {
   const bg = useColorModeValue("white", "gray.800");
   const itemBorder = useColorModeValue("gray.100", "gray.700");
   const handleColor = useColorModeValue("gray.300", "gray.600");
+  const dateColor = useColorModeValue("gray.500", "gray.400");
 
   return (
     <Drawer.Root
@@ -93,6 +96,13 @@ export default function AvatarListDrawer({ users, max }: Props) {
               >
                 <Avatar size="md" src={user.img} name={user.name} />
                 <Text>{user.name || "Anónimo"}</Text>
+                <Text ml="auto" fontSize="sm" color={dateColor}>
+                  {user.updatedAt
+                    ? DateTime.fromSQL(user.updatedAt).toLocaleString(
+                        DateTime.DATETIME_SHORT,
+                      )
+                    : ""}
+                </Text>
               </Flex>
             ))}
           </Box>

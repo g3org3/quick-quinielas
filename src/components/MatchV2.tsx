@@ -122,6 +122,7 @@ export default function MatchV2(props: Props) {
       ? bet.expand?.user.img + "&thumb=100x100&cache=default"
       : "",
     name: bet.expand?.user.name ?? "",
+    updatedAt: bet.updated,
   }));
   const home = prediction?.homeScore.toString() ?? "";
   const away = prediction?.awayScore.toString() ?? "";
