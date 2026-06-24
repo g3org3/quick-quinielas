@@ -149,6 +149,21 @@ export const getUserQuery = (userId: string) =>
       pb.collection(Collections.Users).getOne<UsersResponse>(userId),
   });
 
+export const useSetFavoriteTeam = (userId: string) => {
+  return useMutation({
+    mutationFn(favorite_team: string) {
+      return pb
+        .collection(Collections.Users)
+        .update<UsersResponse>(userId, { favorite_team });
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: [Collections.Users, userId],
+      });
+    },
+  });
+};
+
 export const getUserResultsQuery = (tournamentId: string, userId: string) =>
   queryOptions({
     queryKey: [Collections.Results, tournamentId, userId],

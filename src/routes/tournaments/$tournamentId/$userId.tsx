@@ -18,6 +18,7 @@ import { queryClient } from "@/queryClient";
 import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
 import Flag from "@/components/Flag";
+import FavoriteTeam from "@/components/FavoriteTeam";
 
 export const Route = createFileRoute("/tournaments/$tournamentId/$userId")({
   component: UserPredictions,
@@ -64,6 +65,7 @@ function UserPredictions() {
             <Flex fontSize="large">❗️ {total} puntos</Flex>
             <Flex>✅ {acertados_count} - partidos acertados</Flex>
             <Flex>🙌 {perfect_count} - partidos perfectos</Flex>
+            <FavoriteTeam userId={userId} favoriteTeam={user.favorite_team} />
           </Flex>
         </Flex>
         <hr />
