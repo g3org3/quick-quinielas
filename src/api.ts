@@ -4,10 +4,13 @@ import { pb } from "./pb";
 import { queryClient } from "./queryClient";
 import {
   Collections,
+  LeaderboardResponse,
   MatchBetsResponse,
   MatchesResponse,
   PredictionsResponse,
+  ResultsResponse,
   TournamentsResponse,
+  UsersRecord,
   UsersResponse,
 } from "./pocketbase-types";
 import { DateTime } from "luxon";
@@ -112,6 +115,38 @@ export const getTournamentQuery = (tournamentId: string) =>
       pb
         .collection(Collections.Tournaments)
         .getOne<TournamentsResponse>(tournamentId),
+  });
+
+export const getLeaderboardQuery = (tournamentId: string) =>
+  queryOptions({
+    queryKey: [Collections.Leaderboard, tournamentId],
+    queryFn: () =>
+      pb
+        .collection(Collections.Leaderboard)
+        .getFullList<LeaderboardResponse<number, { user: UsersRecord }>>({
+          filter: `tournament_id = '${tournamentId}'`,
+          expand: "user",
+          sort: "-points",
+        }),
+  });
+
+export const getUserQuery = (userId: string) =>
+  queryOptions({
+    queryKey: [Collections.Users, userId],
+    queryFn: () =>
+      pb.collection(Collections.Users).getOne<UsersResponse>(userId),
+  });
+
+export const getUserResultsQuery = (tournamentId: string, userId: string) =>
+  queryOptions({
+    queryKey: [Collections.Results, tournamentId, userId],
+    queryFn: () =>
+      pb
+        .collection(Collections.Results)
+        .getFullList<ResultsResponse<number, { match_id: MatchesResponse }>>({
+          filter: `tournament_id = '${tournamentId}' && user = '${userId}' && points > 0`,
+          expand: "match_id",
+        }),
   });
 
 export const matchBetsQuery = queryOptions({

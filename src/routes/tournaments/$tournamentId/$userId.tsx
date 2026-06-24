@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   Flex,
   Image,
@@ -13,42 +13,31 @@ import {
 } from "@chakra-ui/react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
-import { pb } from "@/pb";
-import {
-  Collections,
-  MatchesResponse,
-  ResultsResponse,
-  UsersResponse,
-} from "@/pocketbase-types";
+import { getUserQuery, getUserResultsQuery } from "@/api";
+import { queryClient } from "@/queryClient";
 import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
 import Flag from "@/components/Flag";
 
 export const Route = createFileRoute("/tournaments/$tournamentId/$userId")({
   component: UserPredictions,
+  pendingComponent: TournamentLoading,
+  loader: async ({ params }) => {
+    await queryClient.ensureQueryData(getUserQuery(params.userId));
+    await queryClient.ensureQueryData(
+      getUserResultsQuery(params.tournamentId, params.userId),
+    );
+  },
 });
 
 function UserPredictions() {
   const { tournamentId, userId } = Route.useParams();
-  const { data: user, isLoading: isLoadingUser } = useQuery({
-    queryKey: ["get-one", Collections.Users, userId],
-    queryFn: () =>
-      pb.collection(Collections.Users).getOne<UsersResponse>(userId),
-  });
-  const { data: results = [], isLoading } = useQuery({
-    queryKey: ["get-all", Collections.Results, tournamentId, userId],
-    queryFn: () =>
-      pb
-        .collection(Collections.Results)
-        .getFullList<ResultsResponse<number, { match_id: MatchesResponse }>>({
-          filter: `tournament_id = '${tournamentId}' && user = '${userId}' && points > 0`,
-          expand: "match_id",
-        }),
-  });
+  const { data: user } = useSuspenseQuery(getUserQuery(userId));
+  const { data: results } = useSuspenseQuery(
+    getUserResultsQuery(tournamentId, userId),
+  );
   const green = useColorModeValue("green.100", "green.800");
   const red = useColorModeValue("red.50", "red.800");
-
-  if (isLoading || !user || isLoadingUser) return <TournamentLoading />;
 
   const total = results.reduce((sum, p) => sum + (p.points || 0), 0);
   const perfect_count = results.filter((p) => p.points === 3).length;

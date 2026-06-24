@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   Text,
   Flex,
@@ -12,45 +12,31 @@ import {
   Img,
   useColorModeValue,
 } from "@chakra-ui/react";
-import {
-  Collections,
-  LeaderboardResponse,
-  TournamentsResponse,
-  UsersRecord,
-} from "@/pocketbase-types";
+import { getLeaderboardQuery, getTournamentQuery } from "@/api";
 import { pb } from "@/pb";
+import { queryClient } from "@/queryClient";
 import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
 
 export const Route = createFileRoute("/tournaments/$tournamentId/points")({
   component: Points,
+  pendingComponent: TournamentLoading,
+  loader: async ({ params }) => {
+    await queryClient.ensureQueryData(getTournamentQuery(params.tournamentId));
+    await queryClient.ensureQueryData(getLeaderboardQuery(params.tournamentId));
+  },
 });
 
 function Points() {
   const { tournamentId } = Route.useParams();
   const blue = useColorModeValue("blue.100", "blue.800");
 
-  const { data: tournament, isLoading } = useQuery({
-    queryKey: ["get-one", Collections.Tournaments, tournamentId],
-    queryFn: () =>
-      pb
-        .collection(Collections.Tournaments)
-        .getOne<TournamentsResponse>(tournamentId),
-  });
-
-  const { data: leaderboard = [], isLoading: lisLoading } = useQuery({
-    queryKey: ["get-all", Collections.Leaderboard, tournamentId],
-    queryFn: () =>
-      pb
-        .collection(Collections.Leaderboard)
-        .getFullList<LeaderboardResponse<number, { user: UsersRecord }>>({
-          filter: `tournament_id = '${tournamentId}'`,
-          expand: "user",
-          sort: "-points",
-        }),
-  });
-
-  if (isLoading || lisLoading) return <TournamentLoading />;
+  const { data: tournament } = useSuspenseQuery(
+    getTournamentQuery(tournamentId),
+  );
+  const { data: leaderboard } = useSuspenseQuery(
+    getLeaderboardQuery(tournamentId),
+  );
 
   return (
     <>
