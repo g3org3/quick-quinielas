@@ -1,5 +1,5 @@
 export async function handler(event) {
-  const VERSION = 30;
+  const VERSION = 31;
 
   if (event.httpMethod !== "GET") {
     return {

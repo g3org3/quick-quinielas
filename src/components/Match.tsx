@@ -1,8 +1,6 @@
 import toaster from "react-hot-toast";
 import {
   Text,
-  Avatar,
-  AvatarGroup,
   Button,
   Flex,
   Input,
@@ -29,6 +27,7 @@ import {
 } from "@/pocketbase-types";
 import { pb } from "@/pb";
 import Flag from "./Flag";
+import AvatarListDrawer from "./AvatarListDrawer";
 import { useFeatFlag } from "@/featureFlags";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
 import { queryClient } from "@/queryClient";
@@ -60,8 +59,8 @@ export default function Match(props: Props) {
 
   const { data: prediction } = useQuery(
     getPredictionQuery(
-      `user = '${pb.authStore.model?.id}' && match = '${match.id}'`,
-    ),
+      `user = '${pb.authStore.model?.id}' && match = '${match.id}'`
+    )
   );
   const { mutate, isPending } = useMutation({
     mutationFn(prediction: Partial<PredictionsRecord>) {
@@ -96,7 +95,7 @@ export default function Match(props: Props) {
       posthog.captureException(err);
       if (
         confirm(
-          "Hubo un problem al guardar. Quisieres refrescar la pagina para arreglarlo?",
+          "Hubo un problem al guardar. Quisieres refrescar la pagina para arreglarlo?"
         )
       ) {
         window.document.location.reload();
@@ -115,11 +114,13 @@ export default function Match(props: Props) {
           expand: "user",
         }),
   });
-  const images = bets.map((bet) =>
-    bet.expand?.user.img
+  const users = bets.map((bet) => ({
+    img: bet.expand?.user.img
       ? bet.expand?.user.img + "&thumb=100x100&cache=default"
       : "",
-  );
+    name: bet.expand?.user.name ?? "",
+    updatedAt: bet.updated,
+  }));
   const home = prediction?.homeScore.toString() ?? "";
   const away = prediction?.awayScore.toString() ?? "";
 
@@ -172,7 +173,7 @@ export default function Match(props: Props) {
   const isAnyPending = isPending || uisPending;
   const matchdate = DateTime.fromSQL(match.startAtUtc);
   const [isGameStarted2, setGameStarted] = useState(
-    matchdate.toMillis() <= DateTime.now().toMillis(),
+    matchdate.toMillis() <= DateTime.now().toMillis()
   );
   const _isGameStarted = matchdate.toMillis() <= DateTime.now().toMillis();
   useEffect(() => {
@@ -248,9 +249,7 @@ export default function Match(props: Props) {
               <Flag height="40px" country={match.home} />
               {match.home}
               <Flex
-                color={
-                  prediction?.isBonusActive ? "whiteAlpha.800" : undefined
-                }
+                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
                 fontFamily="monospace"
               >
                 {Math.floor((100 * (bet?.home_per || 0)) / 17)}%
@@ -307,9 +306,7 @@ export default function Match(props: Props) {
                 w="50px"
               />
               <Flex
-                color={
-                  prediction?.isBonusActive ? "whiteAlpha.800" : undefined
-                }
+                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
                 fontSize="x-large"
               >
                 -
@@ -344,9 +341,7 @@ export default function Match(props: Props) {
               <Flag height="40px" country={match.away} />
               {match.away}
               <Flex
-                color={
-                  prediction?.isBonusActive ? "whiteAlpha.800" : undefined
-                }
+                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
                 fontFamily="monospace"
               >
                 {Math.floor((100 * (bet?.away_per || 0)) / 17)}%
@@ -366,11 +361,10 @@ export default function Match(props: Props) {
             />
           </FeatFlagComponent>
           <Flex flex="1" overflow="auto">
-            <AvatarGroup size="md" max={showLimitAvatars ? 3 : undefined}>
-              {images.map((imgurl) => (
-                <Avatar key={imgurl} src={imgurl} />
-              ))}
-            </AvatarGroup>
+            <AvatarListDrawer
+              users={users}
+              max={showLimitAvatars ? 3 : undefined}
+            />
           </Flex>
           <FeatFlagComponent
             showIf={!_isGameStarted && match.enableBonus}
