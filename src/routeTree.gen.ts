@@ -13,7 +13,6 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as AdminImport } from './routes/admin'
 import { Route as IndexImport } from './routes/index'
-import { Route as TournamentsIndexImport } from './routes/tournaments/index'
 import { Route as TournamentsTournamentIdIndexImport } from './routes/tournaments/$tournamentId/index'
 import { Route as TournamentsTournamentIdPointsImport } from './routes/tournaments/$tournamentId/points'
 import { Route as TournamentsTournamentIdUserIdImport } from './routes/tournaments/$tournamentId/$userId'
@@ -28,11 +27,6 @@ const AdminRoute = AdminImport.update({
 
 const IndexRoute = IndexImport.update({
   path: '/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const TournamentsIndexRoute = TournamentsIndexImport.update({
-  path: '/tournaments/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -78,13 +72,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminImport
       parentRoute: typeof rootRoute
     }
-    '/tournaments/': {
-      id: '/tournaments/'
-      path: '/tournaments'
-      fullPath: '/tournaments'
-      preLoaderRoute: typeof TournamentsIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/tournaments/$tournamentId/$userId': {
       id: '/tournaments/$tournamentId/$userId'
       path: '/tournaments/$tournamentId/$userId'
@@ -121,7 +108,6 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
   AdminRoute,
-  TournamentsIndexRoute,
   TournamentsTournamentIdUserIdRoute,
   TournamentsTournamentIdPointsRoute,
   TournamentsTournamentIdIndexRoute,
@@ -138,7 +124,6 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/",
         "/admin",
-        "/tournaments/",
         "/tournaments/$tournamentId/$userId",
         "/tournaments/$tournamentId/points",
         "/tournaments/$tournamentId/",
@@ -150,9 +135,6 @@ export const routeTree = rootRoute.addChildren({
     },
     "/admin": {
       "filePath": "admin.tsx"
-    },
-    "/tournaments/": {
-      "filePath": "tournaments/index.tsx"
     },
     "/tournaments/$tournamentId/$userId": {
       "filePath": "tournaments/$tournamentId/$userId.tsx"
