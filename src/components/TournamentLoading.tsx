@@ -47,7 +47,13 @@ export default function TournamentLoading() {
         transition={{
           y: { repeat: Infinity, duration: 1, ease: "easeInOut" },
         }}
-        style={{ fontSize: "72px", lineHeight: 1 }}
+        style={{
+          fontSize: "72px",
+          lineHeight: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
       >
         {MESSAGES[index].emoji}
       </motion.div>
