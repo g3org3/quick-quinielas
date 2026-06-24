@@ -23,9 +23,9 @@ import { FaEye, FaLock, FaLockOpen, FaSave } from "react-icons/fa";
 import {
   Collections,
   MatchBetsResponse,
-  MatchesFirstGoalFromOptions,
-  MatchesFirstGoalOptions,
   MatchesResponse,
+  PredictionsFirstGoalFromOptions,
+  PredictionsFirstGoalOptions,
   PredictionsRecord,
   PredictionsResponse,
   UsersResponse,
@@ -138,15 +138,15 @@ export default function MatchV2(props: Props) {
       return;
     }
     const data = new FormData(e.currentTarget);
-    const form: Record<string, number> = {};
-    for (const [key, value] of data.entries()) {
-      form[key] = Number(value) || 0;
-    }
+    const firstGoal = data.get("first_goal")?.toString() || undefined;
+    const firstGoalFrom = data.get("first_goal_from")?.toString() || undefined;
 
     const payload: Partial<PredictionsRecord> = {
       user: pb.authStore.model?.id,
-      homeScore: form.home,
-      awayScore: form.away,
+      homeScore: Number(data.get("home")) || 0,
+      awayScore: Number(data.get("away")) || 0,
+      first_goal: firstGoal as PredictionsFirstGoalOptions | undefined,
+      first_goal_from: firstGoalFrom as PredictionsFirstGoalFromOptions | undefined,
       match: match.id,
     };
     if (prediction?.id) {
@@ -362,15 +362,15 @@ export default function MatchV2(props: Props) {
             <Text fontSize="sm">Primer gol</Text>
             <Select
               name="first_goal"
-              defaultValue={match.first_goal ?? ""}
+              defaultValue={prediction?.first_goal ?? ""}
               disabled={isAnyPending || isGameStarted2}
               size="sm"
             >
               <option value="">Sin definir</option>
-              <option value={MatchesFirstGoalOptions.primer_tiempo}>
+              <option value={PredictionsFirstGoalOptions.primer_tiempo}>
                 Primer tiempo
               </option>
-              <option value={MatchesFirstGoalOptions.segundo_tiempo}>
+              <option value={PredictionsFirstGoalOptions.segundo_tiempo}>
                 Segundo tiempo
               </option>
             </Select>
@@ -379,15 +379,15 @@ export default function MatchV2(props: Props) {
             <Text fontSize="sm">Primer gol de</Text>
             <Select
               name="first_goal_from"
-              defaultValue={match.first_goal_from ?? ""}
+              defaultValue={prediction?.first_goal_from ?? ""}
               disabled={isAnyPending || isGameStarted2}
               size="sm"
             >
               <option value="">Sin definir</option>
-              <option value={MatchesFirstGoalFromOptions.home}>
+              <option value={PredictionsFirstGoalFromOptions.home}>
                 {match.home}
               </option>
-              <option value={MatchesFirstGoalFromOptions.away}>
+              <option value={PredictionsFirstGoalFromOptions.away}>
                 {match.away}
               </option>
             </Select>
