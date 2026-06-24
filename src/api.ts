@@ -74,6 +74,19 @@ export const getMatchesQuery = (tournamentId: string, tab?: string | null) => {
   });
 };
 
+export const matchesQuery = (countryName: string) => {
+  const nowUtc = DateTime.now().toUTC().toSQL();
+  const filter = `(home = '${countryName}' || away = '${countryName}') && startAtUtc < '${nowUtc}'`;
+  return queryOptions({
+    queryKey: [Collections.Matches, "history", filter],
+    queryFn: () =>
+      pb.collection(Collections.Matches).getFullList<MatchesResponse>({
+        filter,
+        sort: "-startAtUtc",
+      }),
+  });
+};
+
 export const getPredictionsQuery = (
   tournamentId: string,
   tab?: string | null,
