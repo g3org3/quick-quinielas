@@ -149,6 +149,39 @@ export const getUserResultsQuery = (tournamentId: string, userId: string) =>
         }),
   });
 
+export const getMatchQuery = (matchId: string) =>
+  queryOptions({
+    queryKey: ["get-one", Collections.Matches, matchId],
+    queryFn: () =>
+      pb.collection(Collections.Matches).getOne<MatchesResponse>(matchId),
+  });
+
+export const getUsersQuery = queryOptions({
+  queryKey: ["get-all", Collections.Users],
+  queryFn: () =>
+    pb.collection(Collections.Users).getFullList<UsersResponse>({
+      filter: "ignore!=true",
+    }),
+});
+
+export const getMatchResultsQuery = (matchId: string) =>
+  queryOptions({
+    queryKey: ["get-all", Collections.Results, matchId],
+    queryFn: () =>
+      pb
+        .collection(Collections.Results)
+        .getFullList<
+          ResultsResponse<
+            number,
+            { user: UsersResponse; prediction_id: PredictionsResponse }
+          >
+        >({
+          filter: `match_id = '${matchId}'`,
+          expand: "user,prediction_id",
+          sort: "-points",
+        }),
+  });
+
 export const matchBetsQuery = queryOptions({
   queryKey: ["get-all", Collections.MatchBets],
   queryFn: () =>

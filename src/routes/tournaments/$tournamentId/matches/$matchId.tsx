@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import {
   Table,
   Thead,
@@ -17,15 +17,14 @@ import { Flex, useColorModeValue } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import toaster from "react-hot-toast";
 
-import {
-  Collections,
-  MatchesResponse,
-  PredictionsResponse,
-  ResultsResponse,
-  TournamentsResponse,
-  UsersResponse,
-} from "@/pocketbase-types";
+import { Collections } from "@/pocketbase-types";
 import { pb } from "@/pb";
+import {
+  getMatchQuery,
+  getMatchResultsQuery,
+  getTournamentQuery,
+  getUsersQuery,
+} from "@/api";
 import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
@@ -37,6 +36,13 @@ export const Route = createFileRoute(
   "/tournaments/$tournamentId/matches/$matchId",
 )({
   component: SingleMatch,
+  pendingComponent: TournamentLoading,
+  loader: async ({ params }) => {
+    await queryClient.ensureQueryData(getTournamentQuery(params.tournamentId));
+    await queryClient.ensureQueryData(getMatchQuery(params.matchId));
+    await queryClient.ensureQueryData(getUsersQuery);
+    await queryClient.ensureQueryData(getMatchResultsQuery(params.matchId));
+  },
 });
 
 const isAdmin = false;
@@ -47,44 +53,12 @@ function SingleMatch() {
   const yellow = useColorModeValue("yellow.100", "yellow.800");
   const red = useColorModeValue("red.50", "red.800");
 
-  const { data: tournament, isLoading } = useQuery({
-    queryKey: ["get-one", Collections.Tournaments, tournamentId],
-    queryFn: () =>
-      pb
-        .collection(Collections.Tournaments)
-        .getOne<TournamentsResponse>(tournamentId),
-  });
-
-  const { data: match, isLoading: isLoadingM } = useQuery({
-    queryKey: ["get-one", Collections.Matches, matchId],
-    queryFn: () =>
-      pb.collection(Collections.Matches).getOne<MatchesResponse>(matchId),
-  });
-
-  const { data: users = [], isLoading: isLoadingU } = useQuery({
-    queryKey: ["get-all", Collections.Users],
-    queryFn: () =>
-      pb.collection(Collections.Users).getFullList<UsersResponse>({
-        filter: "ignore!=true",
-      }),
-  });
-
-  const { data: results = [], isLoading: isLoadingP } = useQuery({
-    queryKey: ["get-all", Collections.Results, matchId],
-    queryFn: () =>
-      pb
-        .collection(Collections.Results)
-        .getFullList<
-          ResultsResponse<
-            number,
-            { user: UsersResponse; prediction_id: PredictionsResponse }
-          >
-        >({
-          filter: `match_id = '${matchId}'`,
-          expand: "user,prediction_id",
-          sort: "-points",
-        }),
-  });
+  const { data: tournament } = useSuspenseQuery(
+    getTournamentQuery(tournamentId),
+  );
+  const { data: match } = useSuspenseQuery(getMatchQuery(matchId));
+  const { data: users } = useSuspenseQuery(getUsersQuery);
+  const { data: results } = useSuspenseQuery(getMatchResultsQuery(matchId));
 
   const { mutate: onDelete } = useMutation({
     mutationFn: (id: string) =>
@@ -127,8 +101,6 @@ function SingleMatch() {
     // both have a prediction: newest updated first
     return tb - ta;
   });
-
-  if (isLoading || isLoadingM || isLoadingP || isLoadingU) return <TournamentLoading />;
 
   if (!match) return <div>something went wrong</div>;
 
