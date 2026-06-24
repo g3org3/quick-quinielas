@@ -1,27 +1,30 @@
 import { Button, Flex, Img, useColorModeValue } from "@chakra-ui/react";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { tournamentsQuery } from "@/api";
+import { queryClient } from "@/queryClient";
 import TournamentLoading from "@/components/TournamentLoading";
 import { useEffect } from "react";
 
 export const Route = createFileRoute("/")({
   component: Home,
+  pendingComponent: TournamentLoading,
+  loader: async () => {
+    await queryClient.ensureQueryData(tournamentsQuery);
+  },
 });
 
 function Home() {
   const navigate = Route.useNavigate();
   const border = useColorModeValue("gray.200", "gray.700");
   const btn = useColorModeValue("white", undefined);
-  const { data = [], isLoading } = useQuery(tournamentsQuery);
+  const { data } = useSuspenseQuery(tournamentsQuery);
 
   useEffect(() => {
     const tournamentId = "izl4jbo5w25yf6b";
     navigate({ to: "/tournaments/$tournamentId", params: { tournamentId } });
   }, [navigate]);
-
-  if (isLoading) return <TournamentLoading />;
 
   return (
     <>
