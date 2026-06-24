@@ -4,7 +4,9 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { z } from "zod";
 
 import BottomNav from "@/components/BottomNav";
+import FeatFlagComponent from "@/components/FeatFlagComponent";
 import Match from "@/components/Match";
+import MatchV2 from "@/components/MatchV2";
 import TournamentLoading from "@/components/TournamentLoading";
 import {
   getMatchesQuery,
@@ -111,16 +113,31 @@ function HomeTournament() {
             const bet = bets.find((bet) => bet.match_id === match.id);
             const prediction = predictions.find((p) => p.match === match.id);
             return (
-              <Match
+              <FeatFlagComponent
                 key={match.id}
-                match={match}
-                bet={bet}
-                prediction={prediction}
-                tab={tab}
-                tournamentId={tournamentId}
-                predictionsQueryKey={predictionsQuery.queryKey}
-                getMatchesQueryKey={matchesQuery.queryKey}
-              />
+                feature="show_new_matchcard"
+                fallback={
+                  <Match
+                    match={match}
+                    bet={bet}
+                    prediction={prediction}
+                    tab={tab}
+                    tournamentId={tournamentId}
+                    predictionsQueryKey={predictionsQuery.queryKey}
+                    getMatchesQueryKey={matchesQuery.queryKey}
+                  />
+                }
+              >
+                <MatchV2
+                  match={match}
+                  bet={bet}
+                  prediction={prediction}
+                  tab={tab}
+                  tournamentId={tournamentId}
+                  predictionsQueryKey={predictionsQuery.queryKey}
+                  getMatchesQueryKey={matchesQuery.queryKey}
+                />
+              </FeatFlagComponent>
             );
           })}
           {matches.length === 0 ? <>No hay partidos</> : null}

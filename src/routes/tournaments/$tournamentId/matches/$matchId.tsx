@@ -28,6 +28,8 @@ import {
 import { pb } from "@/pb";
 import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
+import FeatFlagComponent from "@/components/FeatFlagComponent";
+import MatchV2 from "@/components/MatchV2";
 import { queryClient } from "@/queryClient";
 import Flag from "@/components/Flag";
 
@@ -142,75 +144,88 @@ function SingleMatch() {
       >
         {tournament?.name}
       </h1>
-      <Flex flexDir="column">
-        <Flex alignItems="center" gap="3" mb="3">
-          <Flex flex="1" gap="3" alignItems="center">
-            <Flex
-              flexDir="column"
-              flex="1"
-              alignItems="center"
-              justifyContent="flex-end"
-            >
-              <Flag height="50px" country={match.home} />
-              {match.home}
-              <Flex fontFamily="monospace" color="gray.600">
-                {homeper}%
+      <FeatFlagComponent
+        feature="show_new_matchcard"
+        fallback={
+          <Flex flexDir="column">
+            <Flex alignItems="center" gap="3" mb="3">
+              <Flex flex="1" gap="3" alignItems="center">
+                <Flex
+                  flexDir="column"
+                  flex="1"
+                  alignItems="center"
+                  justifyContent="flex-end"
+                >
+                  <Flag height="50px" country={match.home} />
+                  {match.home}
+                  <Flex fontFamily="monospace" color="gray.600">
+                    {homeper}%
+                  </Flex>
+                </Flex>
+              </Flex>
+              <Flex flexDir="column" alignSelf="flex-end">
+                <Flex alignItems="center" gap={2}>
+                  <Flex fontSize="xxx-large" fontWeight="bold" p="1">
+                    {match.homeScore}
+                  </Flex>
+                  <Flex fontSize="xx-large">-</Flex>
+                  <Flex fontSize="xxx-large" fontWeight="bold" p="1">
+                    {match.awayScore}
+                  </Flex>
+                </Flex>
+                <br />
+                <Flex
+                  color="gray.600"
+                  fontFamily="monospace"
+                  display="box"
+                  textAlign="center"
+                >
+                  {tieper}%
+                </Flex>
+              </Flex>
+              <Flex flex="1" gap="3" alignItems="center">
+                <Flex flexDir="column" flex="1" alignItems="center">
+                  <Flag height="40px" country={match.away} />
+                  {match.away}
+                  <Flex fontFamily="monospace" color="gray.600">
+                    {awayper}%
+                  </Flex>
+                </Flex>
               </Flex>
             </Flex>
-          </Flex>
-          <Flex flexDir="column" alignSelf="flex-end">
-            <Flex alignItems="center" gap={2}>
-              <Flex fontSize="xxx-large" fontWeight="bold" p="1">
-                {match.homeScore}
-              </Flex>
-              <Flex fontSize="xx-large">-</Flex>
-              <Flex fontSize="xxx-large" fontWeight="bold" p="1">
-                {match.awayScore}
-              </Flex>
-            </Flex>
-            <br />
+            <hr />
             <Flex
-              color="gray.600"
-              fontFamily="monospace"
+              color="gray.500"
               display="box"
+              pt="1"
+              fontSize="16px"
               textAlign="center"
             >
-              {tieper}%
+              {DateTime.fromSQL(match.startAtUtc).toFormat("EEE MMM dd")}
+              {" - "}
+              {DateTime.fromSQL(match.startAtUtc).toFormat("h:mm a")}
             </Flex>
-          </Flex>
-          <Flex flex="1" gap="3" alignItems="center">
-            <Flex flexDir="column" flex="1" alignItems="center">
-              <Flag height="40px" country={match.away} />
-              {match.away}
-              <Flex fontFamily="monospace" color="gray.600">
-                {awayper}%
-              </Flex>
+            <Flex
+              color="gray.500"
+              display="box"
+              fontSize="14px"
+              textAlign="center"
+              mb="2"
+            >
+              {match.location} -{" "}
+              {DateTime.fromSQL(match.startAtUtc).toRelative()}
             </Flex>
+            <hr />
           </Flex>
-        </Flex>
-        <hr />
-        <Flex
-          color="gray.500"
-          display="box"
-          pt="1"
-          fontSize="16px"
-          textAlign="center"
-        >
-          {DateTime.fromSQL(match.startAtUtc).toFormat("EEE MMM dd")}
-          {" - "}
-          {DateTime.fromSQL(match.startAtUtc).toFormat("h:mm a")}
-        </Flex>
-        <Flex
-          color="gray.500"
-          display="box"
-          fontSize="14px"
-          textAlign="center"
-          mb="2"
-        >
-          {match.location} - {DateTime.fromSQL(match.startAtUtc).toRelative()}
-        </Flex>
-        <hr />
-      </Flex>
+        }
+      >
+        <MatchV2
+          match={match}
+          tournamentId={tournamentId}
+          predictionsQueryKey={["get-all", Collections.Results, matchId]}
+          getMatchesQueryKey={["get-one", Collections.Matches, matchId]}
+        />
+      </FeatFlagComponent>
       <Flex
         flexDir="column"
         flex="1"

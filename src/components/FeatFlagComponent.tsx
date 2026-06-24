@@ -8,22 +8,23 @@ interface Props {
   children: ReactNode;
   showIf?: boolean;
   showIfAdmin?: boolean;
+  fallback?: ReactNode;
 }
 
 export default function FeatFlagComponent(props: Props) {
-  const { showIf = true, showIfAdmin } = props;
+  const { showIf = true, showIfAdmin, fallback = null } = props;
   const { isAdmin } = pb.authStore.model as UsersResponse;
   const isActive = useFeatFlag(props.feature);
 
   if (!isActive) {
-    return null;
+    return <>{fallback}</>;
   }
   if (!showIf) {
-    return null;
+    return <>{fallback}</>;
   }
 
   if (!isAdmin && showIfAdmin) {
-    return null;
+    return <>{fallback}</>;
   }
   return <>{props.children}</>;
 }
