@@ -12,8 +12,8 @@ import {
 } from "./pocketbase-types";
 import { DateTime } from "luxon";
 
-export const getTournamentsQuery = queryOptions({
-  queryKey: ["get-all", Collections.Tournaments, "-sort"],
+export const tournamentsQuery = queryOptions({
+  queryKey: [Collections.Tournaments, "-sort"],
   queryFn: () =>
     pb
       .collection(Collections.Tournaments)

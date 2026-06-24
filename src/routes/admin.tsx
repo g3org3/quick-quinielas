@@ -2,7 +2,7 @@ import AdminMatch from "@/components/AdminMatch";
 import {
   getFlagsQuery,
   getMatchesQuery,
-  getTournamentsQuery,
+  tournamentsQuery,
   useToggleFeatFlags,
 } from "@/api";
 import { pb } from "@/pb";
@@ -24,17 +24,20 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
 
 const adminSearchSchema = z.object({
-  tab: z.enum(["matches", "flags"]).catch("matches"),
+  tab: z.enum(["matches", "flags"]).catch("matches").optional(),
   tournamentId: z.string().optional(),
 });
 
 export const Route = createFileRoute("/admin")({
   component: Component,
   validateSearch: adminSearchSchema,
-  loaderDeps: ({ search: { tab, tournamentId } }) => ({ tab, tournamentId }),
+  loaderDeps: ({ search: { tab = "matches", tournamentId } }) => ({
+    tab,
+    tournamentId,
+  }),
   loader: async ({ deps }) => {
     await queryClient.ensureQueryData(getFlagsQuery);
-    await queryClient.ensureQueryData(getTournamentsQuery);
+    await queryClient.ensureQueryData(tournamentsQuery);
     if (deps.tab === "matches" && deps.tournamentId) {
       await queryClient.ensureQueryData(
         getMatchesQuery(deps.tournamentId, "today"),
@@ -57,7 +60,7 @@ function Component() {
         Admin
       </Text>
       <Flex gap={2}>
-        <Link to="/admin" search={{ tab: "matches" }}>
+        <Link to="/admin" search={{}}>
           <Button variant="ghost" isActive={tab === "matches"}>
             Partidos
           </Button>
@@ -103,7 +106,7 @@ function TodayMatches() {
   const navigate = Route.useNavigate();
   const { tournamentId } = Route.useSearch();
   const border = useColorModeValue("gray.200", "gray.700");
-  const { data: tournaments } = useSuspenseQuery(getTournamentsQuery);
+  const { data: tournaments } = useSuspenseQuery(tournamentsQuery);
   const selectedTournamentId = tournamentId ?? tournaments[0]?.id;
 
   if (!selectedTournamentId) {
@@ -127,7 +130,6 @@ function TodayMatches() {
             navigate({
               to: "/admin",
               search: {
-                tab: "matches",
                 tournamentId: event.target.value,
               },
             })
