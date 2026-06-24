@@ -79,7 +79,11 @@ export default function Navbar() {
           </Flex>
         </Link>
         <Spacer />
-        {user.isAdmin && <Link to="/admin">A</Link>}
+        {user.isAdmin && (
+          <Link to="/admin" search={{ tab: "matches" }}>
+            A
+          </Link>
+        )}
         <ColorModeSwitcher />
         <Button
           size="sm"
