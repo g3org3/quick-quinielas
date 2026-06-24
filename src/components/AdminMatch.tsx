@@ -100,16 +100,32 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
         py={4}
         px={2}
         gap={3}
-        alignItems="center"
+        alignItems="flex-start"
         flexWrap="wrap"
       >
-        <Flex flex="1 1 180px" alignItems="center" gap={3} minW={0}>
-          <Flag height="32px" country={match.home} />
-          <Text fontWeight="bold">{match.home}</Text>
+        <Flex flex="1 1 220px" direction="column" gap={3} minW={0}>
+          <Flex alignItems="center" gap={3} minW={0}>
+            <Flag height="32px" country={match.home} />
+            <Text fontWeight="bold" noOfLines={1}>
+              {match.home}
+            </Text>
+          </Flex>
+          <Flex alignItems="center" gap={3} minW={0}>
+            <Flag height="32px" country={match.away} />
+            <Text fontWeight="bold" noOfLines={1}>
+              {match.away}
+            </Text>
+          </Flex>
         </Flex>
 
-        <Flex alignItems="end" gap={2}>
-          <FormControl w="70px">
+        <Flex
+          direction="column"
+          alignItems="stretch"
+          gap={2}
+          flex="0 0 92px"
+          maxW="92px"
+        >
+          <FormControl>
             <FormLabel fontSize="xs" color={muted} mb={1}>
               Local
             </FormLabel>
@@ -123,10 +139,7 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
               fontWeight="bold"
             />
           </FormControl>
-          <Text pb={2} color={muted}>
-            -
-          </Text>
-          <FormControl w="70px">
+          <FormControl>
             <FormLabel fontSize="xs" color={muted} mb={1}>
               Visita
             </FormLabel>
@@ -140,11 +153,6 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
               fontWeight="bold"
             />
           </FormControl>
-        </Flex>
-
-        <Flex flex="1 1 180px" alignItems="center" gap={3} justifyContent="end">
-          <Text fontWeight="bold">{match.away}</Text>
-          <Flag height="32px" country={match.away} />
         </Flex>
 
         <Flex
