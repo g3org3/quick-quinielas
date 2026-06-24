@@ -161,6 +161,7 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
             variant="primary"
             leftIcon={<FaSave />}
             isLoading={isPending}
+            ml="auto"
           >
             Guardar
           </Button>
