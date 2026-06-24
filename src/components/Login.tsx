@@ -72,7 +72,7 @@ export default function Login() {
       <Flex
         h="100dvh"
         flexDirection="column"
-        pt="38.2%"
+        pt={{ base: "38.2%", md: "15%" }}
         alignItems="center"
         bg={bg}
       >
