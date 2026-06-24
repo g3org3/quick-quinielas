@@ -147,6 +147,7 @@ export type UsersRecord = {
   name?: string;
   phone?: number;
   tags?: UsersTagsOptions[];
+  favorite_team?: string;
 };
 
 // Response types include system fields and match responses from the PocketBase API
