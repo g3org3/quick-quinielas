@@ -426,6 +426,38 @@
         "presentable": false,
         "unique": false,
         "options": {}
+      },
+      {
+        "system": false,
+        "id": "tfaoit56",
+        "name": "first_goal",
+        "type": "select",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "primer_tiempo",
+            "segundo_tiempo"
+          ]
+        }
+      },
+      {
+        "system": false,
+        "id": "jur3dsr3",
+        "name": "first_goal_from",
+        "type": "select",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "home",
+            "away"
+          ]
+        }
       }
     ],
     "indexes": [

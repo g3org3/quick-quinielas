@@ -87,8 +87,19 @@ export type MatchesRecord = {
   tournament?: RecordIdString;
 };
 
+export enum PredictionsFirstGoalOptions {
+  "primer_tiempo" = "primer_tiempo",
+  "segundo_tiempo" = "segundo_tiempo",
+}
+
+export enum PredictionsFirstGoalFromOptions {
+  "home" = "home",
+  "away" = "away",
+}
 export type PredictionsRecord = {
   awayScore?: number;
+  first_goal?: PredictionsFirstGoalOptions;
+  first_goal_from?: PredictionsFirstGoalFromOptions;
   homeScore?: number;
   isBonusActive?: boolean;
   match?: RecordIdString;
