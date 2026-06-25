@@ -267,6 +267,9 @@ function SingleMatch() {
                             : null}
                         </Text>
                       </Flex>
+                      {user.favorite_team ? (
+                        <Flag height="24px" country={user.favorite_team} />
+                      ) : null}
                       {result?.isBonusActive ? (
                         <Badge alignSelf="center" colorScheme="red">
                           x2
