@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { Box, Button, Flex, Input, Text, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, Input, Text, useColorModeValue } from "@chakra-ui/react";
 import { usePostHog } from "@posthog/react";
 import { Drawer } from "vaul";
 
@@ -9,16 +9,10 @@ import Flag from "@/components/Flag";
 interface Props {
   trigger: ReactNode;
   value?: string;
-  isApplying?: boolean;
   onApply: (country: string) => void;
 }
 
-export default function CountryDrawer({
-  trigger,
-  value,
-  isApplying,
-  onApply,
-}: Props) {
+export default function CountryDrawer({ trigger, value, onApply }: Props) {
   const posthog = usePostHog();
   const bg = useColorModeValue("white", "gray.800");
   const itemBorder = useColorModeValue("gray.100", "gray.700");
@@ -27,7 +21,6 @@ export default function CountryDrawer({
 
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState(value ?? "");
 
   const names = useMemo(() => Object.keys(countries), []);
   const filtered = useMemo(
@@ -46,7 +39,6 @@ export default function CountryDrawer({
         if (next) {
           posthog.capture("open_country_drawer");
           setSearch("");
-          setSelected(value ?? "");
         }
       }}
     >
@@ -82,7 +74,7 @@ export default function CountryDrawer({
           <Box
             bg={bg}
             borderTopRadius="2xl"
-            maxH="70vh"
+            h="66vh"
             display="flex"
             flexDirection="column"
           >
@@ -93,19 +85,6 @@ export default function CountryDrawer({
               <Text fontWeight="bold" fontSize="lg">
                 Elige tu equipo
               </Text>
-              <Button
-                ml="auto"
-                size="sm"
-                colorScheme="blue"
-                isDisabled={!selected}
-                isLoading={isApplying}
-                onClick={() => {
-                  onApply(selected);
-                  setOpen(false);
-                }}
-              >
-                Aplicar
-              </Button>
             </Flex>
             <Box px={4} pb={2}>
               <Input
@@ -116,7 +95,7 @@ export default function CountryDrawer({
                 onChange={(event) => setSearch(event.target.value)}
               />
             </Box>
-            <Box overflowY="auto" pb={6}>
+            <Box flex="1" overflowY="auto" pb={6}>
               {filtered.map((name) => (
                 <Flex
                   key={name}
@@ -129,8 +108,11 @@ export default function CountryDrawer({
                   py={2}
                   borderTopWidth="1px"
                   borderColor={itemBorder}
-                  bg={selected === name ? selectedBg : undefined}
-                  onClick={() => setSelected(name)}
+                  bg={value === name ? selectedBg : undefined}
+                  onClick={() => {
+                    onApply(name);
+                    setOpen(false);
+                  }}
                 >
                   <Flag height="24px" country={name} />
                   <Text>{name}</Text>

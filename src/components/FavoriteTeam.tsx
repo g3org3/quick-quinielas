@@ -70,7 +70,6 @@ export default function FavoriteTeam({ userId, favoriteTeam }: Props) {
       <Flex gap="2" alignItems="center">
         <CountryDrawer
           value={favoriteTeam}
-          isApplying={isPending}
           onApply={setTeam}
           trigger={
             favoriteTeam ? <TeamDisplay team={favoriteTeam} /> : <ChooseFavorite />
