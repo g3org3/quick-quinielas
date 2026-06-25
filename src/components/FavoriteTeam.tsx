@@ -1,4 +1,4 @@
-import { Button, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { usePostHog } from "@posthog/react";
 import toaster from "react-hot-toast";
 
@@ -19,6 +19,23 @@ function TeamDisplay({ team }: { team: string }) {
       <Flag height="24px" country={team} />
       <Text>{team}</Text>
     </Flex>
+  );
+}
+
+function ChooseFavorite() {
+  const bg = useColorModeValue("gray.100", "gray.700");
+  const hoverBg = useColorModeValue("gray.200", "gray.600");
+  return (
+    <Box
+      px="3"
+      py="1.5"
+      borderRadius="md"
+      bg={bg}
+      _hover={{ bg: hoverBg }}
+      fontWeight="medium"
+    >
+      Elige tu favorito
+    </Box>
   );
 }
 
@@ -56,11 +73,7 @@ export default function FavoriteTeam({ userId, favoriteTeam }: Props) {
           isApplying={isPending}
           onApply={setTeam}
           trigger={
-            favoriteTeam ? (
-              <TeamDisplay team={favoriteTeam} />
-            ) : (
-              <Text>Sin Favorito</Text>
-            )
+            favoriteTeam ? <TeamDisplay team={favoriteTeam} /> : <ChooseFavorite />
           }
         />
         {favoriteTeam && (
