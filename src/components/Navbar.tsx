@@ -4,6 +4,7 @@ import {
   Container,
   Text,
   Flex,
+  Code,
   useColorModeValue,
   Avatar,
   Button,
@@ -79,15 +80,12 @@ export default function Navbar() {
             )}
           </Flex>
         </Link>
+        {user.isAdmin && <Link to="/admin"><Code>Admin</Code></Link>}
         <Spacer />
-        {user.isAdmin && <Link to="/admin">A</Link>}
         <ColorModeSwitcher />
         <Button
-          size="sm"
-          variant="outline"
           onClick={onLogout}
           leftIcon={
-            <Flex gap="1" alignItems="center">
               <Avatar
                 size="xs"
                 name={user?.name}
@@ -96,10 +94,6 @@ export default function Navbar() {
                   cache: "default",
                 })}
               />
-              {user.favorite_team && (
-                <Flag height="20px" country={user.favorite_team} />
-              )}
-            </Flex>
           }
         >
           Logout
