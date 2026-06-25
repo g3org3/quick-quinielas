@@ -75,7 +75,7 @@ export const getMatchesQuery = (tournamentId: string, tab?: string | null) => {
 };
 
 export const matchesQuery = (tournamentId: string, countryName: string) => {
-  const filter = `tournament = '${tournamentId}' && (home = '${countryName}' || away = '${countryName}') && startAtUtc < @now`;
+  const filter = `tournament = '${tournamentId}' && (home = "${countryName}" || away = "${countryName}") && startAtUtc < @now`;
   return queryOptions({
     queryKey: [Collections.Matches, "history", filter],
     queryFn: () =>
