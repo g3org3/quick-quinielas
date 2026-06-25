@@ -241,7 +241,7 @@ function SingleMatch() {
                   key={user.id}
                 >
                   <Td>
-                    <Flex gap={2}>
+                    <Flex gap={2} alignItems="center">
                       <Img
                         rounded="full"
                         w="40px"
@@ -267,6 +267,9 @@ function SingleMatch() {
                             : null}
                         </Text>
                       </Flex>
+                      {user.favorite_team ? (
+                        <Flag height="24px" country={user.favorite_team} />
+                      ) : null}
                       {result?.isBonusActive ? (
                         <Badge alignSelf="center" colorScheme="red">
                           x2

@@ -10,6 +10,7 @@ const featureFlags = {
   show_update_app: "srnwbr4pkcghb7e",
   show_limit_avatars: "osr72q7crt1sdpy",
   show_admin_bonus_enable_button: "eismui3kc6ykpoy",
+  set_favorite_team: "gsugdab7mgzmg92",
 } as const;
 export type FeatureFlag = keyof typeof featureFlags;
 

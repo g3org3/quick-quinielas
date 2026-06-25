@@ -75,7 +75,7 @@ export const getMatchesQuery = (tournamentId: string, tab?: string | null) => {
 };
 
 export const matchesQuery = (tournamentId: string, countryName: string) => {
-  const filter = `tournament = '${tournamentId}' && (home = '${countryName}' || away = '${countryName}') && startAtUtc < @now`;
+  const filter = `tournament = '${tournamentId}' && (home = "${countryName}" || away = "${countryName}") && startAtUtc < @now`;
   return queryOptions({
     queryKey: [Collections.Matches, "history", filter],
     queryFn: () =>
@@ -148,6 +148,21 @@ export const getUserQuery = (userId: string) =>
     queryFn: () =>
       pb.collection(Collections.Users).getOne<UsersResponse>(userId),
   });
+
+export const useSetFavoriteTeam = (userId: string) => {
+  return useMutation({
+    mutationFn(favorite_team: string) {
+      return pb
+        .collection(Collections.Users)
+        .update<UsersResponse>(userId, { favorite_team });
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: [Collections.Users, userId],
+      });
+    },
+  });
+};
 
 export const getUserResultsQuery = (tournamentId: string, userId: string) =>
   queryOptions({

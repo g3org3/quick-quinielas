@@ -10,10 +10,13 @@ import {
 import { usePostHog } from "@posthog/react";
 import { DateTime } from "luxon";
 
+import Flag from "@/components/Flag";
+
 export interface AvatarUser {
   img: string;
   name: string;
   updatedAt: string;
+  favoriteTeam?: string;
 }
 
 interface Props {
@@ -101,6 +104,9 @@ export default function AvatarListDrawer({ users, max }: Props) {
                 >
                   <Avatar size="md" src={user.img} name={user.name} />
                   <Text>{user.name || "Anónimo"}</Text>
+                  {user.favoriteTeam && (
+                    <Flag height="24px" country={user.favoriteTeam} />
+                  )}
                   <Text ml="auto" fontSize="sm" color={dateColor}>
                     {user.updatedAt
                       ? DateTime.fromSQL(user.updatedAt).toLocaleString(

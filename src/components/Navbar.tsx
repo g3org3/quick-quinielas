@@ -4,6 +4,7 @@ import {
   Container,
   Text,
   Flex,
+  Code,
   useColorModeValue,
   Avatar,
   Button,
@@ -78,22 +79,20 @@ export default function Navbar() {
             )}
           </Flex>
         </Link>
+        {user.isAdmin && <Link to="/admin"><Code>Admin</Code></Link>}
         <Spacer />
-        {user.isAdmin && <Link to="/admin">A</Link>}
         <ColorModeSwitcher />
         <Button
-          size="sm"
-          variant="ghost"
           onClick={onLogout}
           leftIcon={
-            <Avatar
-              size="xs"
-              name={user?.name}
-              src={pb.files.getUrl(user, user.avatar, {
-                thumb: "100x100",
-                cache: "default",
-              })}
-            />
+              <Avatar
+                size="xs"
+                name={user?.name}
+                src={pb.files.getUrl(user, user.avatar, {
+                  thumb: "100x100",
+                  cache: "default",
+                })}
+              />
           }
         >
           Logout
