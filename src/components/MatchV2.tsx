@@ -10,12 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import { Link } from "@tanstack/react-router";
-import {
-  QueryKey,
-  queryOptions,
-  useMutation,
-  useQuery,
-} from "@tanstack/react-query";
+import { QueryKey, useMutation, useQuery } from "@tanstack/react-query";
 import { usePostHog } from "@posthog/react";
 import { FaEye, FaLock, FaLockOpen, FaSave } from "react-icons/fa";
 import {
@@ -46,25 +41,11 @@ interface Props {
   predictionsQueryKey: QueryKey;
 }
 
-const getPredictionQuery = (filter: string) =>
-  queryOptions({
-    queryKey: [Collections.Predictions, filter],
-    queryFn: () =>
-      pb
-        .collection(Collections.Predictions)
-        .getFirstListItem<PredictionsResponse>(filter),
-  });
-
 export default function MatchV2(props: Props) {
-  const { match, tournamentId, bet, getMatchesQueryKey } = props;
+  const { match, tournamentId, bet, getMatchesQueryKey, prediction } = props;
   const border = useColorModeValue("gray.200", "gray.700");
   const posthog = usePostHog();
 
-  const { data: prediction } = useQuery(
-    getPredictionQuery(
-      `user = '${pb.authStore.model?.id}' && match = '${match.id}'`
-    )
-  );
   const { mutate, isPending } = useMutation({
     mutationFn(prediction: Partial<PredictionsRecord>) {
       return pb.collection(Collections.Predictions).create(prediction);
