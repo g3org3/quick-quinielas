@@ -84,25 +84,25 @@ export default function Navbar() {
         <ColorModeSwitcher />
         <Button
           size="sm"
-          variant="ghost"
+          variant="outline"
           onClick={onLogout}
           leftIcon={
-            <Avatar
-              size="xs"
-              name={user?.name}
-              src={pb.files.getUrl(user, user.avatar, {
-                thumb: "100x100",
-                cache: "default",
-              })}
-            />
+            <Flex gap="1" alignItems="center">
+              <Avatar
+                size="xs"
+                name={user?.name}
+                src={pb.files.getUrl(user, user.avatar, {
+                  thumb: "100x100",
+                  cache: "default",
+                })}
+              />
+              {user.favorite_team && (
+                <Flag height="20px" country={user.favorite_team} />
+              )}
+            </Flex>
           }
         >
-          <Flex gap="2" alignItems="center">
-            Logout
-            {user.favorite_team && (
-              <Flag height="20px" country={user.favorite_team} />
-            )}
-          </Flex>
+          Logout
         </Button>
       </Container>
     </Flex>
