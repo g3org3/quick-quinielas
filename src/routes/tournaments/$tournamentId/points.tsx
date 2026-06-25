@@ -17,6 +17,7 @@ import { pb } from "@/pb";
 import { queryClient } from "@/queryClient";
 import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
+import Flag from "@/components/Flag";
 
 export const Route = createFileRoute("/tournaments/$tournamentId/points")({
   component: Points,
@@ -96,6 +97,12 @@ function Points() {
                         }
                       />
                       {row.expand?.user.name}
+                      {row.expand?.user.favorite_team && (
+                        <Flag
+                          height="24px"
+                          country={row.expand.user.favorite_team}
+                        />
+                      )}
                     </Flex>
                   </Link>
                 </Td>
