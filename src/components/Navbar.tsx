@@ -12,6 +12,7 @@ import {
 import { usePostHog } from "@posthog/react";
 import { Link } from "@tanstack/react-router";
 import ColorModeSwitcher from "./ColorModeSwitcher";
+import Flag from "@/components/Flag";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useFeatFlag } from "@/featureFlags";
@@ -96,7 +97,12 @@ export default function Navbar() {
             />
           }
         >
-          Logout
+          <Flex gap="2" alignItems="center">
+            Logout
+            {user.favorite_team && (
+              <Flag height="20px" country={user.favorite_team} />
+            )}
+          </Flex>
         </Button>
       </Container>
     </Flex>

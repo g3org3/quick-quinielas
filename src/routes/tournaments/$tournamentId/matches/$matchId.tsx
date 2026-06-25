@@ -241,7 +241,7 @@ function SingleMatch() {
                   key={user.id}
                 >
                   <Td>
-                    <Flex gap={2}>
+                    <Flex gap={2} alignItems="center">
                       <Img
                         rounded="full"
                         w="40px"
