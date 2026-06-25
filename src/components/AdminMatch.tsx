@@ -213,7 +213,8 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
           flexWrap="wrap"
         >
           <Flex gap={2} alignItems="center" color={muted} fontSize="sm">
-            <Badge colorScheme="blue">#{match.matchNumber}</Badge>
+            <Badge colorScheme="blue">R#{match.roundNumber}</Badge>
+            <Badge colorScheme="blue">M#{match.matchNumber}</Badge>
             <Text>{matchDate.toFormat("EEE MMM dd - h:mm a")}</Text>
             <Text>{match.location}</Text>
           </Flex>
