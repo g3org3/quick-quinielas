@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import { Link } from "@tanstack/react-router";
-import { QueryKey, useMutation, useQuery } from "@tanstack/react-query";
+import { QueryKey, useQuery } from "@tanstack/react-query";
 import { usePostHog } from "@posthog/react";
 import { FaEye, FaLock, FaLockOpen, FaSave } from "react-icons/fa";
 import {
@@ -26,7 +26,7 @@ import AvatarListDrawer from "./AvatarListDrawer";
 import GameHistoryDrawer from "./GameHistoryDrawer";
 import { useFeatFlag } from "@/featureFlags";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
-import { queryClient } from "@/queryClient";
+import { useCreatePrediction, useUpdatePrediction } from "@/api";
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -44,46 +44,10 @@ export default function Match(props: Props) {
   const border = useColorModeValue("gray.200", "gray.700");
   const posthog = usePostHog();
 
-  const { mutate, isPending } = useMutation({
-    mutationFn(prediction: Partial<PredictionsRecord>) {
-      return pb.collection(Collections.Predictions).create(prediction);
-    },
-    onSuccess() {
-      queryClient.invalidateQueries({
-        queryKey: props.predictionsQueryKey,
-      });
-      toaster.success("saved");
-    },
-    onError(err) {
-      toaster.error("Something went wrong: " + err.message);
-    },
-  });
-  const { mutate: update, isPending: uisPending } = useMutation({
-    mutationFn: (params: {
-      id: string;
-      prediction: Partial<PredictionsRecord>;
-    }) =>
-      pb
-        .collection(Collections.Predictions)
-        .update(params.id, params.prediction),
-    onSuccess() {
-      toaster.success("saved");
-      queryClient.invalidateQueries({
-        queryKey: props.predictionsQueryKey,
-      });
-    },
-    onError(err) {
-      toaster.error("Something went wrong: " + err.message);
-      posthog.captureException(err);
-      if (
-        confirm(
-          "Hubo un problem al guardar. Quisieres refrescar la pagina para arreglarlo?"
-        )
-      ) {
-        window.document.location.reload();
-      }
-    },
-  });
+  const { mutate, isPending } = useCreatePrediction(props.predictionsQueryKey);
+  const { mutate: update, isPending: uisPending } = useUpdatePrediction(
+    props.predictionsQueryKey
+  );
 
   // CHAPUZ BELOW
   const { data: bets = [] } = useQuery({
