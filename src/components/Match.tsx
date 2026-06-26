@@ -67,7 +67,9 @@ export default function Match(props: Props) {
   const home = prediction?.homeScore.toString() ?? "";
   const away = prediction?.awayScore.toString() ?? "";
   const isBonusActive =
-    user?.favorite_team === match.home || user?.favorite_team === match.away;
+    match.roundNumber > 3
+      ? user?.favorite_team === match.home || user?.favorite_team === match.away
+      : false;
 
   const onUpdate: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();

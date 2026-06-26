@@ -68,6 +68,10 @@ export default function MatchV2(props: Props) {
   }));
   const home = prediction?.homeScore.toString() ?? "";
   const away = prediction?.awayScore.toString() ?? "";
+  const isBonusActive =
+    match.roundNumber > 3
+      ? user?.favorite_team === match.home || user?.favorite_team === match.away
+      : false;
 
   const onUpdate: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -86,9 +90,6 @@ export default function MatchV2(props: Props) {
     const firstGoal = data.get("first_goal")?.toString() ?? "";
     const firstGoalFrom = data.get("first_goal_from")?.toString() ?? "";
 
-    const isBonusActive =
-      user?.favorite_team === match.home ||
-      user?.favorite_team === match.away;
     const payload: Partial<PredictionsRecord> = {
       user: user?.id,
       homeScore: Number(data.get("home")) || 0,
@@ -161,6 +162,7 @@ export default function MatchV2(props: Props) {
     }
   }
   const showLimitAvatars = useFeatFlag("show_limit_avatars");
+  const _isBonusActive = isBonusActive || prediction?.isBonusActive;
 
   return (
     <form onSubmit={onUpdate}>
@@ -169,11 +171,11 @@ export default function MatchV2(props: Props) {
         borderBottom="1px solid"
         borderColor={border}
         bgGradient={
-          !prediction?.isBonusActive
+          !_isBonusActive
             ? undefined
             : "linear(to-br, red.600, red.900, orange.500)"
         }
-        color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+        color={_isBonusActive ? "whiteAlpha.800" : undefined}
         py="5"
       >
         <Flex alignItems="center" position="relative" gap="3">
@@ -199,7 +201,7 @@ export default function MatchV2(props: Props) {
               <Flag height="40px" country={match.home} />
               {match.home}
               <Flex
-                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                color={_isBonusActive ? "whiteAlpha.800" : undefined}
                 fontFamily="monospace"
               >
                 {Math.floor((100 * (bet?.home_per || 0)) / 17)}%
@@ -256,7 +258,7 @@ export default function MatchV2(props: Props) {
                 w="50px"
               />
               <Flex
-                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                color={_isBonusActive ? "whiteAlpha.800" : undefined}
                 fontSize="x-large"
               >
                 -
@@ -291,7 +293,7 @@ export default function MatchV2(props: Props) {
               <Flag height="40px" country={match.away} />
               {match.away}
               <Flex
-                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                color={_isBonusActive ? "whiteAlpha.800" : undefined}
                 fontFamily="monospace"
               >
                 {Math.floor((100 * (bet?.away_per || 0)) / 17)}%
@@ -369,7 +371,7 @@ export default function MatchV2(props: Props) {
           )}
         </Flex>
         <Flex
-          color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+          color={_isBonusActive ? "whiteAlpha.800" : undefined}
           display="box"
           fontSize="14px"
           textAlign="center"
