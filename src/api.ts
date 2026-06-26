@@ -1,5 +1,10 @@
 import toaster from "react-hot-toast";
-import { QueryKey, queryOptions, useMutation } from "@tanstack/react-query";
+import {
+  QueryKey,
+  queryOptions,
+  useMutation,
+  useQuery,
+} from "@tanstack/react-query";
 import { usePostHog } from "@posthog/react";
 import { FeatFlagResponse } from "./featureFlags";
 import { pb } from "./pb";
@@ -150,6 +155,12 @@ export const getUserQuery = (userId: string) =>
     queryKey: [Collections.Users, userId],
     queryFn: () =>
       pb.collection(Collections.Users).getOne<UsersResponse>(userId),
+  });
+
+export const useUserQuery = (userId?: string) =>
+  useQuery({
+    ...getUserQuery(userId ?? ""),
+    enabled: !!userId,
   });
 
 export const useSetFavoriteTeam = (userId: string) => {

@@ -20,7 +20,6 @@ import {
   PredictionsFirstGoalOptions,
   PredictionsRecord,
   PredictionsResponse,
-  UsersResponse,
 } from "@/pocketbase-types";
 import { pb } from "@/pb";
 import Flag from "./Flag";
@@ -31,6 +30,7 @@ import {
   getMatchPredictionsQuery,
   useCreatePrediction,
   useUpdatePrediction,
+  useUserQuery,
 } from "@/api";
 import { useEffect, useState } from "react";
 
@@ -53,6 +53,7 @@ export default function MatchV2(props: Props) {
   const { mutate: update, isPending: uisPending } = useUpdatePrediction(
     props.predictionsQueryKey
   );
+  const { data: user } = useUserQuery(pb.authStore.model?.id);
 
   // CHAPUZ BELOW
   const { data: bets = [] } = useQuery(getMatchPredictionsQuery(match.id));
@@ -85,7 +86,6 @@ export default function MatchV2(props: Props) {
     const firstGoal = data.get("first_goal")?.toString() ?? "";
     const firstGoalFrom = data.get("first_goal_from")?.toString() ?? "";
 
-    const user = pb.authStore.model as UsersResponse;
     const isBonusActive =
       user?.favorite_team === match.home ||
       user?.favorite_team === match.away;
