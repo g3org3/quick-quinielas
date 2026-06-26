@@ -103,6 +103,7 @@ export default function Match(props: Props) {
     name: bet.expand?.user.name ?? "",
     updatedAt: bet.updated,
     favoriteTeam: bet.expand?.user.favorite_team,
+    isBonusActive: bet.isBonusActive,
   }));
   const home = prediction?.homeScore.toString() ?? "";
   const away = prediction?.awayScore.toString() ?? "";
