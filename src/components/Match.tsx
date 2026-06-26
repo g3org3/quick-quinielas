@@ -92,7 +92,6 @@ export default function Match(props: Props) {
       homeScore: form.home,
       awayScore: form.away,
       match: match.id,
-      isBonusActive,
     };
     if (prediction?.id) {
       posthog.capture("prediction_updated", {
