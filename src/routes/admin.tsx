@@ -4,9 +4,9 @@ import {
   getMatchesQuery,
   tournamentsQuery,
   useToggleFeatFlags,
+  useUserQuery,
 } from "@/api";
 import { pb } from "@/pb";
-import { UsersResponse } from "@/pocketbase-types";
 import { queryClient } from "@/queryClient";
 import TournamentLoading from "@/components/TournamentLoading";
 import {
@@ -50,9 +50,9 @@ export const Route = createFileRoute("/admin")({
 
 function Component() {
   const { tab = "matches" } = Route.useSearch();
-  const user = pb.authStore.model as UsersResponse;
+  const { data: user } = useUserQuery(pb.authStore.model?.id);
 
-  if (!user.isAdmin) {
+  if (!user?.isAdmin) {
     return <Text px={4}>No tienes permiso para ver esta pagina.</Text>;
   }
 
