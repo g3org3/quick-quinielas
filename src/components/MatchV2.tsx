@@ -14,7 +14,6 @@ import { QueryKey, useQuery } from "@tanstack/react-query";
 import { usePostHog } from "@posthog/react";
 import { FaEye, FaLock, FaLockOpen, FaSave } from "react-icons/fa";
 import {
-  Collections,
   MatchBetsResponse,
   MatchesResponse,
   PredictionsFirstGoalFromOptions,
@@ -28,7 +27,11 @@ import Flag from "./Flag";
 import AvatarListDrawer from "./AvatarListDrawer";
 import { useFeatFlag } from "@/featureFlags";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
-import { useCreatePrediction, useUpdatePrediction } from "@/api";
+import {
+  getMatchPredictionsQuery,
+  useCreatePrediction,
+  useUpdatePrediction,
+} from "@/api";
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -52,16 +55,7 @@ export default function MatchV2(props: Props) {
   );
 
   // CHAPUZ BELOW
-  const { data: bets = [] } = useQuery({
-    queryKey: ["get-all", Collections.Predictions, match.id],
-    queryFn: () =>
-      pb
-        .collection(Collections.Predictions)
-        .getFullList<PredictionsResponse<{ user: UsersResponse }>>({
-          filter: `match = '${match.id}'`,
-          expand: "user",
-        }),
-  });
+  const { data: bets = [] } = useQuery(getMatchPredictionsQuery(match.id));
   const users = bets.map((bet) => ({
     img: bet.expand?.user.img
       ? bet.expand?.user.img + "&thumb=100x100&cache=default"

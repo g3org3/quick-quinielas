@@ -220,6 +220,18 @@ export const matchBetsQuery = queryOptions({
       .getFullList<MatchBetsResponse<number, number, number>>(),
 });
 
+export const getMatchPredictionsQuery = (matchId: string) =>
+  queryOptions({
+    queryKey: ["get-all", Collections.Predictions, matchId],
+    queryFn: () =>
+      pb
+        .collection(Collections.Predictions)
+        .getFullList<PredictionsResponse<{ user: UsersResponse }>>({
+          filter: `match = '${matchId}'`,
+          expand: "user",
+        }),
+  });
+
 export const useCreatePrediction = (predictionsQueryKey: QueryKey) => {
   const posthog = usePostHog();
   return useMutation({
