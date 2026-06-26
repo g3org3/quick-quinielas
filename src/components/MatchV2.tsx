@@ -91,13 +91,18 @@ export default function MatchV2(props: Props) {
     const firstGoal = data.get("first_goal")?.toString() ?? "";
     const firstGoalFrom = data.get("first_goal_from")?.toString() ?? "";
 
+    const user = pb.authStore.model as UsersResponse;
+    const isBonusActive =
+      user?.favorite_team === match.home ||
+      user?.favorite_team === match.away;
     const payload: Partial<PredictionsRecord> = {
-      user: pb.authStore.model?.id,
+      user: user?.id,
       homeScore: Number(data.get("home")) || 0,
       awayScore: Number(data.get("away")) || 0,
       first_goal: firstGoal as PredictionsFirstGoalOptions,
       first_goal_from: firstGoalFrom as PredictionsFirstGoalFromOptions,
       match: match.id,
+      isBonusActive,
     };
     if (prediction?.id) {
       posthog.capture("prediction_updated", {

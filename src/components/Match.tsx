@@ -89,11 +89,16 @@ export default function Match(props: Props) {
       form[key] = Number(value) || 0;
     }
 
+    const user = pb.authStore.model as UsersResponse;
+    const isBonusActive =
+      user?.favorite_team === match.home ||
+      user?.favorite_team === match.away;
     const payload: Partial<PredictionsRecord> = {
-      user: pb.authStore.model?.id,
+      user: user?.id,
       homeScore: form.home,
       awayScore: form.away,
       match: match.id,
+      isBonusActive,
     };
     if (prediction?.id) {
       posthog.capture("prediction_updated", {
