@@ -2,6 +2,7 @@ import { Drawer } from "vaul";
 import {
   Avatar,
   AvatarGroup,
+  Badge,
   Box,
   Flex,
   Text,
@@ -17,6 +18,7 @@ export interface AvatarUser {
   name: string;
   updatedAt: string;
   favoriteTeam?: string;
+  isBonusActive?: boolean;
 }
 
 interface Props {
@@ -106,6 +108,11 @@ export default function AvatarListDrawer({ users, max }: Props) {
                   <Text>{user.name || "Anónimo"}</Text>
                   {user.favoriteTeam && (
                     <Flag height="24px" country={user.favoriteTeam} />
+                  )}
+                  {user.isBonusActive && (
+                    <Badge alignSelf="center" colorScheme="red">
+                      x2
+                    </Badge>
                   )}
                   <Text ml="auto" fontSize="sm" color={dateColor}>
                     {user.updatedAt

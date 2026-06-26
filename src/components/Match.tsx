@@ -40,9 +40,15 @@ interface Props {
 }
 
 export default function Match(props: Props) {
-  const { match, tournamentId, bet, getMatchesQueryKey, prediction } = props;
+  const { match, tournamentId, bet, prediction } = props;
   const border = useColorModeValue("gray.200", "gray.700");
   const posthog = usePostHog();
+
+  const favoriteTeam = (pb.authStore.model as UsersResponse | null)
+    ?.favorite_team;
+  const isBonusActive =
+    !!favoriteTeam &&
+    (match.home === favoriteTeam || match.away === favoriteTeam);
 
   const { mutate, isPending } = useMutation({
     mutationFn(prediction: Partial<PredictionsRecord>) {
@@ -103,6 +109,7 @@ export default function Match(props: Props) {
     name: bet.expand?.user.name ?? "",
     updatedAt: bet.updated,
     favoriteTeam: bet.expand?.user.favorite_team,
+    isBonusActive: bet.isBonusActive,
   }));
   const home = prediction?.homeScore.toString() ?? "";
   const away = prediction?.awayScore.toString() ?? "";
@@ -129,6 +136,7 @@ export default function Match(props: Props) {
       homeScore: form.home,
       awayScore: form.away,
       match: match.id,
+      isBonusActive,
     };
     if (prediction?.id) {
       posthog.capture("prediction_updated", {
@@ -158,7 +166,6 @@ export default function Match(props: Props) {
   const [isGameStarted2, setGameStarted] = useState(
     matchdate.toMillis() <= DateTime.now().toMillis()
   );
-  const _isGameStarted = matchdate.toMillis() <= DateTime.now().toMillis();
   useEffect(() => {
     if (isGameStarted2) return;
     const id = setInterval(() => {
@@ -179,7 +186,7 @@ export default function Match(props: Props) {
       match.homeScore === prediction.homeScore &&
       match.awayScore === prediction.awayScore
     ) {
-      _points = prediction.isBonusActive ? "+6" : "+3";
+      _points = isBonusActive ? "+6" : "+3";
       _pointsColor = "green";
     } else if (
       (match.homeScore > match.awayScore &&
@@ -189,7 +196,7 @@ export default function Match(props: Props) {
       (match.homeScore === match.awayScore &&
         prediction.homeScore === prediction.awayScore)
     ) {
-      _points = prediction.isBonusActive ? "+2" : "+1";
+      _points = isBonusActive ? "+2" : "+1";
       _pointsColor = "blue";
     }
   }
@@ -202,11 +209,11 @@ export default function Match(props: Props) {
         borderBottom="1px solid"
         borderColor={border}
         bgGradient={
-          !prediction?.isBonusActive
+          !isBonusActive
             ? undefined
             : "linear(to-br, red.600, red.900, orange.500)"
         }
-        color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+        color={isBonusActive ? "whiteAlpha.800" : undefined}
         py="5"
       >
         <Flex alignItems="center" position="relative" gap="3">
@@ -234,7 +241,7 @@ export default function Match(props: Props) {
               </GameHistoryDrawer>
               {match.home}
               <Flex
-                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                color={isBonusActive ? "whiteAlpha.800" : undefined}
                 fontFamily="monospace"
               >
                 {Math.floor((100 * (bet?.home_per || 0)) / 17)}%
@@ -291,7 +298,7 @@ export default function Match(props: Props) {
                 w="50px"
               />
               <Flex
-                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                color={isBonusActive ? "whiteAlpha.800" : undefined}
                 fontSize="x-large"
               >
                 -
@@ -328,7 +335,7 @@ export default function Match(props: Props) {
               </GameHistoryDrawer>
               {match.away}
               <Flex
-                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                color={isBonusActive ? "whiteAlpha.800" : undefined}
                 fontFamily="monospace"
               >
                 {Math.floor((100 * (bet?.away_per || 0)) / 17)}%
@@ -337,34 +344,12 @@ export default function Match(props: Props) {
           </Flex>
         </Flex>
         <Flex gap={3} p={1} alignItems="center">
-          <FeatFlagComponent
-            showIfAdmin
-            feature="show_admin_bonus_enable_button"
-          >
-            <AdminEnableBonus
-              matchId={match.id}
-              enableBonus={match.enableBonus}
-              getMatchesQueryKey={getMatchesQueryKey}
-            />
-          </FeatFlagComponent>
           <Flex flex="1" overflow="auto">
             <AvatarListDrawer
               users={users}
               max={showLimitAvatars ? 3 : undefined}
             />
           </Flex>
-          <FeatFlagComponent
-            showIf={!_isGameStarted && match.enableBonus}
-            feature="show_bonus"
-          >
-            <BonusButton
-              isActive={!!prediction?.isBonusActive}
-              predictionId={prediction?.id}
-              matchId={match.id}
-              label={`${match.home}-${match.away}`}
-              queryKey={props.predictionsQueryKey}
-            />
-          </FeatFlagComponent>
           {!isGameStarted2 ? (
             <Button
               disabled={isAnyPending}
@@ -392,7 +377,7 @@ export default function Match(props: Props) {
           )}
         </Flex>
         <Flex
-          color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+          color={isBonusActive ? "whiteAlpha.800" : undefined}
           display="box"
           fontSize="14px"
           textAlign="center"
@@ -405,110 +390,5 @@ export default function Match(props: Props) {
         </Flex>
       </Flex>
     </form>
-  );
-}
-
-interface BonusProps {
-  isActive: boolean;
-  predictionId?: null | string;
-  queryKey: QueryKey;
-  matchId: string;
-  label: string;
-}
-
-function BonusButton(props: BonusProps) {
-  const { isActive, matchId, label, predictionId, queryKey } = props;
-  const posthog = usePostHog();
-  const { isPending, mutate } = useMutation({
-    mutationFn(isBonusActive: boolean) {
-      if (predictionId) {
-        return pb
-          .collection(Collections.Predictions)
-          .update<
-            Partial<PredictionsResponse>
-          >(predictionId, { isBonusActive });
-      }
-      throw new Error("Tienes que guardar un resultado primero");
-    },
-    onSuccess() {
-      posthog.capture(isActive ? "deactivated_x2" : "activated_x2", {
-        matchId,
-        label,
-      });
-      queryClient.invalidateQueries({ queryKey });
-      toaster.success(isActive ? "Desactivado" : "X2 activado!");
-    },
-    onError(err) {
-      posthog.captureException(err);
-      toaster.error(err.message);
-    },
-  });
-  return (
-    <>
-      {isActive ? (
-        <Button
-          disabled={isPending}
-          onClick={() => mutate(false)}
-          bg="white"
-          color="black"
-          size="sm"
-          fontWeight="bold"
-          _hover={{
-            bg: "gray.200",
-          }}
-          _active={{
-            bg: "gray.400",
-          }}
-        >
-          x2
-        </Button>
-      ) : (
-        <Button
-          color="white"
-          bgGradient="linear(to-br, red.800, red.800, orange.900)"
-          _hover={{
-            bgGradient: "linear(to-br, red.800, red.800, orange.900)",
-            color: "white",
-          }}
-          _active={{
-            bgGradient: "linear(to-br, red.900, red.900, orange.900)",
-            color: "white",
-          }}
-          size="sm"
-          disabled={isPending}
-          onClick={() => mutate(true)}
-          variant="outline"
-        >
-          Activar x2
-        </Button>
-      )}
-    </>
-  );
-}
-
-interface AdminEnableProps {
-  matchId: string;
-  enableBonus?: boolean;
-  getMatchesQueryKey: QueryKey;
-}
-function AdminEnableBonus(props: AdminEnableProps) {
-  const { mutate } = useMutation({
-    mutationFn(enableBonus: boolean) {
-      return pb
-        .collection(Collections.Matches)
-        .update(props.matchId, { enableBonus });
-    },
-    onSuccess() {
-      toaster.success("saved");
-      queryClient.invalidateQueries({ queryKey: props.getMatchesQueryKey });
-    },
-    onError() {
-      toaster.error("failed");
-    },
-  });
-  return (
-    <Button onClick={() => mutate(!props.enableBonus)} size="sm">
-      E: {String(props.enableBonus).substring(0, 2)}
-    </Button>
   );
 }
