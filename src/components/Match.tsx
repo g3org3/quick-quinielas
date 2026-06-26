@@ -66,6 +66,8 @@ export default function Match(props: Props) {
   }));
   const home = prediction?.homeScore.toString() ?? "";
   const away = prediction?.awayScore.toString() ?? "";
+  const isBonusActive =
+    user?.favorite_team === match.home || user?.favorite_team === match.away;
 
   const onUpdate: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -83,10 +85,6 @@ export default function Match(props: Props) {
     for (const [key, value] of data.entries()) {
       form[key] = Number(value) || 0;
     }
-
-    const isBonusActive =
-      user?.favorite_team === match.home ||
-      user?.favorite_team === match.away;
     const payload: Partial<PredictionsRecord> = {
       user: user?.id,
       homeScore: form.home,
@@ -157,6 +155,7 @@ export default function Match(props: Props) {
     }
   }
   const showLimitAvatars = useFeatFlag("show_limit_avatars");
+  const _isBonusActive = isBonusActive || prediction?.isBonusActive;
 
   return (
     <form onSubmit={onUpdate}>
@@ -165,11 +164,11 @@ export default function Match(props: Props) {
         borderBottom="1px solid"
         borderColor={border}
         bgGradient={
-          !prediction?.isBonusActive
+          !_isBonusActive
             ? undefined
             : "linear(to-br, red.600, red.900, orange.500)"
         }
-        color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+        color={_isBonusActive ? "whiteAlpha.800" : undefined}
         py="5"
       >
         <Flex alignItems="center" position="relative" gap="3">
@@ -192,12 +191,15 @@ export default function Match(props: Props) {
               alignItems="center"
               justifyContent="center"
             >
-              <GameHistoryDrawer tournamentId={tournamentId} country={match.home}>
+              <GameHistoryDrawer
+                tournamentId={tournamentId}
+                country={match.home}
+              >
                 <Flag height="40px" country={match.home} />
               </GameHistoryDrawer>
               {match.home}
               <Flex
-                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                color={_isBonusActive ? "whiteAlpha.800" : undefined}
                 fontFamily="monospace"
               >
                 {Math.floor((100 * (bet?.home_per || 0)) / 17)}%
@@ -254,7 +256,7 @@ export default function Match(props: Props) {
                 w="50px"
               />
               <Flex
-                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                color={_isBonusActive ? "whiteAlpha.800" : undefined}
                 fontSize="x-large"
               >
                 -
@@ -286,12 +288,15 @@ export default function Match(props: Props) {
           </Flex>
           <Flex flex="1" gap="3" alignItems="center">
             <Flex flex="1" alignItems="center" flexDir="column">
-              <GameHistoryDrawer tournamentId={tournamentId} country={match.away}>
+              <GameHistoryDrawer
+                tournamentId={tournamentId}
+                country={match.away}
+              >
                 <Flag height="40px" country={match.away} />
               </GameHistoryDrawer>
               {match.away}
               <Flex
-                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                color={_isBonusActive ? "whiteAlpha.800" : undefined}
                 fontFamily="monospace"
               >
                 {Math.floor((100 * (bet?.away_per || 0)) / 17)}%
@@ -333,7 +338,7 @@ export default function Match(props: Props) {
           )}
         </Flex>
         <Flex
-          color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+          color={_isBonusActive ? "whiteAlpha.800" : undefined}
           display="box"
           fontSize="14px"
           textAlign="center"
