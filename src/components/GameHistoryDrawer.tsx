@@ -66,7 +66,7 @@ export default function GameHistoryDrawer({
             outline: "none",
           }}
         >
-          <Box bg={bg} borderTopRadius="2xl" maxH="70vh" overflowY="auto" pb={6}>
+          <Box bg={bg} borderTopRadius="2xl" h="50vh" overflowY="auto" pb={6}>
             <Flex justifyContent="center" pt={3} pb={2}>
               <Box w="40px" h="6px" borderRadius="full" bg={handleColor} />
             </Flex>
