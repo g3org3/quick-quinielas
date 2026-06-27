@@ -24,6 +24,7 @@ import {
 import { pb } from "@/pb";
 import Flag from "./Flag";
 import AvatarListDrawer from "./AvatarListDrawer";
+import GameHistoryDrawer from "./GameHistoryDrawer";
 import { useFeatFlag } from "@/featureFlags";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
 import {
@@ -208,7 +209,12 @@ export default function MatchV2(props: Props) {
               alignItems="center"
               justifyContent="center"
             >
-              <Flag height="40px" country={match.home} />
+              <GameHistoryDrawer
+                tournamentId={tournamentId}
+                country={match.home}
+              >
+                <Flag height="40px" country={match.home} />
+              </GameHistoryDrawer>
               {match.home}
               <Flex
                 color={_isBonusActive ? "whiteAlpha.800" : undefined}
@@ -300,7 +306,12 @@ export default function MatchV2(props: Props) {
           </Flex>
           <Flex flex="1" gap="3" alignItems="center">
             <Flex flex="1" alignItems="center" flexDir="column">
-              <Flag height="40px" country={match.away} />
+              <GameHistoryDrawer
+                tournamentId={tournamentId}
+                country={match.away}
+              >
+                <Flag height="40px" country={match.away} />
+              </GameHistoryDrawer>
               {match.away}
               <Flex
                 color={_isBonusActive ? "whiteAlpha.800" : undefined}
