@@ -225,6 +225,7 @@ export default function MatchV2(props: Props) {
             </Flex>
           </Flex>
           <Flex flexDirection="column" gap={2} alignSelf="flex-start">
+            <Badge alignSelf="center">{Number(match.roundNumber) < 4 ? 'Fase Groupos': '16avos'}</Badge>
             {isGameStarted2 ? (
               <Flex
                 justifyContent="center"
