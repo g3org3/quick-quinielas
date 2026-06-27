@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import type { UsersResponse } from "@/pocketbase-types";
 import { pb } from "@/pb";
 import { FeatureFlag, useFeatFlag } from "@/featureFlags";
+import { useUserQuery } from "@/api";
 
 interface Props {
   feature: FeatureFlag;
@@ -13,7 +13,8 @@ interface Props {
 
 export default function FeatFlagComponent(props: Props) {
   const { showIf = true, showIfAdmin, fallback = null } = props;
-  const { isAdmin } = pb.authStore.model as UsersResponse;
+  const { data: user } = useUserQuery(pb.authStore.model?.id);
+  const isAdmin = user?.isAdmin;
   const isActive = useFeatFlag(props.feature);
 
   if (!isActive) {

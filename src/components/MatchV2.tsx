@@ -10,25 +10,28 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import { Link } from "@tanstack/react-router";
-import { QueryKey, useMutation, useQuery } from "@tanstack/react-query";
+import { QueryKey, useQuery } from "@tanstack/react-query";
 import { usePostHog } from "@posthog/react";
 import { FaEye, FaLock, FaLockOpen, FaSave } from "react-icons/fa";
 import {
-  Collections,
   MatchBetsResponse,
   MatchesResponse,
   PredictionsFirstGoalFromOptions,
   PredictionsFirstGoalOptions,
   PredictionsRecord,
   PredictionsResponse,
-  UsersResponse,
 } from "@/pocketbase-types";
 import { pb } from "@/pb";
 import Flag from "./Flag";
 import AvatarListDrawer from "./AvatarListDrawer";
 import { useFeatFlag } from "@/featureFlags";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
-import { queryClient } from "@/queryClient";
+import {
+  getMatchPredictionsQuery,
+  useCreatePrediction,
+  useUpdatePrediction,
+  useUserQuery,
+} from "@/api";
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -42,62 +45,18 @@ interface Props {
 }
 
 export default function MatchV2(props: Props) {
-  const { match, tournamentId, bet, getMatchesQueryKey, prediction } = props;
+  const { match, tournamentId, bet, prediction } = props;
   const border = useColorModeValue("gray.200", "gray.700");
   const posthog = usePostHog();
 
-  const { mutate, isPending } = useMutation({
-    mutationFn(prediction: Partial<PredictionsRecord>) {
-      return pb.collection(Collections.Predictions).create(prediction);
-    },
-    onSuccess() {
-      queryClient.invalidateQueries({
-        queryKey: props.predictionsQueryKey,
-      });
-      toaster.success("saved");
-    },
-    onError(err) {
-      toaster.error("Something went wrong: " + err.message);
-    },
-  });
-  const { mutate: update, isPending: uisPending } = useMutation({
-    mutationFn: (params: {
-      id: string;
-      prediction: Partial<PredictionsRecord>;
-    }) =>
-      pb
-        .collection(Collections.Predictions)
-        .update(params.id, params.prediction),
-    onSuccess() {
-      toaster.success("saved");
-      queryClient.invalidateQueries({
-        queryKey: props.predictionsQueryKey,
-      });
-    },
-    onError(err) {
-      toaster.error("Something went wrong: " + err.message);
-      posthog.captureException(err);
-      if (
-        confirm(
-          "Hubo un problem al guardar. Quisieres refrescar la pagina para arreglarlo?"
-        )
-      ) {
-        window.document.location.reload();
-      }
-    },
-  });
+  const { mutate, isPending } = useCreatePrediction(props.predictionsQueryKey);
+  const { mutate: update, isPending: uisPending } = useUpdatePrediction(
+    props.predictionsQueryKey
+  );
+  const { data: user } = useUserQuery(pb.authStore.model?.id);
 
   // CHAPUZ BELOW
-  const { data: bets = [] } = useQuery({
-    queryKey: ["get-all", Collections.Predictions, match.id],
-    queryFn: () =>
-      pb
-        .collection(Collections.Predictions)
-        .getFullList<PredictionsResponse<{ user: UsersResponse }>>({
-          filter: `match = '${match.id}'`,
-          expand: "user",
-        }),
-  });
+  const { data: bets = [] } = useQuery(getMatchPredictionsQuery(match.id));
   const users = bets.map((bet) => ({
     img: bet.expand?.user.img
       ? bet.expand?.user.img + "&thumb=100x100&cache=default"
@@ -109,6 +68,10 @@ export default function MatchV2(props: Props) {
   }));
   const home = prediction?.homeScore.toString() ?? "";
   const away = prediction?.awayScore.toString() ?? "";
+  const isBonusActive =
+    match.roundNumber > 3
+      ? user?.favorite_team === match.home || user?.favorite_team === match.away
+      : false;
 
   const onUpdate: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -128,12 +91,13 @@ export default function MatchV2(props: Props) {
     const firstGoalFrom = data.get("first_goal_from")?.toString() ?? "";
 
     const payload: Partial<PredictionsRecord> = {
-      user: pb.authStore.model?.id,
+      user: user?.id,
       homeScore: Number(data.get("home")) || 0,
       awayScore: Number(data.get("away")) || 0,
       first_goal: firstGoal as PredictionsFirstGoalOptions,
       first_goal_from: firstGoalFrom as PredictionsFirstGoalFromOptions,
       match: match.id,
+      isBonusActive,
     };
     if (prediction?.id) {
       posthog.capture("prediction_updated", {
@@ -163,7 +127,6 @@ export default function MatchV2(props: Props) {
   const [isGameStarted2, setGameStarted] = useState(
     matchdate.toMillis() <= DateTime.now().toMillis()
   );
-  const _isGameStarted = matchdate.toMillis() <= DateTime.now().toMillis();
   useEffect(() => {
     if (isGameStarted2) return;
     const id = setInterval(() => {
@@ -199,6 +162,7 @@ export default function MatchV2(props: Props) {
     }
   }
   const showLimitAvatars = useFeatFlag("show_limit_avatars");
+  const _isBonusActive = isBonusActive || prediction?.isBonusActive;
 
   return (
     <form onSubmit={onUpdate}>
@@ -207,11 +171,11 @@ export default function MatchV2(props: Props) {
         borderBottom="1px solid"
         borderColor={border}
         bgGradient={
-          !prediction?.isBonusActive
+          !_isBonusActive
             ? undefined
             : "linear(to-br, red.600, red.900, orange.500)"
         }
-        color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+        color={_isBonusActive ? "whiteAlpha.800" : undefined}
         py="5"
       >
         <Flex alignItems="center" position="relative" gap="3">
@@ -237,7 +201,7 @@ export default function MatchV2(props: Props) {
               <Flag height="40px" country={match.home} />
               {match.home}
               <Flex
-                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                color={_isBonusActive ? "whiteAlpha.800" : undefined}
                 fontFamily="monospace"
               >
                 {Math.floor((100 * (bet?.home_per || 0)) / 17)}%
@@ -294,7 +258,7 @@ export default function MatchV2(props: Props) {
                 w="50px"
               />
               <Flex
-                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                color={_isBonusActive ? "whiteAlpha.800" : undefined}
                 fontSize="x-large"
               >
                 -
@@ -329,7 +293,7 @@ export default function MatchV2(props: Props) {
               <Flag height="40px" country={match.away} />
               {match.away}
               <Flex
-                color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+                color={_isBonusActive ? "whiteAlpha.800" : undefined}
                 fontFamily="monospace"
               >
                 {Math.floor((100 * (bet?.away_per || 0)) / 17)}%
@@ -374,34 +338,12 @@ export default function MatchV2(props: Props) {
           </Flex>
         </Flex>
         <Flex gap={3} p={1} alignItems="center">
-          <FeatFlagComponent
-            showIfAdmin
-            feature="show_admin_bonus_enable_button"
-          >
-            <AdminEnableBonus
-              matchId={match.id}
-              enableBonus={match.enableBonus}
-              getMatchesQueryKey={getMatchesQueryKey}
-            />
-          </FeatFlagComponent>
           <Flex flex="1" overflow="auto">
             <AvatarListDrawer
               users={users}
               max={showLimitAvatars ? 3 : undefined}
             />
           </Flex>
-          <FeatFlagComponent
-            showIf={!_isGameStarted && match.enableBonus}
-            feature="show_bonus"
-          >
-            <BonusButton
-              isActive={!!prediction?.isBonusActive}
-              predictionId={prediction?.id}
-              matchId={match.id}
-              label={`${match.home}-${match.away}`}
-              queryKey={props.predictionsQueryKey}
-            />
-          </FeatFlagComponent>
           {!isGameStarted2 ? (
             <Button
               disabled={isAnyPending}
@@ -429,7 +371,7 @@ export default function MatchV2(props: Props) {
           )}
         </Flex>
         <Flex
-          color={prediction?.isBonusActive ? "whiteAlpha.800" : undefined}
+          color={_isBonusActive ? "whiteAlpha.800" : undefined}
           display="box"
           fontSize="14px"
           textAlign="center"
@@ -442,113 +384,5 @@ export default function MatchV2(props: Props) {
         </Flex>
       </Flex>
     </form>
-  );
-}
-
-interface BonusProps {
-  isActive: boolean;
-  predictionId?: null | string;
-  queryKey: QueryKey;
-  matchId: string;
-  label: string;
-}
-
-function BonusButton(props: BonusProps) {
-  const { isActive, matchId, label, predictionId, queryKey } = props;
-  const posthog = usePostHog();
-  const { isPending, mutate } = useMutation({
-    mutationFn(isBonusActive: boolean) {
-      const user = pb.authStore.model as UsersResponse;
-      if (user.name === "JAG")
-        throw new Error("vas primero no puedes activar el x2");
-      if (predictionId) {
-        return pb
-          .collection(Collections.Predictions)
-          .update<
-            Partial<PredictionsResponse>
-          >(predictionId, { isBonusActive });
-      }
-      throw new Error("Tienes que guardar un resultado primero");
-    },
-    onSuccess() {
-      posthog.capture(isActive ? "deactivated_x2" : "activated_x2", {
-        matchId,
-        label,
-      });
-      queryClient.invalidateQueries({ queryKey });
-      toaster.success(isActive ? "Desactivado" : "X2 activado!");
-    },
-    onError(err) {
-      posthog.captureException(err);
-      toaster.error(err.message);
-    },
-  });
-  return (
-    <>
-      {isActive ? (
-        <Button
-          disabled={isPending}
-          onClick={() => mutate(false)}
-          bg="white"
-          color="black"
-          size="sm"
-          fontWeight="bold"
-          _hover={{
-            bg: "gray.200",
-          }}
-          _active={{
-            bg: "gray.400",
-          }}
-        >
-          x2
-        </Button>
-      ) : (
-        <Button
-          color="white"
-          bgGradient="linear(to-br, red.800, red.800, orange.900)"
-          _hover={{
-            bgGradient: "linear(to-br, red.800, red.800, orange.900)",
-            color: "white",
-          }}
-          _active={{
-            bgGradient: "linear(to-br, red.900, red.900, orange.900)",
-            color: "white",
-          }}
-          size="sm"
-          disabled={isPending}
-          onClick={() => mutate(true)}
-          variant="outline"
-        >
-          Activar x2
-        </Button>
-      )}
-    </>
-  );
-}
-
-interface AdminEnableProps {
-  matchId: string;
-  enableBonus?: boolean;
-  getMatchesQueryKey: QueryKey;
-}
-function AdminEnableBonus(props: AdminEnableProps) {
-  const { mutate } = useMutation({
-    mutationFn(enableBonus: boolean) {
-      return pb
-        .collection(Collections.Matches)
-        .update(props.matchId, { enableBonus });
-    },
-    onSuccess() {
-      toaster.success("saved");
-      queryClient.invalidateQueries({ queryKey: props.getMatchesQueryKey });
-    },
-    onError() {
-      toaster.error("failed");
-    },
-  });
-  return (
-    <Button onClick={() => mutate(!props.enableBonus)} size="sm">
-      E: {String(props.enableBonus).substring(0, 2)}
-    </Button>
   );
 }

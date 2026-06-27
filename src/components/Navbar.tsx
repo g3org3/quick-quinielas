@@ -1,5 +1,4 @@
 import { pb } from "@/pb";
-import { UsersResponse } from "@/pocketbase-types";
 import {
   Container,
   Text,
@@ -16,12 +15,13 @@ import ColorModeSwitcher from "./ColorModeSwitcher";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useFeatFlag } from "@/featureFlags";
+import { useUserQuery } from "@/api";
 import Swal from "sweetalert2";
 
 export default function Navbar() {
   const bg = useColorModeValue("white", "gray.800");
   const posthog = usePostHog();
-  const user = pb.authStore.model as UsersResponse;
+  const { data: user } = useUserQuery(pb.authStore.model?.id);
   const [version, setVersion] = useState<number | undefined>(undefined);
 
   const { data, isLoading } = useQuery({
@@ -32,7 +32,7 @@ export default function Navbar() {
     },
   });
   const flag_showUpdateApp = useFeatFlag("show_update_app");
-  posthog.identify(user.email);
+  if (user) posthog.identify(user.email);
 
   useEffect(() => {
     if (data?.version === undefined) {
@@ -79,7 +79,7 @@ export default function Navbar() {
             )}
           </Flex>
         </Link>
-        {user.isAdmin && <Link to="/admin"><Code>Admin</Code></Link>}
+        {user?.isAdmin && <Link to="/admin"><Code>Admin</Code></Link>}
         <Spacer />
         <ColorModeSwitcher />
         <Button
@@ -88,10 +88,14 @@ export default function Navbar() {
               <Avatar
                 size="xs"
                 name={user?.name}
-                src={pb.files.getUrl(user, user.avatar, {
-                  thumb: "100x100",
-                  cache: "default",
-                })}
+                src={
+                  user
+                    ? pb.files.getUrl(user, user.avatar, {
+                        thumb: "100x100",
+                        cache: "default",
+                      })
+                    : undefined
+                }
               />
           }
         >

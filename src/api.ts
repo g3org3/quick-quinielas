@@ -1,4 +1,11 @@
-import { queryOptions, useMutation } from "@tanstack/react-query";
+import toaster from "react-hot-toast";
+import {
+  QueryKey,
+  queryOptions,
+  useMutation,
+  useQuery,
+} from "@tanstack/react-query";
+import { usePostHog } from "@posthog/react";
 import { FeatFlagResponse } from "./featureFlags";
 import { pb } from "./pb";
 import { queryClient } from "./queryClient";
@@ -7,6 +14,7 @@ import {
   LeaderboardResponse,
   MatchBetsResponse,
   MatchesResponse,
+  PredictionsRecord,
   PredictionsResponse,
   ResultsResponse,
   TournamentsResponse,
@@ -149,6 +157,12 @@ export const getUserQuery = (userId: string) =>
       pb.collection(Collections.Users).getOne<UsersResponse>(userId),
   });
 
+export const useUserQuery = (userId?: string) =>
+  useQuery({
+    ...getUserQuery(userId ?? ""),
+    enabled: !!userId,
+  });
+
 export const useSetFavoriteTeam = (userId: string) => {
   return useMutation({
     mutationFn(favorite_team: string) {
@@ -216,3 +230,60 @@ export const matchBetsQuery = queryOptions({
       .collection(Collections.MatchBets)
       .getFullList<MatchBetsResponse<number, number, number>>(),
 });
+
+export const getMatchPredictionsQuery = (matchId: string) =>
+  queryOptions({
+    queryKey: ["get-all", Collections.Predictions, matchId],
+    queryFn: () =>
+      pb
+        .collection(Collections.Predictions)
+        .getFullList<PredictionsResponse<{ user: UsersResponse }>>({
+          filter: `match = '${matchId}'`,
+          expand: "user",
+        }),
+  });
+
+export const useCreatePrediction = (predictionsQueryKey: QueryKey) => {
+  const posthog = usePostHog();
+  return useMutation({
+    mutationFn(prediction: Partial<PredictionsRecord>) {
+      return pb.collection(Collections.Predictions).create(prediction);
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: predictionsQueryKey });
+      toaster.success("saved");
+    },
+    onError(err) {
+      toaster.error("Something went wrong: " + err.message);
+      posthog.captureException(err);
+    },
+  });
+};
+
+export const useUpdatePrediction = (predictionsQueryKey: QueryKey) => {
+  const posthog = usePostHog();
+  return useMutation({
+    mutationFn: (params: {
+      id: string;
+      prediction: Partial<PredictionsRecord>;
+    }) =>
+      pb
+        .collection(Collections.Predictions)
+        .update(params.id, params.prediction),
+    onSuccess() {
+      toaster.success("saved");
+      queryClient.invalidateQueries({ queryKey: predictionsQueryKey });
+    },
+    onError(err) {
+      toaster.error("Something went wrong: " + err.message);
+      posthog.captureException(err);
+      if (
+        confirm(
+          "Hubo un problem al guardar. Quisieres refrescar la pagina para arreglarlo?"
+        )
+      ) {
+        window.document.location.reload();
+      }
+    },
+  });
+};

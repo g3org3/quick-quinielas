@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Flex, Button, useColorModeValue } from "@chakra-ui/react";
 import { pb } from "@/pb";
-import { UsersResponse } from "@/pocketbase-types";
+import { useUserQuery } from "@/api";
 
 export default function BottomNav({
   tournamentId,
@@ -10,7 +10,8 @@ export default function BottomNav({
   tournamentId: string;
   state?: "vaticinios" | "puntos" | "perfil";
 }) {
-  const userId = (pb.authStore.model as UsersResponse).id;
+  const { data: user } = useUserQuery(pb.authStore.model?.id);
+  const userId = user?.id ?? "";
   const borderColor = useColorModeValue('gray.200', 'gray.600')
 
   return (
