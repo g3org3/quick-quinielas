@@ -99,6 +99,12 @@ export default function MatchV2(props: Props) {
       match: match.id,
       isBonusActive,
     };
+    if (isBonusActive) {
+      posthog.capture("activated_x2", {
+        label: match.home + "-" + match.away,
+        favorite_team: user?.favorite_team,
+      });
+    }
     if (prediction?.id) {
       posthog.capture("prediction_updated", {
         match_id: match.id,
@@ -106,6 +112,8 @@ export default function MatchV2(props: Props) {
         away_team: match.away,
         predicted_home_score: payload.homeScore,
         predicted_away_score: payload.awayScore,
+        first_goal: payload.first_goal,
+        first_goal_from: payload.first_goal_from,
         tournament_id: tournamentId,
       });
       update({ id: prediction.id, prediction: payload });
@@ -116,6 +124,8 @@ export default function MatchV2(props: Props) {
         away_team: match.away,
         predicted_home_score: payload.homeScore,
         predicted_away_score: payload.awayScore,
+        first_goal: payload.first_goal,
+        first_goal_from: payload.first_goal_from,
         tournament_id: tournamentId,
       });
       mutate(payload);
