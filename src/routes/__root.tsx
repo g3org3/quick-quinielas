@@ -58,8 +58,7 @@ function Root() {
         <Container
           maxW="container.xl"
           display="flex"
-          py="4"
-          px="0"
+          p="0"
           gap="3"
           flexDir="column"
           flex="1"
