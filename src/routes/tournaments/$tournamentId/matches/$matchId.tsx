@@ -55,6 +55,7 @@ function SingleMatch() {
   const { matchId, tournamentId } = Route.useParams();
   const green = useColorModeValue("green.100", "green.800");
   const yellow = useColorModeValue("yellow.100", "yellow.800");
+  const blue = useColorModeValue("blue.100", "blue.800");
   const red = useColorModeValue("red.50", "red.800");
 
   const { data: tournament } = useSuspenseQuery(
@@ -106,19 +107,26 @@ function SingleMatch() {
     return tb - ta;
   });
 
-  const getRowStyle = (result?: (typeof results)[number]) => ({
-    bgGradient: result?.isBonusActive
-      ? "linear(to-br, red.600, red.900, orange.500)"
-      : undefined,
-    color: result?.isBonusActive ? "white" : undefined,
-    bg: result?.isBonusActive
-      ? undefined
-      : result?.points === 3
-        ? green
-        : result?.points === 1
-          ? yellow
-          : red,
-  });
+  const getRowStyle = (result?: (typeof results)[number]) => {
+    if (result?.isBonusActive) {
+      return {
+        bgGradient: "linear(to-br, red.600, red.900, orange.500)",
+        color: "white",
+        bg: undefined,
+      };
+    }
+
+    let bg = red;
+    if (result?.exact_score === "1") {
+      bg = green;
+    } else if (result?.correct_result === "1") {
+      bg = yellow;
+    } else if ((result?.points ?? 0) > 0) {
+      bg = blue;
+    }
+
+    return { bgGradient: undefined, color: undefined, bg };
+  };
 
   if (!match) return <div>something went wrong</div>;
 
