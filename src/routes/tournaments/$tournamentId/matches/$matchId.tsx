@@ -106,6 +106,20 @@ function SingleMatch() {
     return tb - ta;
   });
 
+  const getRowStyle = (result?: (typeof results)[number]) => ({
+    bgGradient: result?.isBonusActive
+      ? "linear(to-br, red.600, red.900, orange.500)"
+      : undefined,
+    color: result?.isBonusActive ? "white" : undefined,
+    bg: result?.isBonusActive
+      ? undefined
+      : result?.points === 3
+        ? green
+        : result?.points === 1
+          ? yellow
+          : red,
+  });
+
   if (!match) return <div>something went wrong</div>;
 
   return (
@@ -226,24 +240,7 @@ function SingleMatch() {
               const result = results.find((p) => p.expand?.user.id === user.id);
 
               return (
-                <Tr
-                  bgGradient={
-                    result?.isBonusActive
-                      ? "linear(to-br, red.600, red.900, orange.500)"
-                      : undefined
-                  }
-                  color={result?.isBonusActive ? "white" : undefined}
-                  bg={
-                    result?.isBonusActive
-                      ? undefined
-                      : result?.points === 3
-                        ? green
-                        : result?.points === 1
-                          ? yellow
-                          : red
-                  }
-                  key={user.id}
-                >
+                <Tr {...getRowStyle(result)} key={user.id}>
                   <Td>
                     <Flex gap={2} alignItems="center">
                       <Img
