@@ -23,7 +23,7 @@ import Flag from "./Flag";
 import GameHistoryDrawer from "./GameHistoryDrawer";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
 import { useUserQuery } from "@/api";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface Props {
   bet?: MatchBetsResponse<number, number, number>;
@@ -51,8 +51,26 @@ export default function SimpleMatch(props: Props) {
     firstGoalFrom,
   } = props;
   const border = useColorModeValue("gray.200", "gray.700");
+  const bg = useColorModeValue("white", "gray.900");
 
   const { data: user } = useUserQuery(pb.authStore.model?.id);
+
+  // Collapse to a compact flags + score row once the user scrolls down.
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [collapsed, setCollapsed] = useState(false);
+  useEffect(() => {
+    let scrollParent = containerRef.current?.parentElement ?? null;
+    while (scrollParent) {
+      const overflowY = getComputedStyle(scrollParent).overflowY;
+      if (overflowY === "auto" || overflowY === "scroll") break;
+      scrollParent = scrollParent.parentElement;
+    }
+    if (!scrollParent) return;
+    const onScroll = () => setCollapsed(scrollParent.scrollTop > 16);
+    onScroll();
+    scrollParent.addEventListener("scroll", onScroll, { passive: true });
+    return () => scrollParent.removeEventListener("scroll", onScroll);
+  }, []);
 
   const home = homeScore?.toString() ?? "";
   const away = awayScore?.toString() ?? "";
@@ -101,11 +119,54 @@ export default function SimpleMatch(props: Props) {
   }
   const _isBonusActive = isBonusActive || prediction?.isBonusActive;
 
+  if (collapsed) {
+    return (
+      <Flex
+        ref={containerRef}
+        position="sticky"
+        top="0"
+        zIndex={1}
+        alignItems="center"
+        justifyContent="center"
+        gap="4"
+        borderBottom="1px solid"
+        borderColor={border}
+        bg={_isBonusActive ? undefined : bg}
+        bgGradient={
+          !_isBonusActive
+            ? undefined
+            : "linear(to-br, red.600, red.900, orange.500)"
+        }
+        color={_isBonusActive ? "whiteAlpha.800" : undefined}
+        py="2"
+      >
+        <Flag height="32px" country={match.home} />
+        <Flex
+          alignItems="center"
+          gap="2"
+          fontFamily="monospace"
+          fontSize="x-large"
+          fontWeight="bold"
+        >
+          <Text>{home || "-"}</Text>
+          <Text>-</Text>
+          <Text>{away || "-"}</Text>
+        </Flex>
+        <Flag height="32px" country={match.away} />
+      </Flex>
+    );
+  }
+
   return (
     <Flex
+      ref={containerRef}
       flexDir="column"
+      position="sticky"
+      top="0"
+      zIndex={1}
       borderBottom="1px solid"
       borderColor={border}
+      bg={_isBonusActive ? undefined : bg}
       bgGradient={
         !_isBonusActive
           ? undefined
