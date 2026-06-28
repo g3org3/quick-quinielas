@@ -32,7 +32,7 @@ import {
 import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
-import MatchV2 from "@/components/MatchV2";
+import SimpleMatch from "@/components/SimpleMatch";
 import { queryClient } from "@/queryClient";
 import Flag from "@/components/Flag";
 
@@ -195,7 +195,7 @@ function SingleMatch() {
           </Flex>
         }
       >
-        <MatchV2
+        <SimpleMatch
           match={match}
           tournamentId={tournamentId}
           predictionsQueryKey={["get-all", Collections.Results, matchId]}
