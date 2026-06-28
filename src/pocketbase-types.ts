@@ -114,6 +114,8 @@ export type ResultsRecord<Tpoints = unknown> = {
   isBonusActive?: boolean;
   match_id?: RecordIdString;
   p_away?: number;
+  p_first_goal?: string;
+  p_first_goal_from?: string;
   p_home?: number;
   points?: null | Tpoints;
   prediction_id?: RecordIdString;

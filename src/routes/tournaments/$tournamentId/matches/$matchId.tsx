@@ -17,7 +17,11 @@ import { Flex, useColorModeValue } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import toaster from "react-hot-toast";
 
-import { Collections } from "@/pocketbase-types";
+import {
+  Collections,
+  PredictionsFirstGoalFromOptions,
+  PredictionsFirstGoalOptions,
+} from "@/pocketbase-types";
 import { pb } from "@/pb";
 import {
   getMatchQuery,
@@ -28,7 +32,7 @@ import {
 import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
-import MatchV2 from "@/components/MatchV2";
+import SimpleMatch from "@/components/SimpleMatch";
 import { queryClient } from "@/queryClient";
 import Flag from "@/components/Flag";
 
@@ -100,6 +104,20 @@ function SingleMatch() {
     if (tb === null) return -1;
     // both have a prediction: newest updated first
     return tb - ta;
+  });
+
+  const getRowStyle = (result?: (typeof results)[number]) => ({
+    bgGradient: result?.isBonusActive
+      ? "linear(to-br, red.600, red.900, orange.500)"
+      : undefined,
+    color: result?.isBonusActive ? "white" : undefined,
+    bg: result?.isBonusActive
+      ? undefined
+      : result?.points === 3
+        ? green
+        : result?.points === 1
+          ? yellow
+          : red,
   });
 
   if (!match) return <div>something went wrong</div>;
@@ -191,8 +209,12 @@ function SingleMatch() {
           </Flex>
         }
       >
-        <MatchV2
+        <SimpleMatch
           match={match}
+          homeScore={match.homeScore}
+          awayScore={match.awayScore}
+          firstGoal={match.first_goal}
+          firstGoalFrom={match.first_goal_from}
           tournamentId={tournamentId}
           predictionsQueryKey={["get-all", Collections.Results, matchId]}
           getMatchesQueryKey={["get-one", Collections.Matches, matchId]}
@@ -218,28 +240,7 @@ function SingleMatch() {
               const result = results.find((p) => p.expand?.user.id === user.id);
 
               return (
-                <Tr
-                  bgGradient={
-                    result?.points === 6 || result?.points === 2
-                      ? "linear(to-br, red.600, red.900, orange.500)"
-                      : undefined
-                  }
-                  color={
-                    result?.points === 6 || result?.points === 2
-                      ? "white"
-                      : undefined
-                  }
-                  bg={
-                    result?.points === 6 || result?.points === 2
-                      ? undefined
-                      : result?.points === 3
-                        ? green
-                        : result?.points === 1
-                          ? yellow
-                          : red
-                  }
-                  key={user.id}
-                >
+                <Tr {...getRowStyle(result)} key={user.id}>
                   <Td>
                     <Flex gap={2} alignItems="center">
                       <Img
@@ -269,6 +270,22 @@ function SingleMatch() {
                       </Flex>
                       {user.favorite_team ? (
                         <Flag height="24px" country={user.favorite_team} />
+                      ) : null}
+                      {result?.p_first_goal ? (
+                        <Badge alignSelf="center" colorScheme="purple">
+                          {result.p_first_goal ===
+                          PredictionsFirstGoalOptions.primer_tiempo
+                            ? "T1"
+                            : "T2"}
+                        </Badge>
+                      ) : null}
+                      {result?.p_first_goal_from ? (
+                        <Badge alignSelf="center" colorScheme="purple">
+                          {result.p_first_goal_from ===
+                          PredictionsFirstGoalFromOptions.home
+                            ? "H"
+                            : "A"}
+                        </Badge>
                       ) : null}
                       {result?.isBonusActive ? (
                         <Badge alignSelf="center" colorScheme="red">
