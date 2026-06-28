@@ -11,6 +11,8 @@ import { QueryKey } from "@tanstack/react-query";
 import { FaLock, FaLockOpen } from "react-icons/fa";
 import {
   MatchBetsResponse,
+  MatchesFirstGoalFromOptions,
+  MatchesFirstGoalOptions,
   MatchesResponse,
   PredictionsFirstGoalFromOptions,
   PredictionsFirstGoalOptions,
@@ -30,13 +32,24 @@ interface Props {
   prediction?: PredictionsResponse;
   homeScore?: number;
   awayScore?: number;
+  firstGoal?: MatchesFirstGoalOptions;
+  firstGoalFrom?: MatchesFirstGoalFromOptions;
   tournamentId: string;
   getMatchesQueryKey: QueryKey;
   predictionsQueryKey: QueryKey;
 }
 
 export default function SimpleMatch(props: Props) {
-  const { match, tournamentId, bet, prediction, homeScore, awayScore } = props;
+  const {
+    match,
+    tournamentId,
+    bet,
+    prediction,
+    homeScore,
+    awayScore,
+    firstGoal,
+    firstGoalFrom,
+  } = props;
   const border = useColorModeValue("gray.200", "gray.700");
 
   const { data: user } = useUserQuery(pb.authStore.model?.id);
@@ -224,7 +237,7 @@ export default function SimpleMatch(props: Props) {
           <Text fontSize="sm">Primer gol</Text>
           <Select
             name="first_goal"
-            defaultValue={prediction?.first_goal ?? ""}
+            defaultValue={firstGoal ?? ""}
             disabled
             size="sm"
           >
@@ -241,7 +254,7 @@ export default function SimpleMatch(props: Props) {
           <Text fontSize="sm">Primer gol de</Text>
           <Select
             name="first_goal_from"
-            defaultValue={prediction?.first_goal_from ?? ""}
+            defaultValue={firstGoalFrom ?? ""}
             disabled
             size="sm"
           >

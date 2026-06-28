@@ -199,6 +199,8 @@ function SingleMatch() {
           match={match}
           homeScore={match.homeScore}
           awayScore={match.awayScore}
+          firstGoal={match.first_goal}
+          firstGoalFrom={match.first_goal_from}
           tournamentId={tournamentId}
           predictionsQueryKey={["get-all", Collections.Results, matchId]}
           getMatchesQueryKey={["get-one", Collections.Matches, matchId]}
