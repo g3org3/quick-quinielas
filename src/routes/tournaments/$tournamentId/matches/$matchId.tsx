@@ -117,9 +117,9 @@ function SingleMatch() {
     }
 
     let bg = red;
-    if (result?.exact_score === "1") {
+    if (result?.exact_score === 1) {
       bg = green;
-    } else if (result?.correct_result === "1") {
+    } else if (result?.correct_result === 1) {
       bg = yellow;
     } else if ((result?.points ?? 0) > 0) {
       bg = blue;
