@@ -224,17 +224,13 @@ function SingleMatch() {
               return (
                 <Tr
                   bgGradient={
-                    result?.points === 6 || result?.points === 2
+                    result?.isBonusActive
                       ? "linear(to-br, red.600, red.900, orange.500)"
                       : undefined
                   }
-                  color={
-                    result?.points === 6 || result?.points === 2
-                      ? "white"
-                      : undefined
-                  }
+                  color={result?.isBonusActive ? "white" : undefined}
                   bg={
-                    result?.points === 6 || result?.points === 2
+                    result?.isBonusActive
                       ? undefined
                       : result?.points === 3
                         ? green
