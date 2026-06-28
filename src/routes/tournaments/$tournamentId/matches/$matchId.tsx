@@ -197,6 +197,8 @@ function SingleMatch() {
       >
         <SimpleMatch
           match={match}
+          homeScore={match.homeScore}
+          awayScore={match.awayScore}
           tournamentId={tournamentId}
           predictionsQueryKey={["get-all", Collections.Results, matchId]}
           getMatchesQueryKey={["get-one", Collections.Matches, matchId]}

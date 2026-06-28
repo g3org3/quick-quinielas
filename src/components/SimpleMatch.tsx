@@ -28,19 +28,21 @@ interface Props {
   match: MatchesResponse;
   tab?: string | null;
   prediction?: PredictionsResponse;
+  homeScore?: number;
+  awayScore?: number;
   tournamentId: string;
   getMatchesQueryKey: QueryKey;
   predictionsQueryKey: QueryKey;
 }
 
 export default function SimpleMatch(props: Props) {
-  const { match, tournamentId, bet, prediction } = props;
+  const { match, tournamentId, bet, prediction, homeScore, awayScore } = props;
   const border = useColorModeValue("gray.200", "gray.700");
 
   const { data: user } = useUserQuery(pb.authStore.model?.id);
 
-  const home = prediction?.homeScore.toString() ?? "";
-  const away = prediction?.awayScore.toString() ?? "";
+  const home = homeScore?.toString() ?? "";
+  const away = awayScore?.toString() ?? "";
   const isBonusActive =
     match.roundNumber > 3
       ? user?.favorite_team === match.home || user?.favorite_team === match.away
@@ -201,18 +203,6 @@ export default function SimpleMatch(props: Props) {
               w="50px"
             />
           </Flex>
-          <FeatFlagComponent feature="show_match_score">
-            <Flex
-              gap={1}
-              mt="-15px"
-              hidden={!isGameStarted2}
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Badge colorScheme="red">{match.homeScore}</Badge>-
-              <Badge colorScheme="red">{match.awayScore}</Badge>
-            </Flex>
-          </FeatFlagComponent>
         </Flex>
         <Flex flex="1" gap="3" alignItems="center">
           <Flex flex="1" alignItems="center" flexDir="column">
