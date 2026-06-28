@@ -17,7 +17,11 @@ import { Flex, useColorModeValue } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import toaster from "react-hot-toast";
 
-import { Collections } from "@/pocketbase-types";
+import {
+  Collections,
+  PredictionsFirstGoalFromOptions,
+  PredictionsFirstGoalOptions,
+} from "@/pocketbase-types";
 import { pb } from "@/pb";
 import {
   getMatchQuery,
@@ -269,6 +273,22 @@ function SingleMatch() {
                       </Flex>
                       {user.favorite_team ? (
                         <Flag height="24px" country={user.favorite_team} />
+                      ) : null}
+                      {result?.expand?.prediction_id?.first_goal ? (
+                        <Badge alignSelf="center" colorScheme="purple">
+                          {result.expand.prediction_id.first_goal ===
+                          PredictionsFirstGoalOptions.primer_tiempo
+                            ? "T1"
+                            : "T2"}
+                        </Badge>
+                      ) : null}
+                      {result?.expand?.prediction_id?.first_goal_from ? (
+                        <Badge alignSelf="center" colorScheme="purple">
+                          {result.expand.prediction_id.first_goal_from ===
+                          PredictionsFirstGoalFromOptions.home
+                            ? "H"
+                            : "A"}
+                        </Badge>
                       ) : null}
                       {result?.isBonusActive ? (
                         <Badge alignSelf="center" colorScheme="red">
