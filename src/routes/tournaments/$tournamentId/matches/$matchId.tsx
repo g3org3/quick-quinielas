@@ -274,17 +274,17 @@ function SingleMatch() {
                       {user.favorite_team ? (
                         <Flag height="24px" country={user.favorite_team} />
                       ) : null}
-                      {result?.expand?.prediction_id?.first_goal ? (
+                      {result?.p_first_goal ? (
                         <Badge alignSelf="center" colorScheme="purple">
-                          {result.expand.prediction_id.first_goal ===
+                          {result.p_first_goal ===
                           PredictionsFirstGoalOptions.primer_tiempo
                             ? "T1"
                             : "T2"}
                         </Badge>
                       ) : null}
-                      {result?.expand?.prediction_id?.first_goal_from ? (
+                      {result?.p_first_goal_from ? (
                         <Badge alignSelf="center" colorScheme="purple">
-                          {result.expand.prediction_id.first_goal_from ===
+                          {result.p_first_goal_from ===
                           PredictionsFirstGoalFromOptions.home
                             ? "H"
                             : "A"}
