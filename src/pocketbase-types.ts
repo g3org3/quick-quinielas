@@ -109,6 +109,8 @@ export type PredictionsRecord = {
 export type ResultsRecord<Tpoints = unknown> = {
   away?: string;
   awayScore?: number;
+  correct_result?: number;
+  exact_score?: number;
   home?: string;
   homeScore?: number;
   isBonusActive?: boolean;
