@@ -228,7 +228,12 @@ function SingleMatch() {
           getMatchesQueryKey={["get-one", Collections.Matches, matchId]}
         />
       </FeatFlagComponent>
-      <Flex flexDir="column" flex="1">
+      <Flex
+        flexDir="column"
+        flex="1"
+        overflow="auto"
+        overscrollBehavior="contain"
+      >
         <Table boxShadow="md" borderRadius="sm">
           <Thead>
             <Tr>
