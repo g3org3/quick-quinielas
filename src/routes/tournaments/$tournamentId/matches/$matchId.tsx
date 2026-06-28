@@ -132,208 +132,212 @@ function SingleMatch() {
 
   return (
     <>
-      <h1
-        style={{
-          fontWeight: "bold",
-          letterSpacing: "2px",
-          fontSize: "20px",
-          textAlign: "center",
-        }}
-      >
-        {tournament?.name}
-      </h1>
-      <FeatFlagComponent
-        feature="show_new_matchcard"
-        fallback={
-          <Flex flexDir="column">
-            <Flex alignItems="center" gap="3" mb="3">
-              <Flex flex="1" gap="3" alignItems="center">
-                <Flex
-                  flexDir="column"
-                  flex="1"
-                  alignItems="center"
-                  justifyContent="flex-end"
-                >
-                  <Flag height="50px" country={match.home} />
-                  {match.home}
-                  <Flex fontFamily="monospace" color="gray.600">
-                    {homeper}%
-                  </Flex>
-                </Flex>
-              </Flex>
-              <Flex flexDir="column" alignSelf="flex-end">
-                <Flex alignItems="center" gap={2}>
-                  <Flex fontSize="xxx-large" fontWeight="bold" p="1">
-                    {match.homeScore}
-                  </Flex>
-                  <Flex fontSize="xx-large">-</Flex>
-                  <Flex fontSize="xxx-large" fontWeight="bold" p="1">
-                    {match.awayScore}
-                  </Flex>
-                </Flex>
-                <br />
-                <Flex
-                  color="gray.600"
-                  fontFamily="monospace"
-                  display="box"
-                  textAlign="center"
-                >
-                  {tieper}%
-                </Flex>
-              </Flex>
-              <Flex flex="1" gap="3" alignItems="center">
-                <Flex flexDir="column" flex="1" alignItems="center">
-                  <Flag height="40px" country={match.away} />
-                  {match.away}
-                  <Flex fontFamily="monospace" color="gray.600">
-                    {awayper}%
-                  </Flex>
-                </Flex>
-              </Flex>
-            </Flex>
-            <hr />
-            <Flex
-              color="gray.500"
-              display="box"
-              pt="1"
-              fontSize="16px"
-              textAlign="center"
-            >
-              {DateTime.fromSQL(match.startAtUtc).toFormat("EEE MMM dd")}
-              {" - "}
-              {DateTime.fromSQL(match.startAtUtc).toFormat("h:mm a")}
-            </Flex>
-            <Flex
-              color="gray.500"
-              display="box"
-              fontSize="14px"
-              textAlign="center"
-              mb="2"
-            >
-              {match.location} -{" "}
-              {DateTime.fromSQL(match.startAtUtc).toRelative()}
-            </Flex>
-            <hr />
-          </Flex>
-        }
-      >
-        <SimpleMatch
-          match={match}
-          homeScore={match.homeScore}
-          awayScore={match.awayScore}
-          firstGoal={match.first_goal}
-          firstGoalFrom={match.first_goal_from}
-          tournamentId={tournamentId}
-          predictionsQueryKey={["get-all", Collections.Results, matchId]}
-          getMatchesQueryKey={["get-one", Collections.Matches, matchId]}
-        />
-      </FeatFlagComponent>
       <Flex
         flexDir="column"
         flex="1"
         overflow="auto"
         overscrollBehavior="contain"
       >
-        <Table boxShadow="md" borderRadius="sm">
-          <Thead>
-            <Tr>
-              <Th>Participante</Th>
-              <Th>-</Th>
-              <Th>-</Th>
-              <Th>pts</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {sortedUsers.map((user) => {
-              const result = results.find((p) => p.expand?.user.id === user.id);
-
-              return (
-                <Tr {...getRowStyle(result)} key={user.id}>
-                  <Td>
-                    <Flex gap={2} alignItems="center">
-                      <Img
-                        rounded="full"
-                        w="40px"
-                        h="40px"
-                        src={
-                          user.img
-                            ? user.img + "&thumb=100x100&cache=default"
-                            : `https://api.dicebear.com/9.x/initials/svg?seed=${user.username}`
-                        }
-                      />
-                      <Flex flexDir="column">
-                        <Link
-                          to="/tournaments/$tournamentId/$userId"
-                          params={{ tournamentId, userId: user.id }}
-                        >
-                          {user.name}
-                        </Link>
-                        <Text fontFamily="monospace">
-                          {result?.expand?.prediction_id?.created
-                            ? DateTime.fromSQL(
-                                result.expand.prediction_id.updated,
-                              ).toFormat("MMM dd h:mm a")
-                            : null}
-                        </Text>
-                      </Flex>
-                      {user.favorite_team ? (
-                        <Flag height="24px" country={user.favorite_team} />
-                      ) : null}
-                      {result?.p_first_goal ? (
-                        <Badge alignSelf="center" colorScheme="purple">
-                          {result.p_first_goal ===
-                          PredictionsFirstGoalOptions.primer_tiempo
-                            ? "T1"
-                            : "T2"}
-                        </Badge>
-                      ) : null}
-                      {result?.p_first_goal_from ? (
-                        <Badge alignSelf="center" colorScheme="purple">
-                          {result.p_first_goal_from ===
-                          PredictionsFirstGoalFromOptions.home
-                            ? "H"
-                            : "A"}
-                        </Badge>
-                      ) : null}
-                      {result?.isBonusActive ? (
-                        <Badge alignSelf="center" colorScheme="red">
-                          x2
-                        </Badge>
-                      ) : null}
+        <h1
+          style={{
+            fontWeight: "bold",
+            letterSpacing: "2px",
+            fontSize: "20px",
+            textAlign: "center",
+          }}
+        >
+          {tournament?.name}
+        </h1>
+        <FeatFlagComponent
+          feature="show_new_matchcard"
+          fallback={
+            <Flex flexDir="column">
+              <Flex alignItems="center" gap="3" mb="3">
+                <Flex flex="1" gap="3" alignItems="center">
+                  <Flex
+                    flexDir="column"
+                    flex="1"
+                    alignItems="center"
+                    justifyContent="flex-end"
+                  >
+                    <Flag height="50px" country={match.home} />
+                    {match.home}
+                    <Flex fontFamily="monospace" color="gray.600">
+                      {homeper}%
                     </Flex>
-                  </Td>
-                  <Td>{result?.p_home ?? "-"}</Td>
-                  <Td>{result?.p_away ?? "-"}</Td>
-                  <Td>{result?.points ?? "-"}</Td>
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
-      </Flex>
-      {isAdmin ? (
-        <Flex flexDir="column">
-          {results.map((p) => (
-            <Flex
-              key={p.id}
-              gap="3"
-              p="1"
-              borderTop="1px solid"
-              borderColor="gray.100"
-            >
-              {p.prediction_id} -{p.expand?.user.name} - {p.p_home} {p.p_away}
-              <Spacer />
-              <Button
-                onClick={() => onDelete(p.prediction_id)}
-                colorScheme="red"
-                size="sm"
+                  </Flex>
+                </Flex>
+                <Flex flexDir="column" alignSelf="flex-end">
+                  <Flex alignItems="center" gap={2}>
+                    <Flex fontSize="xxx-large" fontWeight="bold" p="1">
+                      {match.homeScore}
+                    </Flex>
+                    <Flex fontSize="xx-large">-</Flex>
+                    <Flex fontSize="xxx-large" fontWeight="bold" p="1">
+                      {match.awayScore}
+                    </Flex>
+                  </Flex>
+                  <br />
+                  <Flex
+                    color="gray.600"
+                    fontFamily="monospace"
+                    display="box"
+                    textAlign="center"
+                  >
+                    {tieper}%
+                  </Flex>
+                </Flex>
+                <Flex flex="1" gap="3" alignItems="center">
+                  <Flex flexDir="column" flex="1" alignItems="center">
+                    <Flag height="40px" country={match.away} />
+                    {match.away}
+                    <Flex fontFamily="monospace" color="gray.600">
+                      {awayper}%
+                    </Flex>
+                  </Flex>
+                </Flex>
+              </Flex>
+              <hr />
+              <Flex
+                color="gray.500"
+                display="box"
+                pt="1"
+                fontSize="16px"
+                textAlign="center"
               >
-                delete
-              </Button>
+                {DateTime.fromSQL(match.startAtUtc).toFormat("EEE MMM dd")}
+                {" - "}
+                {DateTime.fromSQL(match.startAtUtc).toFormat("h:mm a")}
+              </Flex>
+              <Flex
+                color="gray.500"
+                display="box"
+                fontSize="14px"
+                textAlign="center"
+                mb="2"
+              >
+                {match.location} -{" "}
+                {DateTime.fromSQL(match.startAtUtc).toRelative()}
+              </Flex>
+              <hr />
             </Flex>
-          ))}
+          }
+        >
+          <SimpleMatch
+            match={match}
+            homeScore={match.homeScore}
+            awayScore={match.awayScore}
+            firstGoal={match.first_goal}
+            firstGoalFrom={match.first_goal_from}
+            tournamentId={tournamentId}
+            predictionsQueryKey={["get-all", Collections.Results, matchId]}
+            getMatchesQueryKey={["get-one", Collections.Matches, matchId]}
+          />
+        </FeatFlagComponent>
+        <Flex flexDir="column" flex="1">
+          <Table boxShadow="md" borderRadius="sm">
+            <Thead>
+              <Tr>
+                <Th>Participante</Th>
+                <Th>-</Th>
+                <Th>-</Th>
+                <Th>pts</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {sortedUsers.map((user) => {
+                const result = results.find(
+                  (p) => p.expand?.user.id === user.id,
+                );
+
+                return (
+                  <Tr {...getRowStyle(result)} key={user.id}>
+                    <Td>
+                      <Flex gap={2} alignItems="center">
+                        <Img
+                          rounded="full"
+                          w="40px"
+                          h="40px"
+                          src={
+                            user.img
+                              ? user.img + "&thumb=100x100&cache=default"
+                              : `https://api.dicebear.com/9.x/initials/svg?seed=${user.username}`
+                          }
+                        />
+                        <Flex flexDir="column">
+                          <Link
+                            to="/tournaments/$tournamentId/$userId"
+                            params={{ tournamentId, userId: user.id }}
+                          >
+                            {user.name}
+                          </Link>
+                          <Text fontFamily="monospace">
+                            {result?.expand?.prediction_id?.created
+                              ? DateTime.fromSQL(
+                                  result.expand.prediction_id.updated,
+                                ).toFormat("MMM dd h:mm a")
+                              : null}
+                          </Text>
+                        </Flex>
+                        {user.favorite_team ? (
+                          <Flag height="24px" country={user.favorite_team} />
+                        ) : null}
+                        {result?.p_first_goal ? (
+                          <Badge alignSelf="center" colorScheme="purple">
+                            {result.p_first_goal ===
+                            PredictionsFirstGoalOptions.primer_tiempo
+                              ? "T1"
+                              : "T2"}
+                          </Badge>
+                        ) : null}
+                        {result?.p_first_goal_from ? (
+                          <Badge alignSelf="center" colorScheme="purple">
+                            {result.p_first_goal_from ===
+                            PredictionsFirstGoalFromOptions.home
+                              ? "H"
+                              : "A"}
+                          </Badge>
+                        ) : null}
+                        {result?.isBonusActive ? (
+                          <Badge alignSelf="center" colorScheme="red">
+                            x2
+                          </Badge>
+                        ) : null}
+                      </Flex>
+                    </Td>
+                    <Td>{result?.p_home ?? "-"}</Td>
+                    <Td>{result?.p_away ?? "-"}</Td>
+                    <Td>{result?.points ?? "-"}</Td>
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
         </Flex>
-      ) : null}
+        {isAdmin ? (
+          <Flex flexDir="column">
+            {results.map((p) => (
+              <Flex
+                key={p.id}
+                gap="3"
+                p="1"
+                borderTop="1px solid"
+                borderColor="gray.100"
+              >
+                {p.prediction_id} -{p.expand?.user.name} - {p.p_home} {p.p_away}
+                <Spacer />
+                <Button
+                  onClick={() => onDelete(p.prediction_id)}
+                  colorScheme="red"
+                  size="sm"
+                >
+                  delete
+                </Button>
+              </Flex>
+            ))}
+          </Flex>
+        ) : null}
+      </Flex>
       <BottomNav tournamentId={tournamentId} />
     </>
   );
