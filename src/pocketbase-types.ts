@@ -66,9 +66,15 @@ export type MatchBetsRecord<
 export enum MatchesFirstGoalOptions {
   "primer_tiempo" = "primer_tiempo",
   "segundo_tiempo" = "segundo_tiempo",
+  "tiempo_extra" = "tiempo_extra",
 }
 
 export enum MatchesFirstGoalFromOptions {
+  "home" = "home",
+  "away" = "away",
+}
+
+export enum MatchesPenaltyWinnerOptions {
   "home" = "home",
   "away" = "away",
 }
@@ -78,10 +84,12 @@ export type MatchesRecord = {
   enableBonus?: boolean;
   first_goal?: MatchesFirstGoalOptions;
   first_goal_from?: MatchesFirstGoalFromOptions;
+  group?: string;
   home?: string;
   homeScore?: number;
   location?: string;
   matchNumber?: number;
+  penalty_winner?: MatchesPenaltyWinnerOptions;
   roundNumber?: number;
   startAtUtc?: IsoDateString;
   tournament?: RecordIdString;
@@ -96,6 +104,11 @@ export enum PredictionsFirstGoalFromOptions {
   "home" = "home",
   "away" = "away",
 }
+
+export enum PredictionsPenaltyWinnerOptions {
+  "home" = "home",
+  "away" = "away",
+}
 export type PredictionsRecord = {
   awayScore?: number;
   first_goal?: PredictionsFirstGoalOptions;
@@ -103,24 +116,56 @@ export type PredictionsRecord = {
   homeScore?: number;
   isBonusActive?: boolean;
   match?: RecordIdString;
+  penalty_winner?: PredictionsPenaltyWinnerOptions;
   user?: RecordIdString;
 };
 
-export type ResultsRecord<Tpoints = unknown> = {
+export enum ResultsPFirstGoalOptions {
+  "primer_tiempo" = "primer_tiempo",
+  "segundo_tiempo" = "segundo_tiempo",
+}
+
+export enum ResultsPFirstGoalFromOptions {
+  "home" = "home",
+  "away" = "away",
+}
+
+export enum ResultsFirstGoalOptions {
+  "primer_tiempo" = "primer_tiempo",
+  "segundo_tiempo" = "segundo_tiempo",
+  "tiempo_extra" = "tiempo_extra",
+}
+
+export enum ResultsFirstGoalFromOptions {
+  "home" = "home",
+  "away" = "away",
+}
+export type ResultsRecord<
+  Tcorrect_first_goal = unknown,
+  Tcorrect_first_goal_from = unknown,
+  Tcorrect_penalty_winner = unknown,
+  Tcorrect_result = unknown,
+  Texact_score = unknown,
+  Tpoints = unknown,
+> = {
   away?: string;
   awayScore?: number;
-  correct_result?: number;
-  exact_score?: number;
+  correct_first_goal?: null | Tcorrect_first_goal;
+  correct_first_goal_from?: null | Tcorrect_first_goal_from;
+  correct_penalty_winner?: null | Tcorrect_penalty_winner;
+  correct_result?: null | Tcorrect_result;
+  exact_score?: null | Texact_score;
+  first_goal?: ResultsFirstGoalOptions;
+  first_goal_from?: ResultsFirstGoalFromOptions;
   home?: string;
   homeScore?: number;
   isBonusActive?: boolean;
   match_id?: RecordIdString;
   p_away?: number;
-  p_first_goal?: string;
-  p_first_goal_from?: string;
+  p_first_goal?: ResultsPFirstGoalOptions;
+  p_first_goal_from?: ResultsPFirstGoalFromOptions;
   p_home?: number;
   points?: null | Tpoints;
-  prediction_id?: RecordIdString;
   startAtUtc?: IsoDateString;
   tournament_id?: RecordIdString;
   user?: RecordIdString;
@@ -145,13 +190,13 @@ export enum UsersTagsOptions {
 }
 export type UsersRecord = {
   avatar?: string;
+  favorite_team?: string;
   ignore?: boolean;
   img?: string;
   isAdmin?: boolean;
   name?: string;
   phone?: number;
   tags?: UsersTagsOptions[];
-  favorite_team?: string;
 };
 
 // Response types include system fields and match responses from the PocketBase API
@@ -172,8 +217,23 @@ export type MatchesResponse<Texpand = unknown> = Required<MatchesRecord> &
   BaseSystemFields<Texpand>;
 export type PredictionsResponse<Texpand = unknown> =
   Required<PredictionsRecord> & BaseSystemFields<Texpand>;
-export type ResultsResponse<Tpoints = unknown, Texpand = unknown> = Required<
-  ResultsRecord<Tpoints>
+export type ResultsResponse<
+  Tcorrect_first_goal = unknown,
+  Tcorrect_first_goal_from = unknown,
+  Tcorrect_penalty_winner = unknown,
+  Tcorrect_result = unknown,
+  Texact_score = unknown,
+  Tpoints = unknown,
+  Texpand = unknown,
+> = Required<
+  ResultsRecord<
+    Tcorrect_first_goal,
+    Tcorrect_first_goal_from,
+    Tcorrect_penalty_winner,
+    Tcorrect_result,
+    Texact_score,
+    Tpoints
+  >
 > &
   BaseSystemFields<Texpand>;
 export type TournamentsResponse<Texpand = unknown> =

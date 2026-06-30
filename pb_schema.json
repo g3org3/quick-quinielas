@@ -106,6 +106,20 @@
         "presentable": false,
         "unique": false,
         "options": {}
+      },
+      {
+        "system": false,
+        "id": "vm4kzhl4",
+        "name": "favorite_team",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
       }
     ],
     "indexes": [],
@@ -322,7 +336,8 @@
           "maxSelect": 1,
           "values": [
             "primer_tiempo",
-            "segundo_tiempo"
+            "segundo_tiempo",
+            "tiempo_extra"
           ]
         }
       },
@@ -330,6 +345,36 @@
         "system": false,
         "id": "f31ig3fd",
         "name": "first_goal_from",
+        "type": "select",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "home",
+            "away"
+          ]
+        }
+      },
+      {
+        "system": false,
+        "id": "za3ri8aq",
+        "name": "group",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "ekmpyc9y",
+        "name": "penalty_winner",
         "type": "select",
         "required": false,
         "presentable": false,
@@ -458,6 +503,22 @@
             "away"
           ]
         }
+      },
+      {
+        "system": false,
+        "id": "qaobugaw",
+        "name": "penalty_winner",
+        "type": "select",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "home",
+            "away"
+          ]
+        }
       }
     ],
     "indexes": [
@@ -520,7 +581,7 @@
     "schema": [
       {
         "system": false,
-        "id": "304w8vey",
+        "id": "byxwhyuf",
         "name": "user",
         "type": "relation",
         "required": false,
@@ -536,7 +597,7 @@
       },
       {
         "system": false,
-        "id": "liiyfbar",
+        "id": "wqltjnnm",
         "name": "tournament_id",
         "type": "relation",
         "required": false,
@@ -552,7 +613,7 @@
       },
       {
         "system": false,
-        "id": "7hsaf9tj",
+        "id": "jyvxshov",
         "name": "points",
         "type": "json",
         "required": false,
@@ -650,7 +711,7 @@
     "schema": [
       {
         "system": false,
-        "id": "zqjzrbhm",
+        "id": "qpbzpjjl",
         "name": "user",
         "type": "relation",
         "required": false,
@@ -666,7 +727,77 @@
       },
       {
         "system": false,
-        "id": "jswalcqa",
+        "id": "bmrb5hvm",
+        "name": "p_home",
+        "type": "number",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "noDecimal": false
+        }
+      },
+      {
+        "system": false,
+        "id": "mbk1jvtk",
+        "name": "p_away",
+        "type": "number",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "noDecimal": false
+        }
+      },
+      {
+        "system": false,
+        "id": "pykyntue",
+        "name": "isBonusActive",
+        "type": "bool",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {}
+      },
+      {
+        "system": false,
+        "id": "gve3qggm",
+        "name": "p_first_goal",
+        "type": "select",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "primer_tiempo",
+            "segundo_tiempo"
+          ]
+        }
+      },
+      {
+        "system": false,
+        "id": "hi56htcr",
+        "name": "p_first_goal_from",
+        "type": "select",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "home",
+            "away"
+          ]
+        }
+      },
+      {
+        "system": false,
+        "id": "ak6yg3vm",
         "name": "match_id",
         "type": "relation",
         "required": false,
@@ -682,7 +813,7 @@
       },
       {
         "system": false,
-        "id": "vjdvdnk2",
+        "id": "zbs1eyzj",
         "name": "tournament_id",
         "type": "relation",
         "required": false,
@@ -698,35 +829,7 @@
       },
       {
         "system": false,
-        "id": "plpuwgtm",
-        "name": "p_home",
-        "type": "number",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "noDecimal": false
-        }
-      },
-      {
-        "system": false,
-        "id": "5igbdtzk",
-        "name": "p_away",
-        "type": "number",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "noDecimal": false
-        }
-      },
-      {
-        "system": false,
-        "id": "z4ymtyzv",
+        "id": "mzp0a7fc",
         "name": "home",
         "type": "text",
         "required": false,
@@ -740,7 +843,7 @@
       },
       {
         "system": false,
-        "id": "ndqaibka",
+        "id": "11rsnswa",
         "name": "homeScore",
         "type": "number",
         "required": false,
@@ -754,7 +857,7 @@
       },
       {
         "system": false,
-        "id": "hwtespxs",
+        "id": "gctuagmt",
         "name": "away",
         "type": "text",
         "required": false,
@@ -768,7 +871,7 @@
       },
       {
         "system": false,
-        "id": "ry0qo6qy",
+        "id": "ngin1lxw",
         "name": "awayScore",
         "type": "number",
         "required": false,
@@ -782,23 +885,7 @@
       },
       {
         "system": false,
-        "id": "rrkbdi9k",
-        "name": "prediction_id",
-        "type": "relation",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "d3f6aq6gcuo403s",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "u6rqrkpe",
+        "id": "o2enudpl",
         "name": "startAtUtc",
         "type": "date",
         "required": false,
@@ -811,7 +898,40 @@
       },
       {
         "system": false,
-        "id": "58cda6ef",
+        "id": "gw7cq7q6",
+        "name": "first_goal",
+        "type": "select",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "primer_tiempo",
+            "segundo_tiempo",
+            "tiempo_extra"
+          ]
+        }
+      },
+      {
+        "system": false,
+        "id": "phaw8ogj",
+        "name": "first_goal_from",
+        "type": "select",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "home",
+            "away"
+          ]
+        }
+      },
+      {
+        "system": false,
+        "id": "usp06avq",
         "name": "points",
         "type": "json",
         "required": false,
@@ -823,13 +943,63 @@
       },
       {
         "system": false,
-        "id": "owtk0hk5",
-        "name": "isBonusActive",
-        "type": "bool",
+        "id": "3v6jjjo1",
+        "name": "exact_score",
+        "type": "json",
         "required": false,
         "presentable": false,
         "unique": false,
-        "options": {}
+        "options": {
+          "maxSize": 1
+        }
+      },
+      {
+        "system": false,
+        "id": "wjb112ll",
+        "name": "correct_result",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 1
+        }
+      },
+      {
+        "system": false,
+        "id": "x5fp1v0t",
+        "name": "correct_first_goal",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 1
+        }
+      },
+      {
+        "system": false,
+        "id": "j2r4xzjh",
+        "name": "correct_first_goal_from",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 1
+        }
+      },
+      {
+        "system": false,
+        "id": "fcgloovl",
+        "name": "correct_penalty_winner",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 1
+        }
       }
     ],
     "indexes": [],
@@ -839,7 +1009,7 @@
     "updateRule": null,
     "deleteRule": null,
     "options": {
-      "query": "SELECT \n  (row_number() over()) as id,\n  p.user,\n  m.id as match_id,\n  m.tournament as tournament_id,\n  p.homeScore as p_home,\n  p.awayScore as p_away,\n  m.home,\n  m.homeScore,\n  m.away,\n  m.awayScore,\n  p.id as prediction_id,\n  m.startAtUtc,\n  (case \n    when p.homeScore = m.homeScore and p.awayScore = m.awayScore and p.isBonusActive then 6\n    when p.homeScore > p.awayScore and m.homeScore > m.awayScore and p.isBonusActive  then 2\n    when p.homeScore < p.awayScore and m.homeScore < m.awayScore and p.isBonusActive  then 2\n    when p.homeScore = p.awayScore and m.homeScore = m.awayScore and p.isBonusActive  then 2\n  \n    when p.homeScore = m.homeScore and p.awayScore = m.awayScore  then 3\n    when p.homeScore > p.awayScore and m.homeScore > m.awayScore  then 1\n    when p.homeScore < p.awayScore and m.homeScore < m.awayScore  then 1\n    when p.homeScore = p.awayScore and m.homeScore = m.awayScore  then 1\n    else 0\n  end) as points,\n  p.isBonusActive\nFROM predictions p\nJOIN matches m on m.id = p.match\nwhere m.`startAtUtc` < datetime()"
+      "query": "WITH scored AS (\n    SELECT\n      p.id AS prediction_id,\n      p.homeScore = m.homeScore\n        AND p.awayScore = m.awayScore AS exact_score,\n\n      (\n        (p.homeScore > p.awayScore AND m.homeScore > m.awayScore) OR\n        (p.homeScore < p.awayScore AND m.homeScore < m.awayScore) OR\n        (p.homeScore = p.awayScore AND m.homeScore = m.awayScore)\n      ) AS correct_result,\n\n      m.first_goal != ''\n        AND m.first_goal = p.first_goal AS correct_first_goal,\n\n      m.first_goal_from  != ''\n        AND m.first_goal_from = p.first_goal_from AS correct_first_goal_from,\n\n      m.penalty_winner != ''\n        AND m.penalty_winner = p.penalty_winner as correct_penalty_winner\n\n    FROM predictions p\n    JOIN matches m ON m.id = p.match\n    WHERE m.startAtUtc < datetime()\n  ),\n\n  points AS (\n    SELECT\n      *,\n      (\n        CASE\n          WHEN exact_score THEN 3\n          WHEN correct_result THEN 1\n          ELSE 0\n        END\n        +\n        CASE WHEN correct_first_goal THEN 1 ELSE 0 END\n        +\n        CASE WHEN correct_first_goal_from THEN 1 ELSE 0 END\n        +\n        CASE WHEN correct_penalty_winner THEN 1 ELSE 0 END\n      ) AS base_points\n    FROM scored\n  )\n\n  SELECT\n    (row_number() OVER ()) AS id,\n      p.user,\n      p.homeScore AS p_home,\n      p.awayScore AS p_away,\n      p.isBonusActive,\n      p.first_goal as p_first_goal,\n      p.first_goal_from as p_first_goal_from,\n\n      m.id AS match_id,\n      m.tournament AS tournament_id,\n      m.home,\n      m.homeScore,\n      m.away,\n      m.awayScore,\n      m.startAtUtc,\n      m.first_goal,\n      m.first_goal_from,\n\n    (base_points * CASE WHEN isBonusActive THEN 2 ELSE 1 END) AS points,\n    pp.exact_score,\n    pp.correct_result,\n    pp.correct_first_goal,\n    pp.correct_first_goal_from,\n    pp.correct_penalty_winner\n  FROM points pp\nJOIN predictions p on p.id = pp.prediction_id\nJOIN matches m ON m.id = p.match"
     }
   },
   {
