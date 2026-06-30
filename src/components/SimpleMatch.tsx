@@ -8,6 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import { QueryKey } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { FaLock, FaLockOpen } from "react-icons/fa";
 import {
   MatchBetsResponse,
@@ -140,7 +141,14 @@ export default function SimpleMatch(props: Props) {
         color={_isBonusActive ? "whiteAlpha.800" : undefined}
         py="2"
       >
-        <Flag height="32px" country={match.home} />
+        <motion.div
+          style={{ display: "inline-block", transformOrigin: "center" }}
+          initial={{ scale: 1.25 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.2 }}
+        >
+          <Flag height="32px" country={match.home} />
+        </motion.div>
         <Flex
           alignItems="center"
           gap="2"
@@ -152,7 +160,14 @@ export default function SimpleMatch(props: Props) {
           <Text>-</Text>
           <Text>{away || "-"}</Text>
         </Flex>
-        <Flag height="32px" country={match.away} />
+        <motion.div
+          style={{ display: "inline-block", transformOrigin: "center" }}
+          initial={{ scale: 1.25 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.2 }}
+        >
+          <Flag height="32px" country={match.away} />
+        </motion.div>
       </Flex>
     );
   }
