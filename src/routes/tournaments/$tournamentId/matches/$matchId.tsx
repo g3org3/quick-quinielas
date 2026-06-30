@@ -36,6 +36,18 @@ import SimpleMatch from "@/components/SimpleMatch";
 import { queryClient } from "@/queryClient";
 import Flag from "@/components/Flag";
 
+const firstGoalLabel = (firstGoal: ResultsPFirstGoalOptions) => {
+  if (firstGoal === ResultsPFirstGoalOptions.primer_tiempo) {
+    return "T1";
+  }
+
+  if (firstGoal === ResultsPFirstGoalOptions.segundo_tiempo) {
+    return "T2";
+  }
+
+  return "TE";
+};
+
 export const Route = createFileRoute(
   "/tournaments/$tournamentId/matches/$matchId",
 )({
@@ -284,10 +296,7 @@ function SingleMatch() {
                         ) : null}
                         {result?.p_first_goal ? (
                           <Badge alignSelf="center" colorScheme="purple">
-                            {result.p_first_goal ===
-                            ResultsPFirstGoalOptions.primer_tiempo
-                              ? "T1"
-                              : "T2"}
+                            {firstGoalLabel(result.p_first_goal)}
                           </Badge>
                         ) : null}
                         {result?.p_first_goal_from ? (

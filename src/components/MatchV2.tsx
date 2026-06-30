@@ -363,6 +363,9 @@ export default function MatchV2(props: Props) {
               <option value={PredictionsFirstGoalOptions.segundo_tiempo}>
                 Segundo tiempo
               </option>
+              <option value={PredictionsFirstGoalOptions.tiempo_extra}>
+                Tiempo extra
+              </option>
             </Select>
           </Flex>
           <Flex flex="1 1 140px" flexDir="column" gap={1} minW={0}>

@@ -484,7 +484,8 @@
           "maxSelect": 1,
           "values": [
             "primer_tiempo",
-            "segundo_tiempo"
+            "segundo_tiempo",
+            "tiempo_extra"
           ]
         }
       },
@@ -791,7 +792,8 @@
           "maxSelect": 1,
           "values": [
             "primer_tiempo",
-            "segundo_tiempo"
+            "segundo_tiempo",
+            "tiempo_extra"
           ]
         }
       },

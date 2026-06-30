@@ -183,6 +183,9 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
               <option value={MatchesFirstGoalOptions.segundo_tiempo}>
                 Segundo tiempo
               </option>
+              <option value={MatchesFirstGoalOptions.tiempo_extra}>
+                Tiempo extra
+              </option>
             </Select>
           </FormControl>
           <FormControl flex="1 1 160px" minW={0}>
