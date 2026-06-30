@@ -18,6 +18,7 @@ import {
   MatchesResponse,
   PredictionsFirstGoalFromOptions,
   PredictionsFirstGoalOptions,
+  PredictionsPenaltyWinnerOptions,
   PredictionsRecord,
   PredictionsResponse,
 } from "@/pocketbase-types";
@@ -69,10 +70,25 @@ export default function MatchV2(props: Props) {
   }));
   const home = prediction?.homeScore.toString() ?? "";
   const away = prediction?.awayScore.toString() ?? "";
+  const [homeScore, setHomeScore] = useState(home);
+  const [awayScore, setAwayScore] = useState(away);
+  const [penaltyWinner, setPenaltyWinner] = useState(
+    prediction?.penalty_winner ?? ""
+  );
+  const isPenaltyWinnerEnabled =
+    homeScore.trim() !== "" &&
+    awayScore.trim() !== "" &&
+    Number(homeScore) === Number(awayScore);
   const isBonusActive =
     match.roundNumber > 3
       ? user?.favorite_team === match.home || user?.favorite_team === match.away
       : false;
+
+  useEffect(() => {
+    if (!isPenaltyWinnerEnabled) {
+      setPenaltyWinner("");
+    }
+  }, [isPenaltyWinnerEnabled]);
 
   const onUpdate: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -90,13 +106,20 @@ export default function MatchV2(props: Props) {
     // PocketBase omits undefined values from the update, leaving the old one.
     const firstGoal = data.get("first_goal")?.toString() ?? "";
     const firstGoalFrom = data.get("first_goal_from")?.toString() ?? "";
+    const homeScore = Number(data.get("home")) || 0;
+    const awayScore = Number(data.get("away")) || 0;
+    const isTie = homeScore === awayScore;
+    const penaltyWinner = isTie
+      ? data.get("penalty_winner")?.toString() ?? ""
+      : "";
 
     const payload: Partial<PredictionsRecord> = {
       user: user?.id,
-      homeScore: Number(data.get("home")) || 0,
-      awayScore: Number(data.get("away")) || 0,
+      homeScore,
+      awayScore,
       first_goal: firstGoal as PredictionsFirstGoalOptions,
       first_goal_from: firstGoalFrom as PredictionsFirstGoalFromOptions,
+      penalty_winner: penaltyWinner as PredictionsPenaltyWinnerOptions,
       match: match.id,
       isBonusActive,
     };
@@ -115,6 +138,7 @@ export default function MatchV2(props: Props) {
         predicted_away_score: payload.awayScore,
         first_goal: payload.first_goal,
         first_goal_from: payload.first_goal_from,
+        penalty_winner: payload.penalty_winner,
         tournament_id: tournamentId,
       });
       update({ id: prediction.id, prediction: payload });
@@ -127,6 +151,7 @@ export default function MatchV2(props: Props) {
         predicted_away_score: payload.awayScore,
         first_goal: payload.first_goal,
         first_goal_from: payload.first_goal_from,
+        penalty_winner: payload.penalty_winner,
         tournament_id: tournamentId,
       });
       mutate(payload);
@@ -265,6 +290,7 @@ export default function MatchV2(props: Props) {
             <Flex gap={1}>
               <Input
                 defaultValue={home}
+                onChange={(e) => setHomeScore(e.currentTarget.value)}
                 disabled={isAnyPending || isGameStarted2}
                 border={isGameStarted2 ? "0" : undefined}
                 p="1"
@@ -282,6 +308,7 @@ export default function MatchV2(props: Props) {
               </Flex>
               <Input
                 defaultValue={away}
+                onChange={(e) => setAwayScore(e.currentTarget.value)}
                 disabled={isAnyPending || isGameStarted2}
                 border={isGameStarted2 ? "0" : undefined}
                 textAlign="center"
@@ -354,6 +381,26 @@ export default function MatchV2(props: Props) {
                 {match.home}
               </option>
               <option value={PredictionsFirstGoalFromOptions.away}>
+                {match.away}
+              </option>
+            </Select>
+          </Flex>
+          <Flex flex="1 1 140px" flexDir="column" gap={1} minW={0}>
+            <Text fontSize="sm">Penales</Text>
+            <Select
+              name="penalty_winner"
+              value={isPenaltyWinnerEnabled ? penaltyWinner : ""}
+              onChange={(e) => setPenaltyWinner(e.currentTarget.value)}
+              disabled={
+                isAnyPending || isGameStarted2 || !isPenaltyWinnerEnabled
+              }
+              size="sm"
+            >
+              <option value="">Sin definir</option>
+              <option value={PredictionsPenaltyWinnerOptions.home}>
+                {match.home}
+              </option>
+              <option value={PredictionsPenaltyWinnerOptions.away}>
                 {match.away}
               </option>
             </Select>

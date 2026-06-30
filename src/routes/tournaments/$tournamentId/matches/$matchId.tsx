@@ -21,6 +21,7 @@ import {
   Collections,
   PredictionsFirstGoalFromOptions,
   PredictionsFirstGoalOptions,
+  PredictionsPenaltyWinnerOptions,
 } from "@/pocketbase-types";
 import { pb } from "@/pb";
 import {
@@ -296,6 +297,14 @@ function SingleMatch() {
                             PredictionsFirstGoalFromOptions.home
                               ? "H"
                               : "A"}
+                          </Badge>
+                        ) : null}
+                        {result?.p_penalty_winner ? (
+                          <Badge alignSelf="center" colorScheme="teal">
+                            {result.p_penalty_winner ===
+                            PredictionsPenaltyWinnerOptions.home
+                              ? "P:H"
+                              : "P:A"}
                           </Badge>
                         ) : null}
                         {result?.isBonusActive ? (
