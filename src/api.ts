@@ -184,7 +184,17 @@ export const getUserResultsQuery = (tournamentId: string, userId: string) =>
     queryFn: () =>
       pb
         .collection(Collections.Results)
-        .getFullList<ResultsResponse<number, { match_id: MatchesResponse }>>({
+        .getFullList<
+          ResultsResponse<
+            number,
+            number,
+            number,
+            number,
+            number,
+            number,
+            { match_id: MatchesResponse }
+          >
+        >({
           filter: `tournament_id = '${tournamentId}' && user = '${userId}' && points > 0`,
           expand: "match_id",
         }),
@@ -213,6 +223,11 @@ export const getMatchResultsQuery = (matchId: string) =>
         .collection(Collections.Results)
         .getFullList<
           ResultsResponse<
+            number,
+            number,
+            number,
+            number,
+            number,
             number,
             { user: UsersResponse; prediction_id: PredictionsResponse }
           >

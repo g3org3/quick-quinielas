@@ -165,6 +165,7 @@ export type ResultsRecord<
   p_first_goal?: ResultsPFirstGoalOptions;
   p_first_goal_from?: ResultsPFirstGoalFromOptions;
   p_home?: number;
+  prediction_id?: RecordIdString;
   points?: null | Tpoints;
   startAtUtc?: IsoDateString;
   tournament_id?: RecordIdString;

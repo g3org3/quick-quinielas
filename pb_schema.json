@@ -727,6 +727,22 @@
       },
       {
         "system": false,
+        "id": "mml8j2gv",
+        "name": "prediction_id",
+        "type": "relation",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "collectionId": "d3f6aq6gcuo403s",
+          "cascadeDelete": false,
+          "minSelect": null,
+          "maxSelect": 1,
+          "displayFields": null
+        }
+      },
+      {
+        "system": false,
         "id": "bmrb5hvm",
         "name": "p_home",
         "type": "number",

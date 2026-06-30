@@ -19,8 +19,8 @@ import toaster from "react-hot-toast";
 
 import {
   Collections,
-  PredictionsFirstGoalFromOptions,
-  PredictionsFirstGoalOptions,
+  ResultsPFirstGoalFromOptions,
+  ResultsPFirstGoalOptions,
 } from "@/pocketbase-types";
 import { pb } from "@/pb";
 import {
@@ -285,7 +285,7 @@ function SingleMatch() {
                         {result?.p_first_goal ? (
                           <Badge alignSelf="center" colorScheme="purple">
                             {result.p_first_goal ===
-                            PredictionsFirstGoalOptions.primer_tiempo
+                            ResultsPFirstGoalOptions.primer_tiempo
                               ? "T1"
                               : "T2"}
                           </Badge>
@@ -293,7 +293,7 @@ function SingleMatch() {
                         {result?.p_first_goal_from ? (
                           <Badge alignSelf="center" colorScheme="purple">
                             {result.p_first_goal_from ===
-                            PredictionsFirstGoalFromOptions.home
+                            ResultsPFirstGoalFromOptions.home
                               ? "H"
                               : "A"}
                           </Badge>
