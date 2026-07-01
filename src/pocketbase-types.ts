@@ -98,6 +98,7 @@ export type MatchesRecord = {
 export enum PredictionsFirstGoalOptions {
   "primer_tiempo" = "primer_tiempo",
   "segundo_tiempo" = "segundo_tiempo",
+  "tiempo_extra" = "tiempo_extra",
 }
 
 export enum PredictionsFirstGoalFromOptions {
@@ -123,6 +124,7 @@ export type PredictionsRecord = {
 export enum ResultsPFirstGoalOptions {
   "primer_tiempo" = "primer_tiempo",
   "segundo_tiempo" = "segundo_tiempo",
+  "tiempo_extra" = "tiempo_extra",
 }
 
 export enum ResultsPFirstGoalFromOptions {
@@ -165,6 +167,7 @@ export type ResultsRecord<
   p_first_goal?: ResultsPFirstGoalOptions;
   p_first_goal_from?: ResultsPFirstGoalFromOptions;
   p_home?: number;
+  prediction_id?: RecordIdString;
   points?: null | Tpoints;
   startAtUtc?: IsoDateString;
   tournament_id?: RecordIdString;

@@ -15,7 +15,6 @@ import {
   MatchesFirstGoalOptions,
   MatchesResponse,
   PredictionsFirstGoalFromOptions,
-  PredictionsFirstGoalOptions,
   PredictionsResponse,
 } from "@/pocketbase-types";
 import { pb } from "@/pb";
@@ -303,11 +302,14 @@ export default function SimpleMatch(props: Props) {
             size="sm"
           >
             <option value="">Sin definir</option>
-            <option value={PredictionsFirstGoalOptions.primer_tiempo}>
+            <option value={MatchesFirstGoalOptions.primer_tiempo}>
               Primer tiempo
             </option>
-            <option value={PredictionsFirstGoalOptions.segundo_tiempo}>
+            <option value={MatchesFirstGoalOptions.segundo_tiempo}>
               Segundo tiempo
+            </option>
+            <option value={MatchesFirstGoalOptions.tiempo_extra}>
+              Tiempo extra
             </option>
           </Select>
         </Flex>

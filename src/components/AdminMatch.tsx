@@ -21,6 +21,7 @@ import {
   Collections,
   MatchesFirstGoalFromOptions,
   MatchesFirstGoalOptions,
+  MatchesPenaltyWinnerOptions,
   MatchesRecord,
   MatchesResponse,
 } from "@/pocketbase-types";
@@ -42,7 +43,11 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
     mutationFn(
       data: Pick<
         MatchesRecord,
-        "homeScore" | "awayScore" | "first_goal" | "first_goal_from"
+        | "homeScore"
+        | "awayScore"
+        | "first_goal"
+        | "first_goal_from"
+        | "penalty_winner"
       >,
     ) {
       return pb.collection(Collections.Matches).update(match.id, data);
@@ -57,6 +62,7 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
         away_score: score.awayScore,
         first_goal: score.first_goal,
         first_goal_from: score.first_goal_from,
+        penalty_winner: score.penalty_winner,
       });
       toaster.success("Marcador guardado");
       queryClient.invalidateQueries({ queryKey });
@@ -105,12 +111,15 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
       "") as MatchesFirstGoalOptions;
     const first_goal_from = (data.get("first_goal_from")?.toString() ??
       "") as MatchesFirstGoalFromOptions;
+    const penalty_winner = (data.get("penalty_winner")?.toString() ??
+      "") as MatchesPenaltyWinnerOptions;
 
     mutate({
       homeScore,
       awayScore,
       first_goal,
       first_goal_from,
+      penalty_winner,
     });
   };
 
@@ -183,6 +192,9 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
               <option value={MatchesFirstGoalOptions.segundo_tiempo}>
                 Segundo tiempo
               </option>
+              <option value={MatchesFirstGoalOptions.tiempo_extra}>
+                Tiempo extra
+              </option>
             </Select>
           </FormControl>
           <FormControl flex="1 1 160px" minW={0}>
@@ -199,6 +211,24 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
                 {match.home}
               </option>
               <option value={MatchesFirstGoalFromOptions.away}>
+                {match.away}
+              </option>
+            </Select>
+          </FormControl>
+          <FormControl flex="1 1 160px" minW={0}>
+            <FormLabel fontSize="sm" mb={1} color={muted}>
+              Penales
+            </FormLabel>
+            <Select
+              name="penalty_winner"
+              defaultValue={match.penalty_winner ?? ""}
+              disabled={isPending}
+            >
+              <option value="">Sin definir</option>
+              <option value={MatchesPenaltyWinnerOptions.home}>
+                {match.home}
+              </option>
+              <option value={MatchesPenaltyWinnerOptions.away}>
                 {match.away}
               </option>
             </Select>

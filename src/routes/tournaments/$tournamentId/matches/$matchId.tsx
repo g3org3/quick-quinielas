@@ -19,8 +19,8 @@ import toaster from "react-hot-toast";
 
 import {
   Collections,
-  PredictionsFirstGoalFromOptions,
-  PredictionsFirstGoalOptions,
+  ResultsPFirstGoalFromOptions,
+  ResultsPFirstGoalOptions,
 } from "@/pocketbase-types";
 import { pb } from "@/pb";
 import {
@@ -35,6 +35,18 @@ import FeatFlagComponent from "@/components/FeatFlagComponent";
 import SimpleMatch from "@/components/SimpleMatch";
 import { queryClient } from "@/queryClient";
 import Flag from "@/components/Flag";
+
+const firstGoalLabel = (firstGoal: ResultsPFirstGoalOptions) => {
+  if (firstGoal === ResultsPFirstGoalOptions.primer_tiempo) {
+    return "T1";
+  }
+
+  if (firstGoal === ResultsPFirstGoalOptions.segundo_tiempo) {
+    return "T2";
+  }
+
+  return "TE";
+};
 
 export const Route = createFileRoute(
   "/tournaments/$tournamentId/matches/$matchId",
@@ -284,16 +296,13 @@ function SingleMatch() {
                         ) : null}
                         {result?.p_first_goal ? (
                           <Badge alignSelf="center" colorScheme="purple">
-                            {result.p_first_goal ===
-                            PredictionsFirstGoalOptions.primer_tiempo
-                              ? "T1"
-                              : "T2"}
+                            {firstGoalLabel(result.p_first_goal)}
                           </Badge>
                         ) : null}
                         {result?.p_first_goal_from ? (
                           <Badge alignSelf="center" colorScheme="purple">
                             {result.p_first_goal_from ===
-                            PredictionsFirstGoalFromOptions.home
+                            ResultsPFirstGoalFromOptions.home
                               ? "H"
                               : "A"}
                           </Badge>
