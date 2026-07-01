@@ -114,7 +114,7 @@ export const getPredictionsQuery = (
     filter += ` && match.startAtUtc >= '${startat}' && match.startAtUtc < '${endat}'`;
   } else if (tab === "proximos") {
     const startat = nextDayUtc;
-    const endat = today.plus({ day: 4 }).endOf("day").toUTC().toSQL();
+    const endat = today.plus({ day: 3 }).endOf("day").toUTC().toSQL();
     filter += ` && match.startAtUtc >= '${startat}' && match.startAtUtc < '${endat}'`;
   } else {
     filter += ` && match.startAtUtc >= '${todayUtc}' && match.startAtUtc < '${nextDayUtc}'`;

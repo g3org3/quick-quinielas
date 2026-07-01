@@ -23,6 +23,7 @@ import GameHistoryDrawer from "./GameHistoryDrawer";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
 import { useUserQuery } from "@/api";
 import { useEffect, useRef, useState } from "react";
+import { PhaseBadge } from "./PhaseBadge";
 
 interface Props {
   bet?: MatchBetsResponse<number, number, number>;
@@ -207,9 +208,7 @@ export default function SimpleMatch(props: Props) {
           </Flex>
         </Flex>
         <Flex flexDirection="column" gap={2} alignSelf="flex-start">
-          <Badge alignSelf="center">
-            {Number(match.roundNumber) < 4 ? "Fase Groupos" : "16avos"}
-          </Badge>
+         <PhaseBadge roundNumber={match.roundNumber} /> 
           {isGameStarted2 ? (
             <Flex
               justifyContent="center"
