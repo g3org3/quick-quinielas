@@ -1,9 +1,10 @@
 allowBuilds:
-  '@parcel/watcher': set this to true or false
+  '@parcel/watcher': true
+  '@posthog/cli': true
   '@swc/core': true
   core-js: true
   esbuild: true
-  netlify-cli: set this to true or false
-  sharp: set this to true or false
+  netlify-cli: true
+  sharp: true
   sqlite3: true
-  unix-dgram: set this to true or false
+  unix-dgram: true

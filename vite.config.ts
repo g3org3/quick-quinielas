@@ -14,6 +14,9 @@ export default defineConfig(({ mode }) => {
         "@": "/src",
       },
     },
+    build: {
+      sourcemap: true,
+    },
     server: {
       proxy: {
         "/.netlify": {

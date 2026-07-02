@@ -1,4 +1,6 @@
 [build]
+  command = "pnpm build:netlify"
+  publish = "dist"
   functions = "netlify/functions"
 
 # PostHog reverse proxy — mirrors the Vite dev-server proxy in vite.config.ts
