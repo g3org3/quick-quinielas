@@ -7,7 +7,7 @@
     "dev": "vite",
     "dev:functions": "netlify functions:serve",
     "build": "tsc && vite build",
-    "posthog:sourcemaps": "posthog-cli sourcemap inject --directory ./dist/assets && posthog-cli sourcemap upload --directory ./dist/assets --release-name quick-quinielas --delete-after",
+    "posthog:sourcemaps": "posthog-cli sourcemap inject --directory ./dist/assets && POSTHOG_CLI_PROJECT_ID=201005 posthog-cli sourcemap upload --directory ./dist/assets --release-name quick-quinielas --delete-after",
     "build:netlify": "pnpm build && pnpm posthog:sourcemaps",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "types": "pocketbase-typegen --json ./pb_schema.json && mv ./pocketbase-types.ts ./src",
