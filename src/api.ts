@@ -14,11 +14,11 @@ import {
   LeaderboardResponse,
   MatchBetsResponse,
   MatchesResponse,
+  PredictionsFirstGoalOptions,
   PredictionsRecord,
   PredictionsResponse,
   ResultsResponse,
   TournamentsResponse,
-  UsersRecord,
   UsersResponse,
 } from "./pocketbase-types";
 import { DateTime } from "luxon";
@@ -32,9 +32,9 @@ export const tournamentsQuery = queryOptions({
 });
 
 export const getFlagsQuery = queryOptions({
-  queryKey: ["flags"],
-  async queryFn() {
-    return await pb.collection("flags").getFullList<FeatFlagResponse>();
+  queryKey: [Collections.Flags],
+  queryFn() {
+    return pb.collection(Collections.Flags).getFullList<FeatFlagResponse>();
   },
 });
 
@@ -96,7 +96,7 @@ export const matchesQuery = (tournamentId: string, countryName: string) => {
 
 export const getPredictionsQuery = (
   tournamentId: string,
-  tab?: string | null,
+  tab?: string | null
 ) => {
   const today = DateTime.now().setZone("UTC-6");
   const nextDayUtc = today.plus({ days: 1 }).startOf("day").toUTC().toSQL();
@@ -143,9 +143,9 @@ export const getLeaderboardQuery = (tournamentId: string) =>
     queryFn: () =>
       pb
         .collection(Collections.Leaderboard)
-        .getFullList<LeaderboardResponse<number, { user: UsersRecord }>>({
+        .getFullList<LeaderboardResponse<{ user_id: UsersResponse }>>({
           filter: `tournament_id = '${tournamentId}'`,
-          expand: "user",
+          expand: "user_id",
           sort: "-points",
         }),
   });
@@ -178,68 +178,58 @@ export const useSetFavoriteTeam = (userId: string) => {
   });
 };
 
+type ResultsResponseWithMatchAndPrediction = ResultsResponse<{
+  match_id: MatchesResponse;
+  prediction_id: PredictionsResponse;
+}>;
 export const getUserResultsQuery = (tournamentId: string, userId: string) =>
   queryOptions({
     queryKey: [Collections.Results, tournamentId, userId],
-    queryFn: () =>
-      pb
+    queryFn() {
+      return pb
         .collection(Collections.Results)
-        .getFullList<
-          ResultsResponse<
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
-            { match_id: MatchesResponse }
-          >
-        >({
-          filter: `tournament_id = '${tournamentId}' && user = '${userId}' && points > 0`,
-          expand: "match_id",
-        }),
+        .getFullList<ResultsResponseWithMatchAndPrediction>({
+          filter: `tournament_id = '${tournamentId}' && user_id = '${userId}' && points > 0`,
+          expand: "match_id,prediction_id",
+        });
+    },
   });
 
 export const getMatchQuery = (matchId: string) =>
   queryOptions({
-    queryKey: ["get-one", Collections.Matches, matchId],
+    queryKey: [Collections.Matches, matchId],
     queryFn: () =>
       pb.collection(Collections.Matches).getOne<MatchesResponse>(matchId),
   });
 
 export const usersQuery = queryOptions({
-  queryKey: ["get-all", Collections.Users],
+  queryKey: [Collections.Users],
   queryFn: () =>
     pb.collection(Collections.Users).getFullList<UsersResponse>({
       filter: "ignore!=true",
     }),
 });
 
+export type ResultsResponseWithUserAndPrediction = ResultsResponse<{
+  user_id?: UsersResponse;
+  prediction_id?: PredictionsResponse;
+}>;
 export const getMatchResultsQuery = (matchId: string) =>
   queryOptions({
-    queryKey: ["get-all", Collections.Results, matchId],
-    queryFn: () =>
-      pb
+    queryKey: [Collections.Results, matchId],
+    queryFn() {
+      return pb
         .collection(Collections.Results)
-        .getFullList<
-          ResultsResponse<
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
-            { user: UsersResponse; prediction_id: PredictionsResponse }
-          >
-        >({
-          filter: `match_id = '${matchId}'`,
-          expand: "user,prediction_id",
+        .getFullList<ResultsResponseWithUserAndPrediction>({
+          filter: `match_id='${matchId}'`,
+          expand: "user_id,prediction_id",
           sort: "-points",
-        }),
+        });
+    },
   });
 
 export const matchBetsQuery = queryOptions({
-  queryKey: ["get-all", Collections.MatchBets],
+  queryKey: [Collections.MatchBets],
   queryFn: () =>
     pb
       .collection(Collections.MatchBets)
@@ -248,7 +238,7 @@ export const matchBetsQuery = queryOptions({
 
 export const getMatchPredictionsQuery = (matchId: string) =>
   queryOptions({
-    queryKey: ["get-all", Collections.Predictions, matchId],
+    queryKey: [Collections.Predictions, matchId],
     queryFn: () =>
       pb
         .collection(Collections.Predictions)
@@ -278,13 +268,11 @@ export const useCreatePrediction = (predictionsQueryKey: QueryKey) => {
 export const useUpdatePrediction = (predictionsQueryKey: QueryKey) => {
   const posthog = usePostHog();
   return useMutation({
-    mutationFn: (params: {
-      id: string;
-      prediction: Partial<PredictionsRecord>;
-    }) =>
-      pb
+    mutationFn(params: { id: string; prediction: Partial<PredictionsRecord> }) {
+      return pb
         .collection(Collections.Predictions)
-        .update(params.id, params.prediction),
+        .update(params.id, params.prediction);
+    },
     onSuccess() {
       toaster.success("saved");
       queryClient.invalidateQueries({ queryKey: predictionsQueryKey });
@@ -301,4 +289,16 @@ export const useUpdatePrediction = (predictionsQueryKey: QueryKey) => {
       }
     },
   });
+};
+
+export const firstGoalLabel = (firstGoal: PredictionsFirstGoalOptions) => {
+  if (firstGoal === PredictionsFirstGoalOptions.primer_tiempo) {
+    return "T1";
+  }
+
+  if (firstGoal === PredictionsFirstGoalOptions.segundo_tiempo) {
+    return "T2";
+  }
+
+  return "TE";
 };

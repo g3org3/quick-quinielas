@@ -8,7 +8,6 @@ import {
   Tr,
   Tbody,
   Thead,
-  useColorModeValue,
   Button,
 } from "@chakra-ui/react";
 import { Link, createFileRoute } from "@tanstack/react-router";
@@ -19,6 +18,7 @@ import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
 import Flag from "@/components/Flag";
 import FavoriteTeam from "@/components/FavoriteTeam";
+import { useGetRowStyle } from "@/useGetRowStyle";
 
 export const Route = createFileRoute("/tournaments/$tournamentId/$userId")({
   component: UserPredictions,
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/tournaments/$tournamentId/$userId")({
   loader: async ({ params }) => {
     await queryClient.ensureQueryData(getUserQuery(params.userId));
     await queryClient.ensureQueryData(
-      getUserResultsQuery(params.tournamentId, params.userId),
+      getUserResultsQuery(params.tournamentId, params.userId)
     );
   },
 });
@@ -35,10 +35,9 @@ function UserPredictions() {
   const { tournamentId, userId } = Route.useParams();
   const { data: user } = useSuspenseQuery(getUserQuery(userId));
   const { data: results } = useSuspenseQuery(
-    getUserResultsQuery(tournamentId, userId),
+    getUserResultsQuery(tournamentId, userId)
   );
-  const green = useColorModeValue("green.100", "green.800");
-  const red = useColorModeValue("red.50", "red.800");
+  const getRowStyle = useGetRowStyle();
 
   const total = results.reduce((sum, p) => sum + (p.points || 0), 0);
   const perfect_count = results.filter((p) => p.points === 3).length;
@@ -88,29 +87,9 @@ function UserPredictions() {
             </Thead>
             <Tbody>
               {results.map((result) => {
+                const prediction = result.expand?.prediction_id;
                 return (
-                  <Tr
-                    bgGradient={
-                      result?.points === 6 || result?.points === 2
-                        ? "linear(to-br, red.600, red.900, orange.500)"
-                        : undefined
-                    }
-                    color={
-                      result?.points === 6 || result?.points === 2
-                        ? "white"
-                        : undefined
-                    }
-                    bg={
-                      result?.points === 6 || result?.points === 2
-                        ? undefined
-                        : result?.points === 3
-                          ? green
-                          : result?.points === 1
-                            ? undefined
-                            : red
-                    }
-                    key={result.id}
-                  >
+                  <Tr {...getRowStyle({ result, prediction })} key={result.id}>
                     <Td>
                       <Link
                         to="/tournaments/$tournamentId/matches/$matchId"
@@ -127,8 +106,8 @@ function UserPredictions() {
                         country={result.expand?.match_id.home}
                       />
                     </Td>
-                    <Td>{result?.p_home ?? "-"}</Td>
-                    <Td>{result?.p_away ?? "-"}</Td>
+                    <Td>{prediction?.homeScore ?? "-"}</Td>
+                    <Td>{prediction?.awayScore ?? "-"}</Td>
                     <Td>
                       <Flag
                         height="20px"

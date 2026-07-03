@@ -27,8 +27,6 @@ declare module "@tanstack/react-router" {
   }
 }
 
-const isDev = true;
-
 // Render the app
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
@@ -38,7 +36,7 @@ if (!rootElement.innerHTML) {
       <ChakraProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
-          {isDev ? <ReactQueryDevtools initialIsOpen={true} /> : null}
+          <ReactQueryDevtools initialIsOpen={true} />
         </QueryClientProvider>
       </ChakraProvider>
     </StrictMode>,

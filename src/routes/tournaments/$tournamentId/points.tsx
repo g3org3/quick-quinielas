@@ -73,12 +73,12 @@ function Points() {
             {rankedLeaderboard.map(({ row, position }) => (
               <Tr
                 key={row.id}
-                bg={pb.authStore.model?.id === row.user ? blue : undefined}
+                bg={pb.authStore.model?.id === row.user_id ? blue : undefined}
               >
                 <Td>
                   <Link
                     to="/tournaments/$tournamentId/$userId"
-                    params={{ tournamentId, userId: row.user }}
+                    params={{ tournamentId, userId: row.user_id }}
                   >
                     <Flex alignItems="center" gap={3}>
                       <Text fontFamily="monospace" fontSize={position <= 3 ? "xx-large" : "large"}>
@@ -89,18 +89,17 @@ function Points() {
                         w="40px"
                         h="40px"
                         src={
-                          row.expand?.user.img
-                            ? row.expand?.user.img +
+                          row.expand?.user_id.img
+                            ? row.expand?.user_id.img +
                               "&thumb=100x100&cache=default"
-                            : // @ts-expect-error we dont care
-                              `https://api.dicebear.com/9.x/initials/svg?seed=${row.expand?.user.username}`
+                            : `https://api.dicebear.com/9.x/initials/svg?seed=${row.expand?.user_id.username}`
                         }
                       />
-                      {row.expand?.user.name}
-                      {row.expand?.user.favorite_team && (
+                      {row.expand?.user_id.name}
+                      {row.expand?.user_id.favorite_team && (
                         <Flag
                           height="24px"
-                          country={row.expand.user.favorite_team}
+                          country={row.expand.user_id.favorite_team}
                         />
                       )}
                     </Flex>
