@@ -13,7 +13,6 @@ export enum Collections {
   Predictions = "predictions",
   Results = "results",
   Tournaments = "tournaments",
-  UserBonusView = "user_bonus_view",
   Users = "users",
 }
 
@@ -46,10 +45,10 @@ export type FlagsRecord = {
   isActive?: boolean;
 };
 
-export type LeaderboardRecord<Tpoints = unknown> = {
-  points?: null | Tpoints;
+export type LeaderboardRecord = {
+  points?: number;
   tournament_id?: RecordIdString;
-  user?: RecordIdString;
+  user_id?: RecordIdString;
 };
 
 export type MatchBetsRecord<
@@ -121,67 +120,22 @@ export type PredictionsRecord = {
   user?: RecordIdString;
 };
 
-export enum ResultsPFirstGoalOptions {
-  "primer_tiempo" = "primer_tiempo",
-  "segundo_tiempo" = "segundo_tiempo",
-  "tiempo_extra" = "tiempo_extra",
-}
-
-export enum ResultsPFirstGoalFromOptions {
-  "home" = "home",
-  "away" = "away",
-}
-
-export enum ResultsFirstGoalOptions {
-  "primer_tiempo" = "primer_tiempo",
-  "segundo_tiempo" = "segundo_tiempo",
-  "tiempo_extra" = "tiempo_extra",
-}
-
-export enum ResultsFirstGoalFromOptions {
-  "home" = "home",
-  "away" = "away",
-}
-export type ResultsRecord<
-  Tcorrect_first_goal = unknown,
-  Tcorrect_first_goal_from = unknown,
-  Tcorrect_penalty_winner = unknown,
-  Tcorrect_result = unknown,
-  Texact_score = unknown,
-  Tpoints = unknown,
-> = {
-  away?: string;
-  awayScore?: number;
-  correct_first_goal?: null | Tcorrect_first_goal;
-  correct_first_goal_from?: null | Tcorrect_first_goal_from;
-  correct_penalty_winner?: null | Tcorrect_penalty_winner;
-  correct_result?: null | Tcorrect_result;
-  exact_score?: null | Texact_score;
-  first_goal?: ResultsFirstGoalOptions;
-  first_goal_from?: ResultsFirstGoalFromOptions;
-  home?: string;
-  homeScore?: number;
-  isBonusActive?: boolean;
+export type ResultsRecord = {
+  correct_first_goal?: boolean;
+  correct_first_goal_from?: boolean;
+  correct_penalty_winner?: boolean;
+  correct_result?: boolean;
+  exact_score?: boolean;
   match_id?: RecordIdString;
-  p_away?: number;
-  p_first_goal?: ResultsPFirstGoalOptions;
-  p_first_goal_from?: ResultsPFirstGoalFromOptions;
-  p_home?: number;
+  points?: number;
   prediction_id?: RecordIdString;
-  points?: null | Tpoints;
-  startAtUtc?: IsoDateString;
   tournament_id?: RecordIdString;
-  user?: RecordIdString;
+  user_id?: RecordIdString;
 };
 
 export type TournamentsRecord = {
   logo?: string;
   name?: string;
-};
-
-export type UserBonusViewRecord<Ttotal = unknown> = {
-  total?: null | Ttotal;
-  user?: RecordIdString;
 };
 
 export enum UsersTagsOptions {
@@ -205,10 +159,8 @@ export type UsersRecord = {
 // Response types include system fields and match responses from the PocketBase API
 export type FlagsResponse<Texpand = unknown> = Required<FlagsRecord> &
   BaseSystemFields<Texpand>;
-export type LeaderboardResponse<
-  Tpoints = unknown,
-  Texpand = unknown,
-> = Required<LeaderboardRecord<Tpoints>> & BaseSystemFields<Texpand>;
+export type LeaderboardResponse<Texpand = unknown> =
+  Required<LeaderboardRecord> & BaseSystemFields<Texpand>;
 export type MatchBetsResponse<
   Taway_per = unknown,
   Thome_per = unknown,
@@ -220,31 +172,10 @@ export type MatchesResponse<Texpand = unknown> = Required<MatchesRecord> &
   BaseSystemFields<Texpand>;
 export type PredictionsResponse<Texpand = unknown> =
   Required<PredictionsRecord> & BaseSystemFields<Texpand>;
-export type ResultsResponse<
-  Tcorrect_first_goal = unknown,
-  Tcorrect_first_goal_from = unknown,
-  Tcorrect_penalty_winner = unknown,
-  Tcorrect_result = unknown,
-  Texact_score = unknown,
-  Tpoints = unknown,
-  Texpand = unknown,
-> = Required<
-  ResultsRecord<
-    Tcorrect_first_goal,
-    Tcorrect_first_goal_from,
-    Tcorrect_penalty_winner,
-    Tcorrect_result,
-    Texact_score,
-    Tpoints
-  >
-> &
+export type ResultsResponse<Texpand = unknown> = Required<ResultsRecord> &
   BaseSystemFields<Texpand>;
 export type TournamentsResponse<Texpand = unknown> =
   Required<TournamentsRecord> & BaseSystemFields<Texpand>;
-export type UserBonusViewResponse<
-  Ttotal = unknown,
-  Texpand = unknown,
-> = Required<UserBonusViewRecord<Ttotal>> & BaseSystemFields<Texpand>;
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> &
   AuthSystemFields<Texpand>;
 
@@ -258,7 +189,6 @@ export type CollectionRecords = {
   predictions: PredictionsRecord;
   results: ResultsRecord;
   tournaments: TournamentsRecord;
-  user_bonus_view: UserBonusViewRecord;
   users: UsersRecord;
 };
 
@@ -270,7 +200,6 @@ export type CollectionResponses = {
   predictions: PredictionsResponse;
   results: ResultsResponse;
   tournaments: TournamentsResponse;
-  user_bonus_view: UserBonusViewResponse;
   users: UsersResponse;
 };
 
@@ -285,6 +214,5 @@ export type TypedPocketBase = PocketBase & {
   collection(idOrName: "predictions"): RecordService<PredictionsResponse>;
   collection(idOrName: "results"): RecordService<ResultsResponse>;
   collection(idOrName: "tournaments"): RecordService<TournamentsResponse>;
-  collection(idOrName: "user_bonus_view"): RecordService<UserBonusViewResponse>;
   collection(idOrName: "users"): RecordService<UsersResponse>;
 };

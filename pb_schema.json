@@ -582,8 +582,8 @@
     "schema": [
       {
         "system": false,
-        "id": "byxwhyuf",
-        "name": "user",
+        "id": "xqpujthf",
+        "name": "user_id",
         "type": "relation",
         "required": false,
         "presentable": false,
@@ -598,7 +598,7 @@
       },
       {
         "system": false,
-        "id": "wqltjnnm",
+        "id": "mwvlnku2",
         "name": "tournament_id",
         "type": "relation",
         "required": false,
@@ -614,14 +614,16 @@
       },
       {
         "system": false,
-        "id": "jyvxshov",
+        "id": "7snd8meb",
         "name": "points",
-        "type": "json",
+        "type": "number",
         "required": false,
         "presentable": false,
         "unique": false,
         "options": {
-          "maxSize": 1
+          "min": null,
+          "max": null,
+          "noDecimal": false
         }
       }
     ],
@@ -632,7 +634,7 @@
     "updateRule": null,
     "deleteRule": null,
     "options": {
-      "query": "select \n  concat(r.user, '-', r.tournament_id) as id,\n  r.user,\n  r.tournament_id,\n  sum(points) as points\nfrom users u\ninner join results r on r.user = u.id\n  where u.ignore != true\ngroup by r.user, r.tournament_id"
+      "query": "select \n  concat(r.tournament_id, '_', r.user_id) as id,\n  r.user_id,\n  r.tournament_id,\n  cast(sum(points) as int) as points\nfrom users u\ninner join results r on r.user_id = u.id\n  where u.ignore != true\ngroup by r.user_id, r.tournament_id"
     }
   },
   {
@@ -712,23 +714,7 @@
     "schema": [
       {
         "system": false,
-        "id": "qpbzpjjl",
-        "name": "user",
-        "type": "relation",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "_pb_users_auth_",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "mml8j2gv",
+        "id": "sbd8bj0s",
         "name": "prediction_id",
         "type": "relation",
         "required": false,
@@ -744,94 +730,7 @@
       },
       {
         "system": false,
-        "id": "bmrb5hvm",
-        "name": "p_home",
-        "type": "number",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "noDecimal": false
-        }
-      },
-      {
-        "system": false,
-        "id": "mbk1jvtk",
-        "name": "p_away",
-        "type": "number",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "noDecimal": false
-        }
-      },
-      {
-        "system": false,
-        "id": "pykyntue",
-        "name": "isBonusActive",
-        "type": "bool",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {}
-      },
-      {
-        "system": false,
-        "id": "gve3qggm",
-        "name": "p_first_goal",
-        "type": "select",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "values": [
-            "primer_tiempo",
-            "segundo_tiempo",
-            "tiempo_extra"
-          ]
-        }
-      },
-      {
-        "system": false,
-        "id": "hi56htcr",
-        "name": "p_first_goal_from",
-        "type": "select",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "values": [
-            "home",
-            "away"
-          ]
-        }
-      },
-      {
-        "system": false,
-        "id": "ak6yg3vm",
-        "name": "match_id",
-        "type": "relation",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "v4sce7qii76p0jl",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "zbs1eyzj",
+        "id": "8vhzyzjv",
         "name": "tournament_id",
         "type": "relation",
         "required": false,
@@ -847,199 +746,24 @@
       },
       {
         "system": false,
-        "id": "mzp0a7fc",
-        "name": "home",
-        "type": "text",
+        "id": "xcxhgmrf",
+        "name": "match_id",
+        "type": "relation",
         "required": false,
         "presentable": false,
         "unique": false,
         "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
-      },
-      {
-        "system": false,
-        "id": "11rsnswa",
-        "name": "homeScore",
-        "type": "number",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "noDecimal": false
-        }
-      },
-      {
-        "system": false,
-        "id": "gctuagmt",
-        "name": "away",
-        "type": "text",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
-      },
-      {
-        "system": false,
-        "id": "ngin1lxw",
-        "name": "awayScore",
-        "type": "number",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "noDecimal": false
-        }
-      },
-      {
-        "system": false,
-        "id": "o2enudpl",
-        "name": "startAtUtc",
-        "type": "date",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": "",
-          "max": ""
-        }
-      },
-      {
-        "system": false,
-        "id": "gw7cq7q6",
-        "name": "first_goal",
-        "type": "select",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
+          "collectionId": "v4sce7qii76p0jl",
+          "cascadeDelete": false,
+          "minSelect": null,
           "maxSelect": 1,
-          "values": [
-            "primer_tiempo",
-            "segundo_tiempo",
-            "tiempo_extra"
-          ]
+          "displayFields": null
         }
       },
       {
         "system": false,
-        "id": "phaw8ogj",
-        "name": "first_goal_from",
-        "type": "select",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "values": [
-            "home",
-            "away"
-          ]
-        }
-      },
-      {
-        "system": false,
-        "id": "usp06avq",
-        "name": "points",
-        "type": "json",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 1
-        }
-      },
-      {
-        "system": false,
-        "id": "3v6jjjo1",
-        "name": "exact_score",
-        "type": "json",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 1
-        }
-      },
-      {
-        "system": false,
-        "id": "wjb112ll",
-        "name": "correct_result",
-        "type": "json",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 1
-        }
-      },
-      {
-        "system": false,
-        "id": "x5fp1v0t",
-        "name": "correct_first_goal",
-        "type": "json",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 1
-        }
-      },
-      {
-        "system": false,
-        "id": "j2r4xzjh",
-        "name": "correct_first_goal_from",
-        "type": "json",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 1
-        }
-      },
-      {
-        "system": false,
-        "id": "fcgloovl",
-        "name": "correct_penalty_winner",
-        "type": "json",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 1
-        }
-      }
-    ],
-    "indexes": [],
-    "listRule": "@request.auth.id != \"\"",
-    "viewRule": null,
-    "createRule": null,
-    "updateRule": null,
-    "deleteRule": null,
-    "options": {
-      "query": "WITH scored AS (\n    SELECT\n      p.id AS prediction_id,\n      p.homeScore = m.homeScore\n        AND p.awayScore = m.awayScore AS exact_score,\n\n      (\n        (p.homeScore > p.awayScore AND m.homeScore > m.awayScore) OR\n        (p.homeScore < p.awayScore AND m.homeScore < m.awayScore) OR\n        (p.homeScore = p.awayScore AND m.homeScore = m.awayScore)\n      ) AS correct_result,\n\n      m.first_goal != ''\n        AND m.first_goal = p.first_goal AS correct_first_goal,\n\n      m.first_goal_from  != ''\n        AND m.first_goal_from = p.first_goal_from AS correct_first_goal_from,\n\n      m.penalty_winner != ''\n        AND m.penalty_winner = p.penalty_winner as correct_penalty_winner\n\n    FROM predictions p\n    JOIN matches m ON m.id = p.match\n    WHERE m.startAtUtc < datetime()\n  ),\n\n  points AS (\n    SELECT\n      *,\n      (\n        CASE\n          WHEN exact_score THEN 3\n          WHEN correct_result THEN 1\n          ELSE 0\n        END\n        +\n        CASE WHEN correct_first_goal THEN 1 ELSE 0 END\n        +\n        CASE WHEN correct_first_goal_from THEN 1 ELSE 0 END\n        +\n        CASE WHEN correct_penalty_winner THEN 1 ELSE 0 END\n      ) AS base_points\n    FROM scored\n  )\n\n  SELECT\n    (row_number() OVER ()) AS id,\n      p.user,\n      p.homeScore AS p_home,\n      p.awayScore AS p_away,\n      p.isBonusActive,\n      p.first_goal as p_first_goal,\n      p.first_goal_from as p_first_goal_from,\n\n      m.id AS match_id,\n      m.tournament AS tournament_id,\n      m.home,\n      m.homeScore,\n      m.away,\n      m.awayScore,\n      m.startAtUtc,\n      m.first_goal,\n      m.first_goal_from,\n\n    (base_points * CASE WHEN isBonusActive THEN 2 ELSE 1 END) AS points,\n    pp.exact_score,\n    pp.correct_result,\n    pp.correct_first_goal,\n    pp.correct_first_goal_from,\n    pp.correct_penalty_winner\n  FROM points pp\nJOIN predictions p on p.id = pp.prediction_id\nJOIN matches m ON m.id = p.match"
-    }
-  },
-  {
-    "id": "ztd2buxe0busqa9",
-    "name": "user_bonus_view",
-    "type": "view",
-    "system": false,
-    "schema": [
-      {
-        "system": false,
-        "id": "8xxzuxdu",
-        "name": "user",
+        "id": "bnjnfnyp",
+        "name": "user_id",
         "type": "relation",
         "required": false,
         "presentable": false,
@@ -1054,25 +778,77 @@
       },
       {
         "system": false,
-        "id": "ehb2ctbk",
-        "name": "total",
-        "type": "json",
+        "id": "mshntjdr",
+        "name": "points",
+        "type": "number",
         "required": false,
         "presentable": false,
         "unique": false,
         "options": {
-          "maxSize": 1
+          "min": null,
+          "max": null,
+          "noDecimal": false
         }
+      },
+      {
+        "system": false,
+        "id": "xkgtjqsc",
+        "name": "exact_score",
+        "type": "bool",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {}
+      },
+      {
+        "system": false,
+        "id": "bp1lmzfk",
+        "name": "correct_result",
+        "type": "bool",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {}
+      },
+      {
+        "system": false,
+        "id": "etot1yay",
+        "name": "correct_first_goal",
+        "type": "bool",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {}
+      },
+      {
+        "system": false,
+        "id": "vs89cviw",
+        "name": "correct_first_goal_from",
+        "type": "bool",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {}
+      },
+      {
+        "system": false,
+        "id": "3c1qvolv",
+        "name": "correct_penalty_winner",
+        "type": "bool",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {}
       }
     ],
     "indexes": [],
-    "listRule": "",
-    "viewRule": "",
+    "listRule": "@request.auth.id != \"\"",
+    "viewRule": null,
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
     "options": {
-      "query": "SELECT\n  p.user as id,\n  p.user,\n  sum(\n    case \n      when p.isBonusActive then 1\n      else 0\n     end\n  ) as total\nfrom predictions p \ngroup by p.user"
+      "query": "WITH scored AS (\n    SELECT\n      p.id AS prediction_id,\n      p.homeScore = m.homeScore\n        AND p.awayScore = m.awayScore AS exact_score,\n\n      (\n        (p.homeScore > p.awayScore AND m.homeScore > m.awayScore) OR\n        (p.homeScore < p.awayScore AND m.homeScore < m.awayScore) OR\n        (p.homeScore = p.awayScore AND m.homeScore = m.awayScore)\n      ) AS correct_result,\n\n      m.first_goal != ''\n        AND m.first_goal = p.first_goal AS correct_first_goal,\n\n      m.first_goal_from  != ''\n        AND m.first_goal_from = p.first_goal_from AS correct_first_goal_from,\n\n      m.penalty_winner != ''\n        AND m.penalty_winner = p.penalty_winner as correct_penalty_winner\n\n    FROM predictions p\n    JOIN matches m ON m.id = p.match\n    WHERE m.startAtUtc < datetime()\n  ),\n\n  points AS (\n    SELECT\n      *,\n      (\n        CASE\n          WHEN exact_score THEN 3\n          WHEN correct_result THEN 1\n          ELSE 0\n        END\n        +\n        CASE WHEN correct_first_goal THEN 1 ELSE 0 END\n        +\n        CASE WHEN correct_first_goal_from THEN 1 ELSE 0 END\n        +\n        CASE WHEN correct_penalty_winner THEN 1 ELSE 0 END\n      ) AS base_points\n    FROM scored\n  )\n\nSELECT\n    (row_number() OVER ()) AS id,\n    p.id as prediction_id,\n    m.tournament as tournament_id,\n    m.id AS match_id,\n   p.user as user_id,\n    cast((base_points * CASE WHEN isBonusActive THEN 2 ELSE 1 END) as int) AS points,\n    cast(pp.exact_score = 1 as bool) as exact_score,\n    cast(pp.correct_result = 1 as bool) as correct_result,\n    cast(pp.correct_first_goal = 1 as bool) as correct_first_goal,\n    cast(pp.correct_first_goal_from = 1 as bool) as correct_first_goal_from,\n    cast(pp.correct_penalty_winner=1 as bool) as correct_penalty_winner\nFROM points pp\nJOIN predictions p on p.id = pp.prediction_id\nJOIN matches m ON m.id = p.match"
     }
   }
 ]
