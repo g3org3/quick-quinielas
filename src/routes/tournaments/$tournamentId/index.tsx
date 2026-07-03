@@ -8,12 +8,10 @@ import FeatFlagComponent from "@/components/FeatFlagComponent";
 import Match from "@/components/Match";
 import MatchV2 from "@/components/MatchV2";
 import TournamentLoading from "@/components/TournamentLoading";
-import {
-  getMatchesQuery,
-  getPredictionsQuery,
-  getTournamentQuery,
-  matchBetsQuery,
-} from "@/api";
+import { getMatchesQuery } from "@/api/matches";
+import { matchBetsQuery } from "@/api/matchBets";
+import { getPredictionsQuery } from "@/api/predictions";
+import { getTournamentQuery } from "@/api/tournaments";
 import { queryClient } from "@/queryClient";
 
 const homeSchema = z.object({

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { pb } from "@/pb";
 import { FeatureFlag, useFeatFlag } from "@/featureFlags";
-import { useUserQuery } from "@/api";
+import { useUserQuery } from "@/api/users";
 
 interface Props {
   feature: FeatureFlag;

@@ -2,7 +2,7 @@ import { Button, Flex, Img, useColorModeValue } from "@chakra-ui/react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-import { tournamentsQuery } from "@/api";
+import { tournamentsQuery } from "@/api/tournaments";
 import { queryClient } from "@/queryClient";
 import TournamentLoading from "@/components/TournamentLoading";
 import { useEffect } from "react";

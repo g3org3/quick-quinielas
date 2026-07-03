@@ -12,7 +12,8 @@ import {
   Img,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { getLeaderboardQuery, getTournamentQuery } from "@/api";
+import { getLeaderboardQuery } from "@/api/leaderboard";
+import { getTournamentQuery } from "@/api/tournaments";
 import { pb } from "@/pb";
 import { queryClient } from "@/queryClient";
 import TournamentLoading from "@/components/TournamentLoading";

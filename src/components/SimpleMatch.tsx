@@ -21,7 +21,7 @@ import { pb } from "@/pb";
 import Flag from "./Flag";
 import GameHistoryDrawer from "./GameHistoryDrawer";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
-import { useUserQuery } from "@/api";
+import { useUserQuery } from "@/api/users";
 import { useEffect, useRef, useState } from "react";
 import { PhaseBadge } from "./PhaseBadge";
 

@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Flex, Button, useColorModeValue } from "@chakra-ui/react";
 import { pb } from "@/pb";
-import { useUserQuery } from "@/api";
+import { useUserQuery } from "@/api/users";
 
 export default function BottomNav({
   tournamentId,

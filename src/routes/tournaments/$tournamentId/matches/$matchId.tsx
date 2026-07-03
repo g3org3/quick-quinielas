@@ -18,13 +18,11 @@ import {
   Collections,
   PredictionsFirstGoalFromOptions,
 } from "@/pocketbase-types";
-import {
-  firstGoalLabel,
-  getMatchQuery,
-  getMatchResultsQuery,
-  getTournamentQuery,
-  usersQuery,
-} from "@/api";
+import { getMatchQuery } from "@/api/matches";
+import { firstGoalLabel } from "@/api/predictions";
+import { getMatchResultsQuery } from "@/api/results";
+import { getTournamentQuery } from "@/api/tournaments";
+import { usersQuery } from "@/api/users";
 import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
 import FeatFlagComponent from "@/components/FeatFlagComponent";

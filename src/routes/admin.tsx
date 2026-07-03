@@ -1,11 +1,8 @@
 import AdminMatch from "@/components/AdminMatch";
-import {
-  getFlagsQuery,
-  getMatchesQuery,
-  tournamentsQuery,
-  useToggleFeatFlags,
-  useUserQuery,
-} from "@/api";
+import { getFlagsQuery, useToggleFeatFlags } from "@/api/flags";
+import { getMatchesQuery } from "@/api/matches";
+import { tournamentsQuery } from "@/api/tournaments";
+import { useUserQuery } from "@/api/users";
 import { pb } from "@/pb";
 import { queryClient } from "@/queryClient";
 import TournamentLoading from "@/components/TournamentLoading";

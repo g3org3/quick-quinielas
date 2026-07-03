@@ -15,7 +15,7 @@ import ColorModeSwitcher from "./ColorModeSwitcher";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useFeatFlag } from "@/featureFlags";
-import { useUserQuery } from "@/api";
+import { useUserQuery } from "@/api/users";
 import Swal from "sweetalert2";
 
 export default function Navbar() {

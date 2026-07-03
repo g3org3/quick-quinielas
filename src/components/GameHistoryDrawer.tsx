@@ -4,7 +4,7 @@ import { Box, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { usePostHog } from "@posthog/react";
 import { useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
-import { matchesQuery } from "@/api";
+import { matchesQuery } from "@/api/matches";
 import Flag from "./Flag";
 
 interface Props {

@@ -28,8 +28,8 @@ import {
   getMatchPredictionsQuery,
   useCreatePrediction,
   useUpdatePrediction,
-  useUserQuery,
-} from "@/api";
+} from "@/api/predictions";
+import { useUserQuery } from "@/api/users";
 import { useEffect, useState } from "react";
 
 interface Props {

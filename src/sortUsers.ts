@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { ResultsResponseWithUserAndPrediction } from "./api";
+import type { ResultsResponseWithUserAndPrediction } from "./api/results";
 import { UsersResponse } from "./pocketbase-types";
 
 const _predictionUpdatedAt = (

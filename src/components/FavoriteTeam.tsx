@@ -2,7 +2,7 @@ import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { usePostHog } from "@posthog/react";
 import toaster from "react-hot-toast";
 
-import { useSetFavoriteTeam } from "@/api";
+import { useSetFavoriteTeam } from "@/api/users";
 import CountryDrawer from "@/components/CountryDrawer";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
 import Flag from "@/components/Flag";

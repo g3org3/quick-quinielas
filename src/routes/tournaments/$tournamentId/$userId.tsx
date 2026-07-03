@@ -12,7 +12,8 @@ import {
 } from "@chakra-ui/react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
-import { getUserQuery, getUserResultsQuery } from "@/api";
+import { getUserResultsQuery } from "@/api/results";
+import { getUserQuery } from "@/api/users";
 import { queryClient } from "@/queryClient";
 import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
