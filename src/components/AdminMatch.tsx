@@ -11,10 +11,11 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { usePostHog } from "@posthog/react";
-import { QueryKey, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 import { FaSave } from "react-icons/fa";
 
+import { matchesKeys } from "@/api/matches";
 import Flag from "@/components/Flag";
 import { pb } from "@/pb";
 import {
@@ -29,11 +30,10 @@ import { queryClient } from "@/queryClient";
 
 interface Props {
   match: MatchesResponse;
-  queryKey: QueryKey;
   tournamentId: string;
 }
 
-export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
+export default function AdminMatch({ match, tournamentId }: Props) {
   const border = useColorModeValue("gray.200", "gray.700");
   const muted = useColorModeValue("gray.600", "gray.400");
   const posthog = usePostHog();
@@ -65,7 +65,7 @@ export default function AdminMatch({ match, queryKey, tournamentId }: Props) {
         penalty_winner: score.penalty_winner,
       });
       toaster.success("Marcador guardado");
-      queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: matchesKeys.all });
     },
     onError(err) {
       posthog.capture("admin_match_score_update_failed", {

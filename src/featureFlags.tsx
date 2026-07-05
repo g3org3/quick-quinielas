@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { flagsKeys } from "@/api/flags";
 import { pb } from "./pb";
 import { usePocketBaseRealtime } from "./useRealtime";
 
@@ -21,13 +22,12 @@ export interface FeatFlagResponse {
 }
 
 export function useFeatFlag(feature: FeatureFlag) {
-  usePocketBaseRealtime("flags", ["flags", feature]);
+  const id = featureFlags[feature];
+  usePocketBaseRealtime("flags", flagsKeys.detail(id));
   const { data } = useQuery({
-    queryKey: ["flags", feature],
+    queryKey: flagsKeys.detail(id),
     queryFn() {
-      return pb
-        .collection("flags")
-        .getOne<FeatFlagResponse>(featureFlags[feature]);
+      return pb.collection("flags").getOne<FeatFlagResponse>(id);
     },
   });
   return data?.isActive;

@@ -7,7 +7,6 @@ import {
   Badge,
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
-import { QueryKey } from "@tanstack/react-query";
 import { FaLock, FaLockOpen } from "react-icons/fa";
 import {
   MatchBetsResponse,
@@ -35,8 +34,6 @@ interface Props {
   firstGoal?: MatchesFirstGoalOptions;
   firstGoalFrom?: MatchesFirstGoalFromOptions;
   tournamentId: string;
-  getMatchesQueryKey: QueryKey;
-  predictionsQueryKey: QueryKey;
 }
 
 export default function SimpleMatch(props: Props) {

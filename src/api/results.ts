@@ -14,14 +14,26 @@ type ResultsResponseWithMatchAndPrediction = ResultsResponse<{
   prediction_id: PredictionsResponse;
 }>;
 
+export const resultsKeys = {
+  all: [Collections.Results] as const,
+  lists: () => [...resultsKeys.all, "list"] as const,
+  byUser: (tournamentId: string, userId: string) =>
+    [...resultsKeys.lists(), "user", tournamentId, userId] as const,
+  byMatch: (matchId: string) =>
+    [...resultsKeys.lists(), "match", matchId] as const,
+};
+
 export const getUserResultsQuery = (tournamentId: string, userId: string) =>
   queryOptions({
-    queryKey: [Collections.Results, tournamentId, userId],
+    queryKey: resultsKeys.byUser(tournamentId, userId),
     queryFn() {
       return pb
         .collection(Collections.Results)
         .getFullList<ResultsResponseWithMatchAndPrediction>({
-          filter: `tournament_id = '${tournamentId}' && user_id = '${userId}' && points > 0`,
+          filter:
+            `tournament_id = '${tournamentId}' ` +
+            `&& user_id = '${userId}' ` +
+            `&& points > 0`,
           expand: "match_id,prediction_id",
         });
     },
@@ -34,7 +46,7 @@ export type ResultsResponseWithUserAndPrediction = ResultsResponse<{
 
 export const getMatchResultsQuery = (matchId: string) =>
   queryOptions({
-    queryKey: [Collections.Results, matchId],
+    queryKey: resultsKeys.byMatch(matchId),
     queryFn() {
       return pb
         .collection(Collections.Results)

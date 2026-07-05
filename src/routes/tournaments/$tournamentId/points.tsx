@@ -13,7 +13,6 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { getLeaderboardQuery } from "@/api/leaderboard";
-import { getTournamentQuery } from "@/api/tournaments";
 import { pb } from "@/pb";
 import { queryClient } from "@/queryClient";
 import TournamentLoading from "@/components/TournamentLoading";
@@ -24,7 +23,6 @@ export const Route = createFileRoute("/tournaments/$tournamentId/points")({
   component: Points,
   pendingComponent: TournamentLoading,
   loader: async ({ params }) => {
-    await queryClient.ensureQueryData(getTournamentQuery(params.tournamentId));
     await queryClient.ensureQueryData(getLeaderboardQuery(params.tournamentId));
   },
 });
@@ -33,9 +31,6 @@ function Points() {
   const { tournamentId } = Route.useParams();
   const blue = useColorModeValue("blue.100", "blue.800");
 
-  const { data: tournament } = useSuspenseQuery(
-    getTournamentQuery(tournamentId),
-  );
   const { data: leaderboard } = useSuspenseQuery(
     getLeaderboardQuery(tournamentId),
   );
@@ -52,16 +47,6 @@ function Points() {
 
   return (
     <>
-      <h1
-        style={{
-          fontWeight: "bold",
-          letterSpacing: "2px",
-          fontSize: "20px",
-          textAlign: "center",
-        }}
-      >
-        {tournament?.name}
-      </h1>
       <Flex flex="1" flexDir="column" overflow="auto" overscrollBehavior="contain">
         <Table variant="simple">
           <Thead>

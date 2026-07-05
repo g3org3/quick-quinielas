@@ -14,14 +14,10 @@ import {
 import { Flex } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 
-import {
-  Collections,
-  PredictionsFirstGoalFromOptions,
-} from "@/pocketbase-types";
+import { PredictionsFirstGoalFromOptions } from "@/pocketbase-types";
 import { getMatchQuery } from "@/api/matches";
 import { firstGoalLabel } from "@/api/predictions";
 import { getMatchResultsQuery } from "@/api/results";
-import { getTournamentQuery } from "@/api/tournaments";
 import { usersQuery } from "@/api/users";
 import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
@@ -38,7 +34,6 @@ export const Route = createFileRoute(
   component: SingleMatch,
   pendingComponent: TournamentLoading,
   loader: async ({ params }) => {
-    await queryClient.ensureQueryData(getTournamentQuery(params.tournamentId));
     await queryClient.ensureQueryData(getMatchQuery(params.matchId));
     await queryClient.ensureQueryData(usersQuery);
     await queryClient.ensureQueryData(getMatchResultsQuery(params.matchId));
@@ -48,9 +43,6 @@ export const Route = createFileRoute(
 function SingleMatch() {
   const { matchId, tournamentId } = Route.useParams();
 
-  const { data: tournament } = useSuspenseQuery(
-    getTournamentQuery(tournamentId)
-  );
   const { data: match } = useSuspenseQuery(getMatchQuery(matchId));
   const { data: users } = useSuspenseQuery(usersQuery);
   const { data: results } = useSuspenseQuery(getMatchResultsQuery(matchId));
@@ -65,16 +57,6 @@ function SingleMatch() {
         overflow="auto"
         overscrollBehavior="contain"
       >
-        <h1
-          style={{
-            fontWeight: "bold",
-            letterSpacing: "2px",
-            fontSize: "20px",
-            textAlign: "center",
-          }}
-        >
-          {tournament.name}
-        </h1>
         <FeatFlagComponent
           feature="show_new_matchcard"
           fallback={
@@ -142,8 +124,6 @@ function SingleMatch() {
             firstGoal={match.first_goal}
             firstGoalFrom={match.first_goal_from}
             tournamentId={tournamentId}
-            predictionsQueryKey={[Collections.Results, matchId]}
-            getMatchesQueryKey={[Collections.Matches, matchId]}
           />
         </FeatFlagComponent>
         <Flex flexDir="column" flex="1">

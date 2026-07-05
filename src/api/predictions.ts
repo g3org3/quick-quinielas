@@ -1,6 +1,6 @@
 import toaster from "react-hot-toast";
 import { usePostHog } from "@posthog/react";
-import { QueryKey, queryOptions, useMutation } from "@tanstack/react-query";
+import { queryOptions, useMutation } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 
 import { pb } from "@/pb";
@@ -12,6 +12,15 @@ import {
   UsersResponse,
 } from "@/pocketbase-types";
 import { queryClient } from "@/queryClient";
+
+export const predictionsKeys = {
+  all: [Collections.Predictions] as const,
+  lists: () => [...predictionsKeys.all, "list"] as const,
+  list: (tournamentId: string, userId: string, tab?: string | null) =>
+    [...predictionsKeys.lists(), tournamentId, userId, tab ?? "today"] as const,
+  byMatch: (matchId: string) =>
+    [...predictionsKeys.all, "byMatch", matchId] as const,
+};
 
 export const getPredictionsQuery = (
   tournamentId: string,
@@ -39,7 +48,7 @@ export const getPredictionsQuery = (
     filter += ` && match.startAtUtc >= '${todayUtc}' && match.startAtUtc < '${nextDayUtc}'`;
   }
   return queryOptions({
-    queryKey: [Collections.Predictions, filter],
+    queryKey: predictionsKeys.list(tournamentId, user.id, tab),
     queryFn: () =>
       pb.collection(Collections.Predictions).getFullList<PredictionsResponse>({
         filter,
@@ -49,7 +58,7 @@ export const getPredictionsQuery = (
 
 export const getMatchPredictionsQuery = (matchId: string) =>
   queryOptions({
-    queryKey: [Collections.Predictions, matchId],
+    queryKey: predictionsKeys.byMatch(matchId),
     queryFn: () =>
       pb
         .collection(Collections.Predictions)
@@ -59,14 +68,14 @@ export const getMatchPredictionsQuery = (matchId: string) =>
         }),
   });
 
-export const useCreatePrediction = (predictionsQueryKey: QueryKey) => {
+export const useCreatePrediction = () => {
   const posthog = usePostHog();
   return useMutation({
     mutationFn(prediction: Partial<PredictionsRecord>) {
       return pb.collection(Collections.Predictions).create(prediction);
     },
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: predictionsQueryKey });
+      queryClient.invalidateQueries({ queryKey: predictionsKeys.all });
       toaster.success("saved");
     },
     onError(err) {
@@ -76,7 +85,7 @@ export const useCreatePrediction = (predictionsQueryKey: QueryKey) => {
   });
 };
 
-export const useUpdatePrediction = (predictionsQueryKey: QueryKey) => {
+export const useUpdatePrediction = () => {
   const posthog = usePostHog();
   return useMutation({
     mutationFn(params: { id: string; prediction: Partial<PredictionsRecord> }) {
@@ -86,7 +95,7 @@ export const useUpdatePrediction = (predictionsQueryKey: QueryKey) => {
     },
     onSuccess() {
       toaster.success("saved");
-      queryClient.invalidateQueries({ queryKey: predictionsQueryKey });
+      queryClient.invalidateQueries({ queryKey: predictionsKeys.all });
     },
     onError(err) {
       toaster.error("Something went wrong: " + err.message);

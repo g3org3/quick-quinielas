@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import { Link } from "@tanstack/react-router";
-import { QueryKey, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { usePostHog } from "@posthog/react";
 import { FaEye, FaLock, FaLockOpen, FaSave } from "react-icons/fa";
 import {
@@ -38,8 +38,6 @@ interface Props {
   tab?: string | null;
   prediction?: PredictionsResponse;
   tournamentId: string;
-  getMatchesQueryKey: QueryKey;
-  predictionsQueryKey: QueryKey;
 }
 
 export default function Match(props: Props) {
@@ -47,10 +45,8 @@ export default function Match(props: Props) {
   const border = useColorModeValue("gray.200", "gray.700");
   const posthog = usePostHog();
 
-  const { mutate, isPending } = useCreatePrediction(props.predictionsQueryKey);
-  const { mutate: update, isPending: uisPending } = useUpdatePrediction(
-    props.predictionsQueryKey
-  );
+  const { mutate, isPending } = useCreatePrediction();
+  const { mutate: update, isPending: uisPending } = useUpdatePrediction();
   const { data: user } = useUserQuery(pb.authStore.model?.id);
 
   // CHAPUZ BELOW

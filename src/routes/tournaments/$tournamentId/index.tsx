@@ -11,7 +11,6 @@ import TournamentLoading from "@/components/TournamentLoading";
 import { getMatchesQuery } from "@/api/matches";
 import { matchBetsQuery } from "@/api/matchBets";
 import { getPredictionsQuery } from "@/api/predictions";
-import { getTournamentQuery } from "@/api/tournaments";
 import { queryClient } from "@/queryClient";
 
 const homeSchema = z.object({
@@ -25,7 +24,6 @@ export const Route = createFileRoute("/tournaments/$tournamentId/")({
   loaderDeps: ({ search: { tab } }) => ({ tab }),
   loader: async ({ params, deps }) => {
     await queryClient.ensureQueryData(matchBetsQuery);
-    await queryClient.ensureQueryData(getTournamentQuery(params.tournamentId));
     await queryClient.ensureQueryData(
       getMatchesQuery(params.tournamentId, deps.tab),
     );
@@ -39,9 +37,6 @@ function HomeTournament() {
   const { tournamentId } = Route.useParams();
   const { tab = "today" } = Route.useSearch();
 
-  const { data: tournament } = useSuspenseQuery(
-    getTournamentQuery(tournamentId),
-  );
   const matchesQuery = getMatchesQuery(tournamentId, tab);
   const { data: matches } = useSuspenseQuery(matchesQuery);
   const { data: bets } = useSuspenseQuery(matchBetsQuery);
@@ -58,16 +53,6 @@ function HomeTournament() {
         mb={1}
         overscrollBehavior="contain"
       >
-        <h1
-          style={{
-            fontWeight: "bold",
-            letterSpacing: "2px",
-            fontSize: "20px",
-            textAlign: "center",
-          }}
-        >
-          {tournament.name}
-        </h1>
         <Flex gap="1" mt="5" justifyContent="center">
           <Link
             to="/tournaments/$tournamentId"
@@ -121,8 +106,6 @@ function HomeTournament() {
                     prediction={prediction}
                     tab={tab}
                     tournamentId={tournamentId}
-                    predictionsQueryKey={predictionsQuery.queryKey}
-                    getMatchesQueryKey={matchesQuery.queryKey}
                   />
                 }
               >
@@ -132,8 +115,6 @@ function HomeTournament() {
                   prediction={prediction}
                   tab={tab}
                   tournamentId={tournamentId}
-                  predictionsQueryKey={predictionsQuery.queryKey}
-                  getMatchesQueryKey={matchesQuery.queryKey}
                 />
               </FeatFlagComponent>
             );

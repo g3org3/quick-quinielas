@@ -157,12 +157,7 @@ function AdminMatchList({ tournamentId }: { tournamentId: string }) {
   return (
     <Flex flexDir="column">
       {matches.map((match) => (
-        <AdminMatch
-          key={match.id}
-          match={match}
-          queryKey={matchesQuery.queryKey}
-          tournamentId={tournamentId}
-        />
+        <AdminMatch key={match.id} match={match} tournamentId={tournamentId} />
       ))}
     </Flex>
   );
