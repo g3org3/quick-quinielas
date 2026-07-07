@@ -152,52 +152,52 @@ function SingleMatch() {
                     key={user.id}
                   >
                     <Td>
-                      <Flex gap={2} alignItems="center">
-                        <Img
-                          rounded="full"
-                          w="40px"
-                          h="40px"
-                          src={
-                            user.img
-                              ? user.img + "&thumb=100x100&cache=default"
-                              : `https://api.dicebear.com/9.x/initials/svg?seed=${user.username}`
-                          }
-                        />
-                        <Flex flexDir="column">
+                      <Flex flexDir="column" gap={1}>
+                        <Flex gap={2} alignItems="center">
+                          <Img
+                            rounded="full"
+                            w="40px"
+                            h="40px"
+                            src={
+                              user.img
+                                ? user.img + "&thumb=100x100&cache=default"
+                                : `https://api.dicebear.com/9.x/initials/svg?seed=${user.username}`
+                            }
+                          />
                           <Link
                             to="/tournaments/$tournamentId/$userId"
                             params={{ tournamentId, userId: user.id }}
                           >
                             {user.name}
                           </Link>
-                          <Text fontFamily="monospace">
-                            {result?.expand?.prediction_id?.created
-                              ? DateTime.fromSQL(
-                                  result.expand.prediction_id.updated
-                                ).toFormat("MMM dd h:mm a")
-                              : null}
-                          </Text>
+                          {user.favorite_team ? (
+                            <Flag height="24px" country={user.favorite_team} />
+                          ) : null}
+                          {prediction?.first_goal ? (
+                            <Badge alignSelf="center" colorScheme="purple">
+                              {firstGoalLabel(prediction.first_goal)}
+                            </Badge>
+                          ) : null}
+                          {prediction?.first_goal_from ? (
+                            <Badge alignSelf="center" colorScheme="purple">
+                              {prediction.first_goal_from ===
+                              PredictionsFirstGoalFromOptions.home
+                                ? "H"
+                                : "A"}
+                            </Badge>
+                          ) : null}
+                          {prediction?.isBonusActive ? (
+                            <Badge alignSelf="center" colorScheme="red">
+                              x2
+                            </Badge>
+                          ) : null}
                         </Flex>
-                        {user.favorite_team ? (
-                          <Flag height="24px" country={user.favorite_team} />
-                        ) : null}
-                        {prediction?.first_goal ? (
-                          <Badge alignSelf="center" colorScheme="purple">
-                            {firstGoalLabel(prediction.first_goal)}
-                          </Badge>
-                        ) : null}
-                        {prediction?.first_goal_from ? (
-                          <Badge alignSelf="center" colorScheme="purple">
-                            {prediction.first_goal_from ===
-                            PredictionsFirstGoalFromOptions.home
-                              ? "H"
-                              : "A"}
-                          </Badge>
-                        ) : null}
-                        {prediction?.isBonusActive ? (
-                          <Badge alignSelf="center" colorScheme="red">
-                            x2
-                          </Badge>
+                        {result?.expand?.prediction_id?.created ? (
+                          <Text fontFamily="monospace" fontSize="xs">
+                            {DateTime.fromSQL(
+                              result.expand.prediction_id.updated
+                            ).toFormat("MMM dd h:mm a")}
+                          </Text>
                         ) : null}
                       </Flex>
                     </Td>
