@@ -25,6 +25,7 @@ import FeatFlagComponent from "@/components/FeatFlagComponent";
 import SimpleMatch from "@/components/SimpleMatch";
 import { queryClient } from "@/queryClient";
 import Flag from "@/components/Flag";
+import { countries } from "@/components/countries";
 import { useGetRowStyle } from "@/useGetRowStyle";
 import { sortUsers } from "@/sortUsers";
 
@@ -128,7 +129,7 @@ function SingleMatch() {
           />
         </FeatFlagComponent>
         <Flex flexDir="column" flex="1">
-          <Table boxShadow="md" borderRadius="sm">
+          <Table size="sm" boxShadow="md" borderRadius="sm">
             <Thead>
               <Tr>
                 <Th>Participante</Th>
@@ -187,8 +188,8 @@ function SingleMatch() {
                               <Badge alignSelf="center" colorScheme="purple">
                                 {prediction.first_goal_from ===
                                 PredictionsFirstGoalFromOptions.home
-                                  ? match.home
-                                  : match.away}
+                                  ? (countries[match.home]?.iso3 ?? match.home)
+                                  : (countries[match.away]?.iso3 ?? match.away)}
                               </Badge>
                             ) : null}
                             {prediction?.isBonusActive ? (
