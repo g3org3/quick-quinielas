@@ -11,20 +11,21 @@ const primary = defineStyle((props) => {
   const isDark = props.colorMode === 'dark'
 
   return {
-    bg: isDark ? 'brand.700' : 'brand.200',
-    color: isDark ? 'brand.50' : 'brand.900',
+    // Deep solid green with white text; slightly brighter in dark mode for contrast.
+    bg: isDark ? 'brand.500' : 'brand.600',
+    color: 'white',
     // Short ease transition for color + tactile press feedback
     transitionProperty: 'background-color, transform',
     transitionDuration: '150ms',
     transitionTimingFunction: 'ease',
     _hover: {
-      bg: isDark ? 'brand.600' : 'brand.300',
+      bg: isDark ? 'brand.600' : 'brand.700',
       _disabled: {
-        bg: isDark ? 'brand.700' : 'brand.200',
+        bg: isDark ? 'brand.500' : 'brand.600',
       },
     },
     _active: {
-      bg: isDark ? 'brand.500' : 'brand.400',
+      bg: isDark ? 'brand.700' : 'brand.800',
       transform: 'scale(0.97)',
     },
     // Honor reduced-motion: drop the scale + transition
