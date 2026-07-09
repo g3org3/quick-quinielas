@@ -10,11 +10,9 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { usePostHog } from "@posthog/react";
-import { useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 
 import Flag from "@/components/Flag";
-import { usersQuery } from "@/api/users";
 
 export interface AvatarUser {
   img: string;
@@ -38,13 +36,14 @@ export default function AvatarListDrawer({ users, max }: Props) {
   const countColor = useColorModeValue("brand.600", "brand.300");
   const progressTrack = useColorModeValue("gray.100", "gray.700");
 
-  const { data: allUsers = [] } = useQuery(usersQuery);
-  const total = allUsers.length || users.length;
+  // const { data: allUsers = [] } = useQuery(usersQuery);
+  // hard code for now
+  const total = 12;
   const predictionPercent =
     total > 0 ? Math.min(100, Math.round((users.length / total) * 100)) : 0;
 
   const sortedUsers = [...users].sort((a, b) =>
-    (b.updatedAt ?? "").localeCompare(a.updatedAt ?? ""),
+    (b.updatedAt ?? "").localeCompare(a.updatedAt ?? "")
   );
 
   return (
@@ -156,8 +155,8 @@ export default function AvatarListDrawer({ users, max }: Props) {
                   <Text ml="auto" fontSize="sm" color={dateColor}>
                     {user.updatedAt
                       ? DateTime.fromSQL(user.updatedAt)
-                          .toFormat("LLL-dd hh:mma")
-                          .toLowerCase()
+                        .toFormat("LLL-dd hh:mma")
+                        .toLowerCase()
                       : ""}
                   </Text>
                 </Flex>
