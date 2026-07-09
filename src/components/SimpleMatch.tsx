@@ -18,11 +18,9 @@ import {
   PredictionsFirstGoalFromOptions,
   PredictionsResponse,
 } from "@/pocketbase-types";
-import { pb } from "@/pb";
 import Flag from "./Flag";
 import GameHistoryDrawer from "./GameHistoryDrawer";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
-import { useUserQuery } from "@/api/users";
 import { useEffect, useRef, useState } from "react";
 import { PhaseBadge } from "./PhaseBadge";
 import { MatchStatus } from "./MatchStatus";
@@ -58,8 +56,6 @@ export default function SimpleMatch(props: Props) {
   const border = "border.subtle";
   const bg = "surface";
 
-  const { data: user } = useUserQuery(pb.authStore.model?.id);
-
   // Collapse to a compact flags + score row once the user scrolls down.
   const containerRef = useRef<HTMLDivElement>(null);
   const [collapsed, setCollapsed] = useState(false);
@@ -79,10 +75,6 @@ export default function SimpleMatch(props: Props) {
 
   const home = homeScore?.toString() ?? "";
   const away = awayScore?.toString() ?? "";
-  const isBonusActive =
-    match.roundNumber > 3
-      ? user?.favorite_team === match.home || user?.favorite_team === match.away
-      : false;
 
   const matchdate = DateTime.fromSQL(match.startAtUtc);
   const [isGameStarted2, setGameStarted] = useState(
@@ -122,7 +114,6 @@ export default function SimpleMatch(props: Props) {
       _pointsColor = "blue";
     }
   }
-  const _isBonusActive = isBonusActive || prediction?.isBonusActive;
 
   if (collapsed) {
     return (
@@ -136,13 +127,7 @@ export default function SimpleMatch(props: Props) {
         gap="4"
         borderBottom="1px solid"
         borderColor={border}
-        bg={_isBonusActive ? undefined : bg}
-        bgGradient={
-          !_isBonusActive
-            ? undefined
-            : "linear(to-br, red.600, red.900, orange.500)"
-        }
-        color={_isBonusActive ? "whiteAlpha.800" : undefined}
+        bg={bg}
         py="2"
       >
         <Flag height="32px" country={match.home} />
@@ -171,13 +156,7 @@ export default function SimpleMatch(props: Props) {
       zIndex={1}
       borderBottom="1px solid"
       borderColor={border}
-      bg={_isBonusActive ? undefined : bg}
-      bgGradient={
-        !_isBonusActive
-          ? undefined
-          : "linear(to-br, red.600, red.900, orange.500)"
-      }
-      color={_isBonusActive ? "whiteAlpha.800" : undefined}
+      bg={bg}
       py="5"
     >
       <Flex alignItems="center" justifyContent="space-between" gap={2} px={2} pb={3}>
@@ -187,13 +166,13 @@ export default function SimpleMatch(props: Props) {
           alignItems="center"
           textAlign="center"
           minW={0}
-          color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
+          color="text.muted"
           fontSize="xs"
         >
           <Text noOfLines={1}>{matchdate.toFormat("EEE dd MMM, h:mm a")}</Text>
           <Text noOfLines={1}>{match.location}</Text>
         </Flex>
-        <MatchStatus isClosed={isGameStarted2} onDark={!!_isBonusActive} />
+        <MatchStatus isClosed={isGameStarted2} />
       </Flex>
       <Flex alignItems="center" position="relative" gap="3">
         <FeatFlagComponent feature="show_points">
@@ -241,7 +220,7 @@ export default function SimpleMatch(props: Props) {
             />
             <Flex
               alignItems="center"
-              color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
+              color="text.muted"
               fontSize="4xl"
             >
               -
@@ -281,7 +260,6 @@ export default function SimpleMatch(props: Props) {
           awayCount={bet?.away_per || 0}
           tieCount={bet?.tie_per || 0}
           total={totalUsers}
-          onDark={!!_isBonusActive}
         />
       </Box>
       <Flex gap={3} px={1} pb={2} alignItems="center" flexWrap="wrap">
@@ -291,7 +269,7 @@ export default function SimpleMatch(props: Props) {
             textTransform="uppercase"
             letterSpacing="wider"
             fontWeight="semibold"
-            color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
+            color="text.muted"
             mb={1}
           >
             Primer gol (tiempo)
@@ -320,7 +298,7 @@ export default function SimpleMatch(props: Props) {
             textTransform="uppercase"
             letterSpacing="wider"
             fontWeight="semibold"
-            color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
+            color="text.muted"
             mb={1}
           >
             Primer gol (equipo)
@@ -346,7 +324,7 @@ export default function SimpleMatch(props: Props) {
             textTransform="uppercase"
             letterSpacing="wider"
             fontWeight="semibold"
-            color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
+            color="text.muted"
             mb={1}
           >
             Penales (ganador)
