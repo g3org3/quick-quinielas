@@ -35,7 +35,7 @@ import {
   useCreatePrediction,
   useUpdatePrediction,
 } from "@/api/predictions";
-import { useUserQuery, usersQuery } from "@/api/users";
+import { useUserQuery } from "@/api/users";
 import { useEffect, useState } from "react";
 import { PhaseBadge } from "./PhaseBadge";
 import { MatchStatus } from "./MatchStatus";
@@ -59,7 +59,8 @@ export default function MatchV2(props: Props) {
   const { mutate: update, isPending: uisPending } = useUpdatePrediction();
   const { data: user } = useUserQuery(pb.authStore.model?.id);
 
-  const { data: allUsers = [] } = useQuery(usersQuery);
+  // const { data: allUsers = [] } = useQuery(usersQuery);
+  const totalUsers = 12;
   // CHAPUZ BELOW
   const { data: bets = [] } = useQuery(getMatchPredictionsQuery(match.id));
   const users = bets.map((bet) => ({
@@ -321,7 +322,7 @@ export default function MatchV2(props: Props) {
             homeCount={bet?.home_per || 0}
             awayCount={bet?.away_per || 0}
             tieCount={bet?.tie_per || 0}
-            total={allUsers.length}
+            total={totalUsers}
             onDark={!!_isBonusActive}
           />
         </Box>
