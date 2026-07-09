@@ -163,42 +163,47 @@ function SingleMatch() {
                               : `https://api.dicebear.com/9.x/initials/svg?seed=${user.username}`
                           }
                         />
-                        <Flex flexDir="column">
-                          <Link
-                            to="/tournaments/$tournamentId/$userId"
-                            params={{ tournamentId, userId: user.id }}
-                          >
-                            {user.name}
-                          </Link>
-                          <Text fontFamily="monospace">
-                            {result?.expand?.prediction_id?.created
-                              ? DateTime.fromSQL(
-                                  result.expand.prediction_id.updated
-                                ).toFormat("MMM dd h:mm a")
-                              : null}
-                          </Text>
+                        <Flex flexDir="column" gap={1}>
+                          <Flex gap={2} alignItems="center">
+                            <Link
+                              to="/tournaments/$tournamentId/$userId"
+                              params={{ tournamentId, userId: user.id }}
+                            >
+                              {user.name}
+                            </Link>
+                            {user.favorite_team ? (
+                              <Flag
+                                height="24px"
+                                country={user.favorite_team}
+                              />
+                            ) : null}
+                            {prediction?.first_goal ? (
+                              <Badge alignSelf="center" colorScheme="purple">
+                                {firstGoalLabel(prediction.first_goal)}
+                              </Badge>
+                            ) : null}
+                            {prediction?.first_goal_from ? (
+                              <Badge alignSelf="center" colorScheme="purple">
+                                {prediction.first_goal_from ===
+                                PredictionsFirstGoalFromOptions.home
+                                  ? "H"
+                                  : "A"}
+                              </Badge>
+                            ) : null}
+                            {prediction?.isBonusActive ? (
+                              <Badge alignSelf="center" colorScheme="red">
+                                x2
+                              </Badge>
+                            ) : null}
+                          </Flex>
+                          {result?.expand?.prediction_id?.created ? (
+                            <Text fontFamily="monospace" fontSize="xs">
+                              {DateTime.fromSQL(
+                                result.expand.prediction_id.updated
+                              ).toFormat("MMM dd h:mm a")}
+                            </Text>
+                          ) : null}
                         </Flex>
-                        {user.favorite_team ? (
-                          <Flag height="24px" country={user.favorite_team} />
-                        ) : null}
-                        {prediction?.first_goal ? (
-                          <Badge alignSelf="center" colorScheme="purple">
-                            {firstGoalLabel(prediction.first_goal)}
-                          </Badge>
-                        ) : null}
-                        {prediction?.first_goal_from ? (
-                          <Badge alignSelf="center" colorScheme="purple">
-                            {prediction.first_goal_from ===
-                            PredictionsFirstGoalFromOptions.home
-                              ? "H"
-                              : "A"}
-                          </Badge>
-                        ) : null}
-                        {prediction?.isBonusActive ? (
-                          <Badge alignSelf="center" colorScheme="red">
-                            x2
-                          </Badge>
-                        ) : null}
                       </Flex>
                     </Td>
                     <Td>{prediction?.homeScore ?? "-"}</Td>
