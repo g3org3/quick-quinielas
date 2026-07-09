@@ -5,6 +5,7 @@ import {
   Badge,
   Box,
   Flex,
+  Progress,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -35,9 +36,12 @@ export default function AvatarListDrawer({ users, max }: Props) {
   const handleColor = useColorModeValue("gray.300", "gray.600");
   const dateColor = useColorModeValue("gray.500", "gray.400");
   const countColor = useColorModeValue("brand.600", "brand.300");
+  const progressTrack = useColorModeValue("gray.100", "gray.700");
 
   const { data: allUsers = [] } = useQuery(usersQuery);
   const total = allUsers.length || users.length;
+  const predictionPercent =
+    total > 0 ? Math.min(100, Math.round((users.length / total) * 100)) : 0;
 
   const sortedUsers = [...users].sort((a, b) =>
     (b.updatedAt ?? "").localeCompare(a.updatedAt ?? ""),
@@ -97,15 +101,28 @@ export default function AvatarListDrawer({ users, max }: Props) {
               <Box w="40px" h="6px" borderRadius="full" bg={handleColor} />
             </Flex>
             <Flex flexDir="column" px={4} py={2}>
-              <Text fontWeight="bold" fontSize="lg">
-                Participantes
-              </Text>
-              <Text fontSize="sm" color={dateColor}>
+              <Flex alignItems="baseline" justifyContent="space-between">
+                <Text fontWeight="bold" fontSize="lg">
+                  Participantes
+                </Text>
+                <Text fontWeight="bold" color={countColor}>
+                  {predictionPercent}%
+                </Text>
+              </Flex>
+              <Text fontSize="sm" color={dateColor} mb={2}>
                 <Text as="span" fontWeight="bold" color={countColor}>
                   {users.length} de {total}
                 </Text>{" "}
                 ya vaticinaron
               </Text>
+              <Progress
+                aria-label="Porcentaje de participantes que ya vaticinaron"
+                value={predictionPercent}
+                size="sm"
+                colorScheme="brand"
+                bg={progressTrack}
+                borderRadius="full"
+              />
             </Flex>
             <Box overflowY="auto" pb={6}>
               {sortedUsers.map((user, i) => (
