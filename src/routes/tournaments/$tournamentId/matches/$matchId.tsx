@@ -104,7 +104,9 @@ function SingleMatch() {
               >
                 {DateTime.fromSQL(match.startAtUtc).toRelative()}
                 {" · "}
-                {DateTime.fromSQL(match.startAtUtc).toFormat("EEE dd MMM, h:mm a")}
+                {DateTime.fromSQL(match.startAtUtc).toFormat(
+                  "EEE dd MMM, h:mm a"
+                )}
               </Flex>
               <Flex
                 color="text.muted"
@@ -187,7 +189,7 @@ function SingleMatch() {
                             {prediction?.first_goal_from ? (
                               <Badge alignSelf="center" colorScheme="purple">
                                 {prediction.first_goal_from ===
-                                PredictionsFirstGoalFromOptions.home
+                                  PredictionsFirstGoalFromOptions.home
                                   ? (countries[match.home]?.iso3 ?? match.home)
                                   : (countries[match.away]?.iso3 ?? match.away)}
                               </Badge>
@@ -200,15 +202,9 @@ function SingleMatch() {
                                 color="text.muted"
                                 fontFamily="mono"
                               >
-                                {/* Luxon has no lowercase-meridiem token, hence the manual "pm" */}
                                 {DateTime.fromSQL(
                                   result.expand.prediction_id.updated
-                                ).toFormat("MMM-dd hh:mm") +
-                                  DateTime.fromSQL(
-                                    result.expand.prediction_id.updated
-                                  )
-                                    .toFormat("a")
-                                    .toLowerCase()}
+                                ).toFormat("MMM dd hh:mma")}
                               </Text>
                             ) : null}
                             {prediction?.isBonusActive ? (
