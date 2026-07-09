@@ -192,9 +192,10 @@ function SingleMatch() {
                                   : (countries[match.away]?.iso3 ?? match.away)}
                               </Badge>
                             ) : null}
+                          </Flex>
+                          <Flex gap={2} alignItems="center">
                             {prediction?.isBonusActive ? (
                               <Badge
-                                alignSelf="center"
                                 bg="gold.50"
                                 borderWidth="1px"
                                 borderColor="gold.200"
@@ -205,15 +206,15 @@ function SingleMatch() {
                                 ×2
                               </Badge>
                             ) : null}
+                            {result?.expand?.prediction_id?.created ? (
+                              <Text fontSize="xs" color="text.muted">
+                                Votó{" "}
+                                {DateTime.fromSQL(
+                                  result.expand.prediction_id.updated
+                                ).toRelative()}
+                              </Text>
+                            ) : null}
                           </Flex>
-                          {result?.expand?.prediction_id?.created ? (
-                            <Text fontSize="xs" color="text.muted">
-                              Votó{" "}
-                              {DateTime.fromSQL(
-                                result.expand.prediction_id.updated
-                              ).toRelative()}
-                            </Text>
-                          ) : null}
                         </Flex>
                       </Flex>
                     </Td>
