@@ -194,18 +194,6 @@ function SingleMatch() {
                             ) : null}
                           </Flex>
                           <Flex gap={2} alignItems="center">
-                            {prediction?.isBonusActive ? (
-                              <Badge
-                                bg="gold.50"
-                                borderWidth="1px"
-                                borderColor="gold.200"
-                                color="gold.700"
-                                fontFamily="mono"
-                                rounded="md"
-                              >
-                                ×2
-                              </Badge>
-                            ) : null}
                             {result?.expand?.prediction_id?.created ? (
                               <Text
                                 fontSize="xs"
@@ -222,6 +210,18 @@ function SingleMatch() {
                                     .toFormat("a")
                                     .toLowerCase()}
                               </Text>
+                            ) : null}
+                            {prediction?.isBonusActive ? (
+                              <Badge
+                                bg="gold.50"
+                                borderWidth="1px"
+                                borderColor="gold.200"
+                                color="gold.700"
+                                fontFamily="mono"
+                                rounded="md"
+                              >
+                                ×2
+                              </Badge>
                             ) : null}
                           </Flex>
                         </Flex>
