@@ -260,6 +260,7 @@ export default function MatchV2(props: Props) {
                 border={isGameStarted2 ? "0" : undefined}
                 p="1"
                 name="home"
+                inputMode="numeric"
                 textAlign="center"
                 placeholder="-"
                 fontSize="2xl"
@@ -284,6 +285,7 @@ export default function MatchV2(props: Props) {
                 aria-label={`Goles de ${match.away}`}
                 p={1}
                 name="away"
+                inputMode="numeric"
                 placeholder="-"
                 w="50px"
               />
