@@ -164,18 +164,34 @@ export default function MatchV2(props: Props) {
   const [isGameStarted2, setGameStarted] = useState(
     matchdate.toMillis() <= DateTime.now().toMillis()
   );
+  const [nowTick, setNowTick] = useState(() => DateTime.now().toMillis());
   useEffect(() => {
     if (isGameStarted2) return;
     const id = setInterval(() => {
-      const isGameStarted = matchdate.toMillis() <= DateTime.now().toMillis();
-      if (isGameStarted) {
+      const nowMs = DateTime.now().toMillis();
+      if (matchdate.toMillis() <= nowMs) {
         setGameStarted(true);
       }
+      // Only re-render when the minute bucket changes to keep the countdown cheap.
+      setNowTick((prev) =>
+        Math.floor(nowMs / 60000) !== Math.floor(prev / 60000) ? nowMs : prev
+      );
     }, 1000);
 
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isGameStarted2]);
+
+  // "Empieza en …": minutes under an hour, hours under a day, nothing beyond.
+  const minutesUntilStart = Math.ceil((matchdate.toMillis() - nowTick) / 60000);
+  let startsInLabel = "";
+  if (!isGameStarted2 && minutesUntilStart > 0) {
+    if (minutesUntilStart < 60) {
+      startsInLabel = `Empieza en ${minutesUntilStart} min`;
+    } else if (minutesUntilStart < 60 * 24) {
+      startsInLabel = `Empieza en ${Math.round(minutesUntilStart / 60)} h`;
+    }
+  }
   let _points = "";
   let _pointsColor = "red";
   // TODO: this should come up from results it seems
@@ -230,7 +246,18 @@ export default function MatchV2(props: Props) {
             </Text>
             <Text noOfLines={1}>{match.location}</Text>
           </Flex>
-          <MatchStatus isClosed={isGameStarted2} onDark={!!_isBonusActive} />
+          <Flex flexDir="column" alignItems="flex-end" gap={0.5} minW={0}>
+            <MatchStatus isClosed={isGameStarted2} onDark={!!_isBonusActive} />
+            {startsInLabel ? (
+              <Text
+                fontSize="xs"
+                noOfLines={1}
+                color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
+              >
+                {startsInLabel}
+              </Text>
+            ) : null}
+          </Flex>
         </Flex>
         <Flex alignItems="center" position="relative" gap="3">
           <FeatFlagComponent feature="show_points">
