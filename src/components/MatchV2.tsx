@@ -420,7 +420,6 @@ export default function MatchV2(props: Props) {
               disabled={isAnyPending}
               type="submit"
               variant="primary"
-              size="sm"
               leftIcon={<FaSave />}
             >
               Guardar
@@ -433,7 +432,6 @@ export default function MatchV2(props: Props) {
               <Button
                 disabled={isAnyPending}
                 variant="secondary"
-                size="sm"
                 leftIcon={<FaEye />}
               >
                 Ver resultados
@@ -449,7 +447,8 @@ export default function MatchV2(props: Props) {
           textAlign="center"
         >
           <Text>
-            {matchdate.toRelative()} · {matchdate.toFormat("EEE dd MMM, h:mm a")}
+            {matchdate.toRelative()} ·{" "}
+            {matchdate.toFormat("EEE dd MMM, h:mm a")}
           </Text>
           <Text fontSize="xs">{match.location}</Text>
         </Flex>
