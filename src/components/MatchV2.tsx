@@ -1,6 +1,7 @@
 import toaster from "react-hot-toast";
 import {
   Text,
+  Box,
   Button,
   Flex,
   FormControl,
@@ -34,10 +35,12 @@ import {
   useCreatePrediction,
   useUpdatePrediction,
 } from "@/api/predictions";
-import { useUserQuery } from "@/api/users";
+import { useUserQuery, usersQuery } from "@/api/users";
 import { useEffect, useState } from "react";
 import { PhaseBadge } from "./PhaseBadge";
 import { MatchStatus } from "./MatchStatus";
+import { VoteBar } from "./VoteBar";
+import { countries } from "./countries";
 
 interface Props {
   bet?: MatchBetsResponse<number, number, number>;
@@ -56,6 +59,7 @@ export default function MatchV2(props: Props) {
   const { mutate: update, isPending: uisPending } = useUpdatePrediction();
   const { data: user } = useUserQuery(pb.authStore.model?.id);
 
+  const { data: allUsers = [] } = useQuery(usersQuery);
   // CHAPUZ BELOW
   const { data: bets = [] } = useQuery(getMatchPredictionsQuery(match.id));
   const users = bets.map((bet) => ({
@@ -239,13 +243,6 @@ export default function MatchV2(props: Props) {
               <Text fontWeight="semibold" noOfLines={1}>
                 {match.home}
               </Text>
-              <Text
-                color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
-                fontFamily="mono"
-                fontSize="xs"
-              >
-                {Math.floor((100 * (bet?.home_per || 0)) / 17)}% votos
-              </Text>
             </Flex>
           </Flex>
           <Flex flexDirection="column" gap={2} alignSelf="flex-start">
@@ -314,16 +311,20 @@ export default function MatchV2(props: Props) {
               <Text fontWeight="semibold" noOfLines={1}>
                 {match.away}
               </Text>
-              <Text
-                color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
-                fontFamily="mono"
-                fontSize="xs"
-              >
-                {Math.floor((100 * (bet?.away_per || 0)) / 17)}% votos
-              </Text>
             </Flex>
           </Flex>
         </Flex>
+        <Box px={2} pt={3} pb={1}>
+          <VoteBar
+            homeLabel={countries[match.home]?.iso3 ?? match.home}
+            awayLabel={countries[match.away]?.iso3 ?? match.away}
+            homeCount={bet?.home_per || 0}
+            awayCount={bet?.away_per || 0}
+            tieCount={bet?.tie_per || 0}
+            total={allUsers.length}
+            onDark={!!_isBonusActive}
+          />
+        </Box>
         <Flex gap={3} px={1} pb={2} alignItems="center" flexWrap="wrap">
           <FormControl flex="1 1 140px" minW={0}>
             <FormLabel
