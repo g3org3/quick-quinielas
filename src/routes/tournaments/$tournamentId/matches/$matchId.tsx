@@ -164,8 +164,8 @@ function SingleMatch() {
             <Thead>
               <Tr>
                 <Th>Participante</Th>
-                <Th>Local</Th>
-                <Th>Visita</Th>
+                <Th>{countries[match.home]?.iso3 ?? match.home}</Th>
+                <Th>{countries[match.away]?.iso3 ?? match.away}</Th>
                 <Th isNumeric>Pts</Th>
               </Tr>
             </Thead>
