@@ -155,9 +155,9 @@ export default function AvatarListDrawer({ users, max }: Props) {
                   )}
                   <Text ml="auto" fontSize="sm" color={dateColor}>
                     {user.updatedAt
-                      ? DateTime.fromSQL(user.updatedAt).toLocaleString(
-                          DateTime.DATETIME_SHORT,
-                        )
+                      ? DateTime.fromSQL(user.updatedAt)
+                          .toFormat("LLL-dd hh:mma")
+                          .toLowerCase()
                       : ""}
                   </Text>
                 </Flex>
