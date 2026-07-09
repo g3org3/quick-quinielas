@@ -207,11 +207,20 @@ function SingleMatch() {
                               </Badge>
                             ) : null}
                             {result?.expand?.prediction_id?.created ? (
-                              <Text fontSize="xs" color="text.muted">
-                                Votó{" "}
+                              <Text
+                                fontSize="xs"
+                                color="text.muted"
+                                fontFamily="mono"
+                              >
+                                {/* Luxon has no lowercase-meridiem token, hence the manual "pm" */}
                                 {DateTime.fromSQL(
                                   result.expand.prediction_id.updated
-                                ).toRelative()}
+                                ).toFormat("MMM-dd hh:mm") +
+                                  DateTime.fromSQL(
+                                    result.expand.prediction_id.updated
+                                  )
+                                    .toFormat("a")
+                                    .toLowerCase()}
                               </Text>
                             ) : null}
                           </Flex>
