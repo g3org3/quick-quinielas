@@ -14,7 +14,10 @@ import {
 import { Flex } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 
-import { PredictionsFirstGoalFromOptions } from "@/pocketbase-types";
+import {
+  MatchesPenaltyWinnerOptions,
+  PredictionsFirstGoalFromOptions,
+} from "@/pocketbase-types";
 import { getMatchQuery } from "@/api/matches";
 import { firstGoalLabel } from "@/api/predictions";
 import { getMatchResultsQuery } from "@/api/results";
@@ -130,6 +133,31 @@ function SingleMatch() {
             tournamentId={tournamentId}
           />
         </FeatFlagComponent>
+        {match.penalty_winner ? (
+          <Flex
+            justifyContent="center"
+            alignItems="center"
+            gap={2}
+            py={2}
+            color="text.secondary"
+          >
+            <Flag
+              height="20px"
+              country={
+                match.penalty_winner === MatchesPenaltyWinnerOptions.home
+                  ? match.home
+                  : match.away
+              }
+            />
+            <Text fontSize="sm" fontWeight="semibold">
+              Ganó{" "}
+              {match.penalty_winner === MatchesPenaltyWinnerOptions.home
+                ? match.home
+                : match.away}{" "}
+              en penales
+            </Text>
+          </Flex>
+        ) : null}
         <Flex flexDir="column" flex="1">
           <Table size="sm" boxShadow="md" borderRadius="sm">
             <Thead>
