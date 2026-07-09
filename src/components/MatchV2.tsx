@@ -247,8 +247,10 @@ export default function MatchV2(props: Props) {
             </Flex>
           </Flex>
           <Flex flexDirection="column" gap={2} alignSelf="flex-start">
-            <PhaseBadge roundNumber={match.roundNumber} />
-            <MatchStatus isClosed={isGameStarted2} onDark={!!_isBonusActive} />
+            <Flex gap={2} alignItems="center" justifyContent="center">
+              <PhaseBadge roundNumber={match.roundNumber} />
+              <MatchStatus isClosed={isGameStarted2} onDark={!!_isBonusActive} />
+            </Flex>
 
             <Flex gap={1}>
               <Input
