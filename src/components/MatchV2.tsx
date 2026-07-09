@@ -1,18 +1,20 @@
 import toaster from "react-hot-toast";
 import {
   Text,
+  Box,
   Button,
   Flex,
+  FormControl,
+  FormLabel,
   Input,
   Select,
-  useColorModeValue,
   Badge,
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { usePostHog } from "@posthog/react";
-import { FaEye, FaLock, FaLockOpen, FaSave } from "react-icons/fa";
+import { FaEye, FaSave } from "react-icons/fa";
 import {
   MatchBetsResponse,
   MatchesResponse,
@@ -36,6 +38,9 @@ import {
 import { useUserQuery } from "@/api/users";
 import { useEffect, useState } from "react";
 import { PhaseBadge } from "./PhaseBadge";
+import { MatchStatus } from "./MatchStatus";
+import { VoteBar } from "./VoteBar";
+import { countries } from "./countries";
 
 interface Props {
   bet?: MatchBetsResponse<number, number, number>;
@@ -47,13 +52,15 @@ interface Props {
 
 export default function MatchV2(props: Props) {
   const { match, tournamentId, bet, prediction } = props;
-  const border = useColorModeValue("gray.200", "gray.700");
+  const border = "border.subtle";
   const posthog = usePostHog();
 
   const { mutate, isPending } = useCreatePrediction();
   const { mutate: update, isPending: uisPending } = useUpdatePrediction();
   const { data: user } = useUserQuery(pb.authStore.model?.id);
 
+  // const { data: allUsers = [] } = useQuery(usersQuery);
+  const totalUsers = 12;
   // CHAPUZ BELOW
   const { data: bets = [] } = useQuery(getMatchPredictionsQuery(match.id));
   const users = bets.map((bet) => ({
@@ -157,18 +164,34 @@ export default function MatchV2(props: Props) {
   const [isGameStarted2, setGameStarted] = useState(
     matchdate.toMillis() <= DateTime.now().toMillis()
   );
+  const [nowTick, setNowTick] = useState(() => DateTime.now().toMillis());
   useEffect(() => {
     if (isGameStarted2) return;
     const id = setInterval(() => {
-      const isGameStarted = matchdate.toMillis() <= DateTime.now().toMillis();
-      if (isGameStarted) {
+      const nowMs = DateTime.now().toMillis();
+      if (matchdate.toMillis() <= nowMs) {
         setGameStarted(true);
       }
+      // Only re-render when the minute bucket changes to keep the countdown cheap.
+      setNowTick((prev) =>
+        Math.floor(nowMs / 60000) !== Math.floor(prev / 60000) ? nowMs : prev
+      );
     }, 1000);
 
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isGameStarted2]);
+
+  // "Empieza en …": minutes under an hour, hours under a day, nothing beyond.
+  const minutesUntilStart = Math.ceil((matchdate.toMillis() - nowTick) / 60000);
+  let startsInLabel = "";
+  if (!isGameStarted2 && minutesUntilStart > 0) {
+    if (minutesUntilStart < 60) {
+      startsInLabel = `Empieza en ${minutesUntilStart} min`;
+    } else if (minutesUntilStart < 60 * 24) {
+      startsInLabel = `Empieza en ${Math.round(minutesUntilStart / 60)} h`;
+    }
+  }
   let _points = "";
   let _pointsColor = "red";
   // TODO: this should come up from results it seems
@@ -208,6 +231,34 @@ export default function MatchV2(props: Props) {
         color={_isBonusActive ? "whiteAlpha.800" : undefined}
         py="5"
       >
+        <Flex alignItems="center" justifyContent="space-between" gap={2} px={2} pb={3}>
+          <PhaseBadge roundNumber={match.roundNumber} />
+          <Flex
+            flexDir="column"
+            alignItems="center"
+            textAlign="center"
+            minW={0}
+            color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
+            fontSize="xs"
+          >
+            <Text noOfLines={1}>
+              {matchdate.toFormat("EEE dd MMM, h:mm a")}
+            </Text>
+            <Text noOfLines={1}>{match.location}</Text>
+          </Flex>
+          <Flex flexDir="column" alignItems="flex-end" gap={0.5} minW={0}>
+            <MatchStatus isClosed={isGameStarted2} onDark={!!_isBonusActive} />
+            {startsInLabel ? (
+              <Text
+                fontSize="xs"
+                noOfLines={1}
+                color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
+              >
+                {startsInLabel}
+              </Text>
+            ) : null}
+          </Flex>
+        </Flex>
         <Flex alignItems="center" position="relative" gap="3">
           <FeatFlagComponent feature="show_points">
             <Badge
@@ -234,53 +285,12 @@ export default function MatchV2(props: Props) {
               >
                 <Flag height="40px" country={match.home} />
               </GameHistoryDrawer>
-              {match.home}
-              <Flex
-                color={_isBonusActive ? "whiteAlpha.800" : undefined}
-                fontFamily="monospace"
-              >
-                {Math.floor((100 * (bet?.home_per || 0)) / 17)}%
-              </Flex>
+              <Text fontWeight="semibold" noOfLines={1}>
+                {match.home}
+              </Text>
             </Flex>
           </Flex>
-          <Flex flexDirection="column" gap={2} alignSelf="flex-start">
-            <PhaseBadge roundNumber={match.roundNumber} />
-            {isGameStarted2 ? (
-              <Flex
-                justifyContent="center"
-                alignSelf="center"
-                alignItems="center"
-                gap={1}
-                px={3}
-                py={0.5}
-                rounded="md"
-                fontWeight="bold"
-                bg="orange.100"
-                fontSize="small"
-                color="orange.600"
-              >
-                <FaLock />
-                <Text>Cerrado</Text>
-              </Flex>
-            ) : (
-              <Flex
-                justifyContent="center"
-                alignSelf="center"
-                alignItems="center"
-                gap={1}
-                px={3}
-                py={0.5}
-                rounded="md"
-                fontWeight="bold"
-                bg="green.100"
-                fontSize="small"
-                color="green.600"
-              >
-                <FaLockOpen />
-                <Text>Abierto</Text>
-              </Flex>
-            )}
-
+          <Flex flexDirection="column" gap={2}>
             <Flex gap={1}>
               <Input
                 value={homePrediction}
@@ -288,15 +298,20 @@ export default function MatchV2(props: Props) {
                 disabled={isAnyPending || isGameStarted2}
                 border={isGameStarted2 ? "0" : undefined}
                 p="1"
+                h="64px"
                 name="home"
+                inputMode="numeric"
                 textAlign="center"
                 placeholder="-"
-                fontSize="x-large"
-                w="50px"
+                fontSize="4xl"
+                fontWeight="bold"
+                aria-label={`Goles de ${match.home}`}
+                w="64px"
               />
               <Flex
-                color={_isBonusActive ? "whiteAlpha.800" : undefined}
-                fontSize="x-large"
+                alignItems="center"
+                color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
+                fontSize="4xl"
               >
                 -
               </Flex>
@@ -306,11 +321,15 @@ export default function MatchV2(props: Props) {
                 disabled={isAnyPending || isGameStarted2}
                 border={isGameStarted2 ? "0" : undefined}
                 textAlign="center"
-                fontSize="x-large"
+                fontSize="4xl"
+                fontWeight="bold"
+                aria-label={`Goles de ${match.away}`}
                 p={1}
+                h="64px"
                 name="away"
+                inputMode="numeric"
                 placeholder="-"
-                w="50px"
+                w="64px"
               />
             </Flex>
             <FeatFlagComponent feature="show_match_score">
@@ -334,19 +353,35 @@ export default function MatchV2(props: Props) {
               >
                 <Flag height="40px" country={match.away} />
               </GameHistoryDrawer>
-              {match.away}
-              <Flex
-                color={_isBonusActive ? "whiteAlpha.800" : undefined}
-                fontFamily="monospace"
-              >
-                {Math.floor((100 * (bet?.away_per || 0)) / 17)}%
-              </Flex>
+              <Text fontWeight="semibold" noOfLines={1}>
+                {match.away}
+              </Text>
             </Flex>
           </Flex>
         </Flex>
+        <Box px={2} pt={3} pb={1}>
+          <VoteBar
+            homeLabel={countries[match.home]?.iso3 ?? match.home}
+            awayLabel={countries[match.away]?.iso3 ?? match.away}
+            homeCount={bet?.home_per || 0}
+            awayCount={bet?.away_per || 0}
+            tieCount={bet?.tie_per || 0}
+            total={totalUsers}
+            onDark={!!_isBonusActive}
+          />
+        </Box>
         <Flex gap={3} px={1} pb={2} alignItems="center" flexWrap="wrap">
-          <Flex flex="1 1 140px" flexDir="column" gap={1} minW={0}>
-            <Text fontSize="sm">Primer gol</Text>
+          <FormControl flex="1 1 140px" minW={0}>
+            <FormLabel
+              fontSize="xs"
+              textTransform="uppercase"
+              letterSpacing="wider"
+              fontWeight="semibold"
+              color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
+              mb={1}
+            >
+              Primer gol (tiempo)
+            </FormLabel>
             <Select
               name="first_goal"
               defaultValue={prediction?.first_goal ?? ""}
@@ -364,9 +399,18 @@ export default function MatchV2(props: Props) {
                 Tiempo extra
               </option>
             </Select>
-          </Flex>
-          <Flex flex="1 1 140px" flexDir="column" gap={1} minW={0}>
-            <Text fontSize="sm">Primer gol de</Text>
+          </FormControl>
+          <FormControl flex="1 1 140px" minW={0}>
+            <FormLabel
+              fontSize="xs"
+              textTransform="uppercase"
+              letterSpacing="wider"
+              fontWeight="semibold"
+              color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
+              mb={1}
+            >
+              Primer gol (equipo)
+            </FormLabel>
             <Select
               name="first_goal_from"
               defaultValue={prediction?.first_goal_from ?? ""}
@@ -381,9 +425,18 @@ export default function MatchV2(props: Props) {
                 {match.away}
               </option>
             </Select>
-          </Flex>
-          <Flex flex="1 1 140px" flexDir="column" gap={1} minW={0}>
-            <Text fontSize="sm">Penales</Text>
+          </FormControl>
+          <FormControl flex="1 1 140px" minW={0}>
+            <FormLabel
+              fontSize="xs"
+              textTransform="uppercase"
+              letterSpacing="wider"
+              fontWeight="semibold"
+              color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
+              mb={1}
+            >
+              Penales (ganador)
+            </FormLabel>
             <Select
               name="penalty_winner"
               value={isPredictedTie ? penaltyWinner : ""}
@@ -399,7 +452,7 @@ export default function MatchV2(props: Props) {
                 {match.away}
               </option>
             </Select>
-          </Flex>
+          </FormControl>
         </Flex>
         <Flex gap={3} p={1} alignItems="center">
           <Flex flex="1" overflow="auto">
@@ -413,7 +466,6 @@ export default function MatchV2(props: Props) {
               disabled={isAnyPending}
               type="submit"
               variant="primary"
-              size="sm"
               leftIcon={<FaSave />}
             >
               Guardar
@@ -426,25 +478,12 @@ export default function MatchV2(props: Props) {
               <Button
                 disabled={isAnyPending}
                 variant="secondary"
-                size="sm"
                 leftIcon={<FaEye />}
               >
                 Ver resultados
               </Button>
             </Link>
           )}
-        </Flex>
-        <Flex
-          color={_isBonusActive ? "whiteAlpha.800" : undefined}
-          display="box"
-          fontSize="14px"
-          textAlign="center"
-        >
-          {matchdate.toFormat("EEE MMM dd ")} - hora:{" "}
-          {matchdate.toFormat("h:mm a")}
-          <br />
-          {match.location} {" - "}
-          {matchdate.toRelative()}
         </Flex>
       </Flex>
     </form>

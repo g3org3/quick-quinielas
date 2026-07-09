@@ -5,6 +5,7 @@ import {
   Badge,
   Box,
   Flex,
+  Progress,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -32,9 +33,17 @@ export default function AvatarListDrawer({ users, max }: Props) {
   const itemBorder = useColorModeValue("gray.100", "gray.700");
   const handleColor = useColorModeValue("gray.300", "gray.600");
   const dateColor = useColorModeValue("gray.500", "gray.400");
+  const countColor = useColorModeValue("brand.600", "brand.300");
+  const progressTrack = useColorModeValue("gray.100", "gray.700");
+
+  // const { data: allUsers = [] } = useQuery(usersQuery);
+  // hard code for now
+  const total = 12;
+  const predictionPercent =
+    total > 0 ? Math.min(100, Math.round((users.length / total) * 100)) : 0;
 
   const sortedUsers = [...users].sort((a, b) =>
-    (b.updatedAt ?? "").localeCompare(a.updatedAt ?? ""),
+    (b.updatedAt ?? "").localeCompare(a.updatedAt ?? "")
   );
 
   return (
@@ -90,9 +99,30 @@ export default function AvatarListDrawer({ users, max }: Props) {
             <Flex justifyContent="center" pt={3} pb={2}>
               <Box w="40px" h="6px" borderRadius="full" bg={handleColor} />
             </Flex>
-            <Text fontWeight="bold" fontSize="lg" px={4} py={2}>
-              Participantes ({users.length})
-            </Text>
+            <Flex flexDir="column" px={4} py={2}>
+              <Flex alignItems="baseline" justifyContent="space-between">
+                <Text fontWeight="bold" fontSize="lg">
+                  Participantes
+                </Text>
+                <Text fontWeight="bold" color={countColor}>
+                  {predictionPercent}%
+                </Text>
+              </Flex>
+              <Text fontSize="sm" color={dateColor} mb={2}>
+                <Text as="span" fontWeight="bold" color={countColor}>
+                  {users.length} de {total}
+                </Text>{" "}
+                ya vaticinaron
+              </Text>
+              <Progress
+                aria-label="Porcentaje de participantes que ya vaticinaron"
+                value={predictionPercent}
+                size="sm"
+                colorScheme="brand"
+                bg={progressTrack}
+                borderRadius="full"
+              />
+            </Flex>
             <Box overflowY="auto" pb={6}>
               {sortedUsers.map((user, i) => (
                 <Flex
@@ -110,15 +140,23 @@ export default function AvatarListDrawer({ users, max }: Props) {
                     <Flag height="24px" country={user.favoriteTeam} />
                   )}
                   {user.isBonusActive && (
-                    <Badge alignSelf="center" colorScheme="red">
-                      x2
+                    <Badge
+                      alignSelf="center"
+                      bg="gold.50"
+                      borderWidth="1px"
+                      borderColor="gold.200"
+                      color="gold.700"
+                      fontFamily="mono"
+                      rounded="md"
+                    >
+                      ×2
                     </Badge>
                   )}
                   <Text ml="auto" fontSize="sm" color={dateColor}>
                     {user.updatedAt
-                      ? DateTime.fromSQL(user.updatedAt).toLocaleString(
-                          DateTime.DATETIME_SHORT,
-                        )
+                      ? DateTime.fromSQL(user.updatedAt)
+                        .toFormat("LLL-dd hh:mma")
+                        .toLowerCase()
                       : ""}
                   </Text>
                 </Flex>

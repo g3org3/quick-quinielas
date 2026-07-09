@@ -14,7 +14,10 @@ import {
 import { Flex } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 
-import { PredictionsFirstGoalFromOptions } from "@/pocketbase-types";
+import {
+  MatchesPenaltyWinnerOptions,
+  PredictionsFirstGoalFromOptions,
+} from "@/pocketbase-types";
 import { getMatchQuery } from "@/api/matches";
 import { firstGoalLabel } from "@/api/predictions";
 import { getMatchResultsQuery } from "@/api/results";
@@ -25,6 +28,7 @@ import FeatFlagComponent from "@/components/FeatFlagComponent";
 import SimpleMatch from "@/components/SimpleMatch";
 import { queryClient } from "@/queryClient";
 import Flag from "@/components/Flag";
+import { countries } from "@/components/countries";
 import { useGetRowStyle } from "@/useGetRowStyle";
 import { sortUsers } from "@/sortUsers";
 
@@ -75,11 +79,13 @@ function SingleMatch() {
                 </Flex>
                 <Flex flexDir="column" alignSelf="flex-end">
                   <Flex alignItems="center" gap={2}>
-                    <Flex fontSize="xxx-large" fontWeight="bold" p="1">
+                    <Flex fontSize="5xl" fontWeight="extrabold" p="1">
                       {match.homeScore}
                     </Flex>
-                    <Flex fontSize="xx-large">-</Flex>
-                    <Flex fontSize="xxx-large" fontWeight="bold" p="1">
+                    <Flex fontSize="2xl" color="text.muted">
+                      -
+                    </Flex>
+                    <Flex fontSize="5xl" fontWeight="extrabold" p="1">
                       {match.awayScore}
                     </Flex>
                   </Flex>
@@ -93,25 +99,26 @@ function SingleMatch() {
               </Flex>
               <hr />
               <Flex
-                color="gray.500"
+                color="text.muted"
                 display="box"
                 pt="1"
-                fontSize="16px"
+                fontSize="sm"
                 textAlign="center"
               >
-                {DateTime.fromSQL(match.startAtUtc).toFormat("EEE MMM dd")}
-                {" - "}
-                {DateTime.fromSQL(match.startAtUtc).toFormat("h:mm a")}
+                {DateTime.fromSQL(match.startAtUtc).toRelative()}
+                {" · "}
+                {DateTime.fromSQL(match.startAtUtc).toFormat(
+                  "EEE dd MMM, h:mm a"
+                )}
               </Flex>
               <Flex
-                color="gray.500"
+                color="text.muted"
                 display="box"
-                fontSize="14px"
+                fontSize="xs"
                 textAlign="center"
                 mb="2"
               >
-                {match.location} -{" "}
-                {DateTime.fromSQL(match.startAtUtc).toRelative()}
+                {match.location}
               </Flex>
               <hr />
             </Flex>
@@ -123,17 +130,43 @@ function SingleMatch() {
             awayScore={match.awayScore}
             firstGoal={match.first_goal}
             firstGoalFrom={match.first_goal_from}
+            penaltyWinner={match.penalty_winner}
             tournamentId={tournamentId}
           />
         </FeatFlagComponent>
+        {match.penalty_winner ? (
+          <Flex
+            justifyContent="center"
+            alignItems="center"
+            gap={2}
+            py={2}
+            color="text.secondary"
+          >
+            <Flag
+              height="20px"
+              country={
+                match.penalty_winner === MatchesPenaltyWinnerOptions.home
+                  ? match.home
+                  : match.away
+              }
+            />
+            <Text fontSize="sm" fontWeight="semibold">
+              Ganó{" "}
+              {match.penalty_winner === MatchesPenaltyWinnerOptions.home
+                ? match.home
+                : match.away}{" "}
+              en penales
+            </Text>
+          </Flex>
+        ) : null}
         <Flex flexDir="column" flex="1">
-          <Table boxShadow="md" borderRadius="sm">
+          <Table size="sm" boxShadow="md" borderRadius="sm">
             <Thead>
               <Tr>
                 <Th>Participante</Th>
-                <Th>-</Th>
-                <Th>-</Th>
-                <Th>pts</Th>
+                <Th>{countries[match.home]?.iso3 ?? match.home}</Th>
+                <Th>{countries[match.away]?.iso3 ?? match.away}</Th>
+                <Th isNumeric>Pts</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -185,24 +218,37 @@ function SingleMatch() {
                             {prediction?.first_goal_from ? (
                               <Badge alignSelf="center" colorScheme="purple">
                                 {prediction.first_goal_from ===
-                                PredictionsFirstGoalFromOptions.home
-                                  ? "H"
-                                  : "A"}
-                              </Badge>
-                            ) : null}
-                            {prediction?.isBonusActive ? (
-                              <Badge alignSelf="center" colorScheme="red">
-                                x2
+                                  PredictionsFirstGoalFromOptions.home
+                                  ? (countries[match.home]?.iso3 ?? match.home)
+                                  : (countries[match.away]?.iso3 ?? match.away)}
                               </Badge>
                             ) : null}
                           </Flex>
-                          {result?.expand?.prediction_id?.created ? (
-                            <Text fontFamily="monospace" fontSize="xs">
-                              {DateTime.fromSQL(
-                                result.expand.prediction_id.updated
-                              ).toFormat("MMM dd h:mm a")}
-                            </Text>
-                          ) : null}
+                          <Flex gap={2} alignItems="center">
+                            {result?.expand?.prediction_id?.created ? (
+                              <Text
+                                fontSize="xs"
+                                color="text.muted"
+                                fontFamily="mono"
+                              >
+                                {DateTime.fromSQL(
+                                  result.expand.prediction_id.updated
+                                ).toFormat("MMM dd hh:mma")}
+                              </Text>
+                            ) : null}
+                            {prediction?.isBonusActive ? (
+                              <Badge
+                                bg="gold.50"
+                                borderWidth="1px"
+                                borderColor="gold.200"
+                                color="gold.700"
+                                fontFamily="mono"
+                                rounded="md"
+                              >
+                                ×2
+                              </Badge>
+                            ) : null}
+                          </Flex>
                         </Flex>
                       </Flex>
                     </Td>

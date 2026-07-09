@@ -1,4 +1,13 @@
-import { Text, Flex, Button, Input, useColorModeValue } from "@chakra-ui/react";
+import {
+  Text,
+  Flex,
+  Button,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import type { ClientResponseError } from "pocketbase";
 import { useState } from "react";
 import toaster from "react-hot-toast";
@@ -9,9 +18,7 @@ import { GoogleIcon } from "./GoogleIcon";
 
 export default function Login() {
   const [account, setAccount] = useState("");
-  const bg = useColorModeValue("gray.100", "gray.800");
-  const bgsoft = useColorModeValue("gray.50", "gray.900");
-  const colorText = useColorModeValue("black", "white");
+  const chipBg = useColorModeValue("brand.100", "brand.800");
   const posthog = usePostHog();
 
   const onLogin = async () => {
@@ -73,50 +80,56 @@ export default function Login() {
         h="100dvh"
         flexDirection="column"
         pt={{ base: "38.2%", md: "15%" }}
+        px={4}
         alignItems="center"
-        bg={bg}
+        bg="surface.subtle"
       >
         <Flex
-          p="8"
-          w="400px"
-          bg={bgsoft}
+          p={8}
+          w="full"
+          maxW="400px"
+          bg="surface"
           boxShadow="lg"
           border="1px solid"
-          borderColor={bg}
-          borderRadius="lg"
+          borderColor="border.subtle"
+          borderRadius="2xl"
           flexDir="column"
-          color={colorText}
-          gap="4"
+          color="text.primary"
+          gap={4}
         >
-          <Flex
-            textAlign="center"
-            alignItems="center"
-            fontSize="xxx-large"
-            fontWeight="bold"
-            flexDirection="column"
-          >
-            <Text px={4} rounded="full" bg="green.200">
+          <Flex textAlign="center" alignItems="center" flexDirection="column" gap={2}>
+            <Text fontSize="4xl" px={4} rounded="full" bg={chipBg}>
               🏟️
             </Text>
-            <Text mt="-10px">Quiniela</Text>
+            <Heading size="xl">Quiniela</Heading>
+            <Text fontSize="sm" color="text.muted">
+              Predice los marcadores. Gana la porra
+            </Text>
           </Flex>
-          <Text mt="-20px" alignSelf="center" color="gray.500">
-            Predice los marcadores. Gana la porra
-          </Text>
-          <Text color="gray.600">Escribe tu correo</Text>
-          <Input
-            mt="-15px"
-            border="1px solid #000"
-            fontSize="18px"
-            placeholder="ejemplo@gmail.com"
-            onChange={(e) => setAccount(e.target.value.toLowerCase())}
-            value={account}
-          />
-          <Button bg="green.600" color="white" type="submit">
-            Hacer login con correo
+          <FormControl>
+            <FormLabel
+              fontSize="xs"
+              textTransform="uppercase"
+              letterSpacing="wider"
+              fontWeight="semibold"
+              color="text.muted"
+              mb={1}
+            >
+              Correo
+            </FormLabel>
+            <Input
+              size="lg"
+              placeholder="ejemplo@gmail.com"
+              inputMode="email"
+              onChange={(e) => setAccount(e.target.value.toLowerCase())}
+              value={account}
+            />
+          </FormControl>
+          <Button variant="primary" size="lg" type="submit">
+            Entrar con correo
           </Button>
-          <Flex borderTop="1px dashed #aaa" h="1px"></Flex>
-          <Button leftIcon={<GoogleIcon />} onClick={onLogin}>
+          <Flex borderTop="1px dashed" borderColor="border.subtle" h="1px"></Flex>
+          <Button variant="secondary" size="lg" leftIcon={<GoogleIcon />} onClick={onLogin}>
             Continuar con Google
           </Button>
         </Flex>

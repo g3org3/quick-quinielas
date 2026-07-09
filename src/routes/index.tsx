@@ -1,4 +1,4 @@
-import { Button, Flex, Img, useColorModeValue } from "@chakra-ui/react";
+import { Button, Flex, Heading, Img } from "@chakra-ui/react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
@@ -17,8 +17,6 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const navigate = Route.useNavigate();
-  const border = useColorModeValue("gray.200", "gray.700");
-  const btn = useColorModeValue("white", undefined);
   const { data } = useSuspenseQuery(tournamentsQuery);
 
   useEffect(() => {
@@ -28,7 +26,9 @@ function Home() {
 
   return (
     <>
-      <h1 style={{ fontWeight: "bold" }}>Torneos</h1>
+      <Heading size="lg" mb={4}>
+        Torneos
+      </Heading>
       <Flex gap="5" flexDirection="column">
         {data.map((tournament) => (
           <Link
@@ -42,12 +42,12 @@ function Home() {
               gap="5"
               h="120px"
               width="100%"
-              bg={btn}
+              bg="surface"
               border="1px solid"
               boxShadow="sm"
-              borderColor={border}
+              borderColor="border.subtle"
             >
-              <Flex borderRight="1px solid" borderColor={border} pr="5">
+              <Flex borderRight="1px solid" borderColor="border.subtle" pr="5">
                 <Img width="100px" height="100px" src={tournament.logo} />
               </Flex>
               <Flex>{tournament.name}</Flex>
