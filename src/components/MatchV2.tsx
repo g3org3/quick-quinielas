@@ -215,6 +215,23 @@ export default function MatchV2(props: Props) {
         color={_isBonusActive ? "whiteAlpha.800" : undefined}
         py="5"
       >
+        <Flex alignItems="center" justifyContent="space-between" gap={2} px={2} pb={3}>
+          <PhaseBadge roundNumber={match.roundNumber} />
+          <Flex
+            flexDir="column"
+            alignItems="center"
+            textAlign="center"
+            minW={0}
+            color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
+            fontSize="xs"
+          >
+            <Text noOfLines={1}>
+              {matchdate.toFormat("EEE dd MMM, h:mm a")}
+            </Text>
+            <Text noOfLines={1}>{match.location}</Text>
+          </Flex>
+          <MatchStatus isClosed={isGameStarted2} onDark={!!_isBonusActive} />
+        </Flex>
         <Flex alignItems="center" position="relative" gap="3">
           <FeatFlagComponent feature="show_points">
             <Badge
@@ -246,12 +263,7 @@ export default function MatchV2(props: Props) {
               </Text>
             </Flex>
           </Flex>
-          <Flex flexDirection="column" gap={2} alignSelf="flex-start">
-            <Flex gap={2} alignItems="center" justifyContent="center">
-              <PhaseBadge roundNumber={match.roundNumber} />
-              <MatchStatus isClosed={isGameStarted2} onDark={!!_isBonusActive} />
-            </Flex>
-
+          <Flex flexDirection="column" gap={2}>
             <Flex gap={1}>
               <Input
                 value={homePrediction}
@@ -259,18 +271,20 @@ export default function MatchV2(props: Props) {
                 disabled={isAnyPending || isGameStarted2}
                 border={isGameStarted2 ? "0" : undefined}
                 p="1"
+                h="64px"
                 name="home"
                 inputMode="numeric"
                 textAlign="center"
                 placeholder="-"
-                fontSize="2xl"
+                fontSize="4xl"
                 fontWeight="bold"
                 aria-label={`Goles de ${match.home}`}
-                w="50px"
+                w="64px"
               />
               <Flex
+                alignItems="center"
                 color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
-                fontSize="2xl"
+                fontSize="4xl"
               >
                 -
               </Flex>
@@ -280,14 +294,15 @@ export default function MatchV2(props: Props) {
                 disabled={isAnyPending || isGameStarted2}
                 border={isGameStarted2 ? "0" : undefined}
                 textAlign="center"
-                fontSize="2xl"
+                fontSize="4xl"
                 fontWeight="bold"
                 aria-label={`Goles de ${match.away}`}
                 p={1}
+                h="64px"
                 name="away"
                 inputMode="numeric"
                 placeholder="-"
-                w="50px"
+                w="64px"
               />
             </Flex>
             <FeatFlagComponent feature="show_match_score">
@@ -442,19 +457,6 @@ export default function MatchV2(props: Props) {
               </Button>
             </Link>
           )}
-        </Flex>
-        <Flex
-          flexDir="column"
-          alignItems="center"
-          color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
-          fontSize="sm"
-          textAlign="center"
-        >
-          <Text>
-            {matchdate.toRelative()} ·{" "}
-            {matchdate.toFormat("EEE dd MMM, h:mm a")}
-          </Text>
-          <Text fontSize="xs">{match.location}</Text>
         </Flex>
       </Flex>
     </form>
