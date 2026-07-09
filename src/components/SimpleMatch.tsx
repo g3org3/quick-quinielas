@@ -1,5 +1,6 @@
 import {
   Text,
+  Box,
   Flex,
   FormControl,
   FormLabel,
@@ -12,6 +13,7 @@ import {
   MatchBetsResponse,
   MatchesFirstGoalFromOptions,
   MatchesFirstGoalOptions,
+  MatchesPenaltyWinnerOptions,
   MatchesResponse,
   PredictionsFirstGoalFromOptions,
   PredictionsResponse,
@@ -24,6 +26,8 @@ import { useUserQuery } from "@/api/users";
 import { useEffect, useRef, useState } from "react";
 import { PhaseBadge } from "./PhaseBadge";
 import { MatchStatus } from "./MatchStatus";
+import { VoteBar } from "./VoteBar";
+import { countries } from "./countries";
 
 interface Props {
   bet?: MatchBetsResponse<number, number, number>;
@@ -34,6 +38,7 @@ interface Props {
   awayScore?: number;
   firstGoal?: MatchesFirstGoalOptions;
   firstGoalFrom?: MatchesFirstGoalFromOptions;
+  penaltyWinner?: MatchesPenaltyWinnerOptions;
   tournamentId: string;
 }
 
@@ -47,7 +52,9 @@ export default function SimpleMatch(props: Props) {
     awayScore,
     firstGoal,
     firstGoalFrom,
+    penaltyWinner,
   } = props;
+  const totalUsers = 12;
   const border = "border.subtle";
   const bg = "surface";
 
@@ -173,6 +180,21 @@ export default function SimpleMatch(props: Props) {
       color={_isBonusActive ? "whiteAlpha.800" : undefined}
       py="5"
     >
+      <Flex alignItems="center" justifyContent="space-between" gap={2} px={2} pb={3}>
+        <PhaseBadge roundNumber={match.roundNumber} />
+        <Flex
+          flexDir="column"
+          alignItems="center"
+          textAlign="center"
+          minW={0}
+          color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
+          fontSize="xs"
+        >
+          <Text noOfLines={1}>{matchdate.toFormat("EEE dd MMM, h:mm a")}</Text>
+          <Text noOfLines={1}>{match.location}</Text>
+        </Flex>
+        <MatchStatus isClosed={isGameStarted2} onDark={!!_isBonusActive} />
+      </Flex>
       <Flex alignItems="center" position="relative" gap="3">
         <FeatFlagComponent feature="show_points">
           <Badge
@@ -199,36 +221,28 @@ export default function SimpleMatch(props: Props) {
             <Text fontWeight="semibold" noOfLines={1}>
               {match.home}
             </Text>
-            <Text
-              color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
-              fontFamily="mono"
-              fontSize="xs"
-            >
-              {Math.floor((100 * (bet?.home_per || 0)) / 17)}% votos
-            </Text>
           </Flex>
         </Flex>
-        <Flex flexDirection="column" gap={2} alignSelf="flex-start">
-          <PhaseBadge roundNumber={match.roundNumber} />
-          <MatchStatus isClosed={isGameStarted2} onDark={!!_isBonusActive} />
-
+        <Flex flexDirection="column" gap={2}>
           <Flex gap={1}>
             <Input
               defaultValue={home}
               disabled
               border={isGameStarted2 ? "0" : undefined}
               p="1"
+              h="64px"
               name="home"
               textAlign="center"
               placeholder="-"
-              fontSize="2xl"
+              fontSize="4xl"
               fontWeight="bold"
               aria-label={`Goles de ${match.home}`}
-              w="50px"
+              w="64px"
             />
             <Flex
+              alignItems="center"
               color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
-              fontSize="2xl"
+              fontSize="4xl"
             >
               -
             </Flex>
@@ -237,13 +251,14 @@ export default function SimpleMatch(props: Props) {
               disabled
               border={isGameStarted2 ? "0" : undefined}
               textAlign="center"
-              fontSize="2xl"
+              fontSize="4xl"
               fontWeight="bold"
               aria-label={`Goles de ${match.away}`}
               p={1}
+              h="64px"
               name="away"
               placeholder="-"
-              w="50px"
+              w="64px"
             />
           </Flex>
         </Flex>
@@ -255,16 +270,20 @@ export default function SimpleMatch(props: Props) {
             <Text fontWeight="semibold" noOfLines={1}>
               {match.away}
             </Text>
-            <Text
-              color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
-              fontFamily="mono"
-              fontSize="xs"
-            >
-              {Math.floor((100 * (bet?.away_per || 0)) / 17)}% votos
-            </Text>
           </Flex>
         </Flex>
       </Flex>
+      <Box px={2} pt={3} pb={1}>
+        <VoteBar
+          homeLabel={countries[match.home]?.iso3 ?? match.home}
+          awayLabel={countries[match.away]?.iso3 ?? match.away}
+          homeCount={bet?.home_per || 0}
+          awayCount={bet?.away_per || 0}
+          tieCount={bet?.tie_per || 0}
+          total={totalUsers}
+          onDark={!!_isBonusActive}
+        />
+      </Box>
       <Flex gap={3} px={1} pb={2} alignItems="center" flexWrap="wrap">
         <FormControl flex="1 1 140px" minW={0}>
           <FormLabel
@@ -321,18 +340,32 @@ export default function SimpleMatch(props: Props) {
             </option>
           </Select>
         </FormControl>
-      </Flex>
-      <Flex
-        flexDir="column"
-        alignItems="center"
-        color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
-        fontSize="sm"
-        textAlign="center"
-      >
-        <Text>
-          {matchdate.toRelative()} · {matchdate.toFormat("EEE dd MMM, h:mm a")}
-        </Text>
-        <Text fontSize="xs">{match.location}</Text>
+        <FormControl flex="1 1 140px" minW={0}>
+          <FormLabel
+            fontSize="xs"
+            textTransform="uppercase"
+            letterSpacing="wider"
+            fontWeight="semibold"
+            color={_isBonusActive ? "whiteAlpha.800" : "text.muted"}
+            mb={1}
+          >
+            Penales (ganador)
+          </FormLabel>
+          <Select
+            name="penalty_winner"
+            defaultValue={penaltyWinner ?? ""}
+            disabled
+            size="sm"
+          >
+            <option value="">Sin definir</option>
+            <option value={MatchesPenaltyWinnerOptions.home}>
+              {match.home}
+            </option>
+            <option value={MatchesPenaltyWinnerOptions.away}>
+              {match.away}
+            </option>
+          </Select>
+        </FormControl>
       </Flex>
     </Flex>
   );

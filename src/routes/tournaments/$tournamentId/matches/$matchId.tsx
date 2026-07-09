@@ -130,6 +130,7 @@ function SingleMatch() {
             awayScore={match.awayScore}
             firstGoal={match.first_goal}
             firstGoalFrom={match.first_goal_from}
+            penaltyWinner={match.penalty_winner}
             tournamentId={tournamentId}
           />
         </FeatFlagComponent>
