@@ -75,11 +75,13 @@ function SingleMatch() {
                 </Flex>
                 <Flex flexDir="column" alignSelf="flex-end">
                   <Flex alignItems="center" gap={2}>
-                    <Flex fontSize="xxx-large" fontWeight="bold" p="1">
+                    <Flex fontSize="5xl" fontWeight="extrabold" p="1">
                       {match.homeScore}
                     </Flex>
-                    <Flex fontSize="xx-large">-</Flex>
-                    <Flex fontSize="xxx-large" fontWeight="bold" p="1">
+                    <Flex fontSize="2xl" color="text.muted">
+                      -
+                    </Flex>
+                    <Flex fontSize="5xl" fontWeight="extrabold" p="1">
                       {match.awayScore}
                     </Flex>
                   </Flex>
@@ -93,25 +95,24 @@ function SingleMatch() {
               </Flex>
               <hr />
               <Flex
-                color="gray.500"
+                color="text.muted"
                 display="box"
                 pt="1"
-                fontSize="16px"
+                fontSize="sm"
                 textAlign="center"
               >
-                {DateTime.fromSQL(match.startAtUtc).toFormat("EEE MMM dd")}
-                {" - "}
-                {DateTime.fromSQL(match.startAtUtc).toFormat("h:mm a")}
+                {DateTime.fromSQL(match.startAtUtc).toRelative()}
+                {" · "}
+                {DateTime.fromSQL(match.startAtUtc).toFormat("EEE dd MMM, h:mm a")}
               </Flex>
               <Flex
-                color="gray.500"
+                color="text.muted"
                 display="box"
-                fontSize="14px"
+                fontSize="xs"
                 textAlign="center"
                 mb="2"
               >
-                {match.location} -{" "}
-                {DateTime.fromSQL(match.startAtUtc).toRelative()}
+                {match.location}
               </Flex>
               <hr />
             </Flex>
@@ -131,9 +132,9 @@ function SingleMatch() {
             <Thead>
               <Tr>
                 <Th>Participante</Th>
-                <Th>-</Th>
-                <Th>-</Th>
-                <Th>pts</Th>
+                <Th>Local</Th>
+                <Th>Visita</Th>
+                <Th isNumeric>Pts</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -186,21 +187,30 @@ function SingleMatch() {
                               <Badge alignSelf="center" colorScheme="purple">
                                 {prediction.first_goal_from ===
                                 PredictionsFirstGoalFromOptions.home
-                                  ? "H"
-                                  : "A"}
+                                  ? match.home
+                                  : match.away}
                               </Badge>
                             ) : null}
                             {prediction?.isBonusActive ? (
-                              <Badge alignSelf="center" colorScheme="red">
-                                x2
+                              <Badge
+                                alignSelf="center"
+                                bg="gold.50"
+                                borderWidth="1px"
+                                borderColor="gold.200"
+                                color="gold.700"
+                                fontFamily="mono"
+                                rounded="md"
+                              >
+                                ×2
                               </Badge>
                             ) : null}
                           </Flex>
                           {result?.expand?.prediction_id?.created ? (
-                            <Text fontFamily="monospace" fontSize="xs">
+                            <Text fontSize="xs" color="text.muted">
+                              Votó{" "}
                               {DateTime.fromSQL(
                                 result.expand.prediction_id.updated
-                              ).toFormat("MMM dd h:mm a")}
+                              ).toRelative()}
                             </Text>
                           ) : null}
                         </Flex>

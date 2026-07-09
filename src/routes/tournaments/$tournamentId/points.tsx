@@ -52,7 +52,7 @@ function Points() {
           <Thead>
             <Tr>
               <Th>Participante</Th>
-              <Th>Puntos</Th>
+              <Th isNumeric>Puntos</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -67,7 +67,11 @@ function Points() {
                     params={{ tournamentId, userId: row.user_id }}
                   >
                     <Flex alignItems="center" gap={3}>
-                      <Text fontFamily="monospace" fontSize={position <= 3 ? "xx-large" : "large"}>
+                      <Text
+                        fontFamily="mono"
+                        fontSize={position <= 3 ? "2xl" : "lg"}
+                        color={position <= 3 ? undefined : "text.muted"}
+                      >
                         {displayPoints(position)}
                       </Text>
                       <Img
@@ -81,7 +85,9 @@ function Points() {
                             : `https://api.dicebear.com/9.x/initials/svg?seed=${row.expand?.user_id.username}`
                         }
                       />
-                      {row.expand?.user_id.name}
+                      <Text fontWeight="semibold" noOfLines={1}>
+                        {row.expand?.user_id.name}
+                      </Text>
                       {row.expand?.user_id.favorite_team && (
                         <Flag
                           height="24px"
@@ -91,7 +97,9 @@ function Points() {
                     </Flex>
                   </Link>
                 </Td>
-                <Td fontWeight="bold">{row.points}</Td>
+                <Td isNumeric fontWeight="bold" fontFamily="mono">
+                  {row.points}
+                </Td>
               </Tr>
             ))}
           </Tbody>
