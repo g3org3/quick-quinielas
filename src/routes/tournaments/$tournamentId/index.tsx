@@ -1,4 +1,4 @@
-import { Button, Flex } from "@chakra-ui/react";
+import { Button, Flex, Text } from "@chakra-ui/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { z } from "zod";
@@ -119,7 +119,21 @@ function HomeTournament() {
               </FeatFlagComponent>
             );
           })}
-          {matches.length === 0 ? <>No hay partidos</> : null}
+          {matches.length === 0 ? (
+            <Flex
+              flex="1"
+              flexDir="column"
+              alignItems="center"
+              justifyContent="center"
+              gap={2}
+              py={12}
+            >
+              <Text fontSize="4xl" aria-hidden>
+                ⚽
+              </Text>
+              <Text color="text.muted">No hay partidos</Text>
+            </Flex>
+          ) : null}
         </Flex>
       </Flex>
       <BottomNav state="vaticinios" tournamentId={tournamentId} />
