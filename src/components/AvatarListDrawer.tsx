@@ -9,9 +9,11 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { usePostHog } from "@posthog/react";
+import { useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 
 import Flag from "@/components/Flag";
+import { usersQuery } from "@/api/users";
 
 export interface AvatarUser {
   img: string;
@@ -32,6 +34,10 @@ export default function AvatarListDrawer({ users, max }: Props) {
   const itemBorder = useColorModeValue("gray.100", "gray.700");
   const handleColor = useColorModeValue("gray.300", "gray.600");
   const dateColor = useColorModeValue("gray.500", "gray.400");
+  const countColor = useColorModeValue("brand.600", "brand.300");
+
+  const { data: allUsers = [] } = useQuery(usersQuery);
+  const total = allUsers.length || users.length;
 
   const sortedUsers = [...users].sort((a, b) =>
     (b.updatedAt ?? "").localeCompare(a.updatedAt ?? ""),
@@ -90,9 +96,17 @@ export default function AvatarListDrawer({ users, max }: Props) {
             <Flex justifyContent="center" pt={3} pb={2}>
               <Box w="40px" h="6px" borderRadius="full" bg={handleColor} />
             </Flex>
-            <Text fontWeight="bold" fontSize="lg" px={4} py={2}>
-              Participantes ({users.length})
-            </Text>
+            <Flex flexDir="column" px={4} py={2}>
+              <Text fontWeight="bold" fontSize="lg">
+                Participantes
+              </Text>
+              <Text fontSize="sm" color={dateColor}>
+                <Text as="span" fontWeight="bold" color={countColor}>
+                  {users.length} de {total}
+                </Text>{" "}
+                ya vaticinaron
+              </Text>
+            </Flex>
             <Box overflowY="auto" pb={6}>
               {sortedUsers.map((user, i) => (
                 <Flex
@@ -110,8 +124,16 @@ export default function AvatarListDrawer({ users, max }: Props) {
                     <Flag height="24px" country={user.favoriteTeam} />
                   )}
                   {user.isBonusActive && (
-                    <Badge alignSelf="center" colorScheme="red">
-                      x2
+                    <Badge
+                      alignSelf="center"
+                      bg="gold.50"
+                      borderWidth="1px"
+                      borderColor="gold.200"
+                      color="gold.700"
+                      fontFamily="mono"
+                      rounded="md"
+                    >
+                      ×2
                     </Badge>
                   )}
                   <Text ml="auto" fontSize="sm" color={dateColor}>
