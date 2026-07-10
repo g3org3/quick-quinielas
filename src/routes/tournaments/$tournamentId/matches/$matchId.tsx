@@ -24,7 +24,6 @@ import { getMatchResultsQuery } from "@/api/results";
 import { usersQuery } from "@/api/users";
 import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
-import FeatFlagComponent from "@/components/FeatFlagComponent";
 import SimpleMatch from "@/components/SimpleMatch";
 import { queryClient } from "@/queryClient";
 import Flag from "@/components/Flag";
@@ -61,79 +60,15 @@ function SingleMatch() {
         overflow="auto"
         overscrollBehavior="contain"
       >
-        <FeatFlagComponent
-          feature="show_new_matchcard"
-          fallback={
-            <Flex flexDir="column">
-              <Flex alignItems="center" gap="3" mb="3">
-                <Flex flex="1" gap="3" alignItems="center">
-                  <Flex
-                    flexDir="column"
-                    flex="1"
-                    alignItems="center"
-                    justifyContent="flex-end"
-                  >
-                    <Flag height="50px" country={match.home} />
-                    {match.home}
-                  </Flex>
-                </Flex>
-                <Flex flexDir="column" alignSelf="flex-end">
-                  <Flex alignItems="center" gap={2}>
-                    <Flex fontSize="5xl" fontWeight="extrabold" p="1">
-                      {match.homeScore}
-                    </Flex>
-                    <Flex fontSize="2xl" color="text.muted">
-                      -
-                    </Flex>
-                    <Flex fontSize="5xl" fontWeight="extrabold" p="1">
-                      {match.awayScore}
-                    </Flex>
-                  </Flex>
-                </Flex>
-                <Flex flex="1" gap="3" alignItems="center">
-                  <Flex flexDir="column" flex="1" alignItems="center">
-                    <Flag height="40px" country={match.away} />
-                    {match.away}
-                  </Flex>
-                </Flex>
-              </Flex>
-              <hr />
-              <Flex
-                color="text.muted"
-                display="box"
-                pt="1"
-                fontSize="sm"
-                textAlign="center"
-              >
-                {DateTime.fromSQL(match.startAtUtc).toRelative()}
-                {" · "}
-                {DateTime.fromSQL(match.startAtUtc).toFormat(
-                  "EEE dd MMM, h:mm a"
-                )}
-              </Flex>
-              <Flex
-                color="text.muted"
-                display="box"
-                fontSize="xs"
-                textAlign="center"
-                mb="2"
-              >
-                {match.location}
-              </Flex>
-              <hr />
-            </Flex>
-          }
-        >
-          <SimpleMatch
-            match={match}
-            homeScore={match.homeScore}
-            awayScore={match.awayScore}
-            firstGoal={match.first_goal}
-            firstGoalFrom={match.first_goal_from}
-            penaltyWinner={match.penalty_winner}
-            tournamentId={tournamentId}
-          />
-        </FeatFlagComponent>
+        <SimpleMatch
+          match={match}
+          homeScore={match.homeScore}
+          awayScore={match.awayScore}
+          firstGoal={match.first_goal}
+          firstGoalFrom={match.first_goal_from}
+          penaltyWinner={match.penalty_winner}
+          tournamentId={tournamentId}
+        />
         {match.penalty_winner ? (
           <Flex
             justifyContent="center"

@@ -4,8 +4,6 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { z } from "zod";
 
 import BottomNav from "@/components/BottomNav";
-import FeatFlagComponent from "@/components/FeatFlagComponent";
-import Match from "@/components/Match";
 import MatchV2 from "@/components/MatchV2";
 import TournamentLoading from "@/components/TournamentLoading";
 import { getMatchesQuery } from "@/api/matches";
@@ -96,27 +94,14 @@ function HomeTournament() {
             const bet = bets.find((bet) => bet.match_id === match.id);
             const prediction = predictions.find((p) => p.match === match.id);
             return (
-              <FeatFlagComponent
+              <MatchV2
                 key={match.id}
-                feature="show_new_matchcard"
-                fallback={
-                  <Match
-                    match={match}
-                    bet={bet}
-                    prediction={prediction}
-                    tab={tab}
-                    tournamentId={tournamentId}
-                  />
-                }
-              >
-                <MatchV2
-                  match={match}
-                  bet={bet}
-                  prediction={prediction}
-                  tab={tab}
-                  tournamentId={tournamentId}
-                />
-              </FeatFlagComponent>
+                match={match}
+                bet={bet}
+                prediction={prediction}
+                tab={tab}
+                tournamentId={tournamentId}
+              />
             );
           })}
           {matches.length === 0 ? (

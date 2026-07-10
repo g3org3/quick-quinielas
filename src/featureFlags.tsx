@@ -4,7 +4,6 @@ import { pb } from "./pb";
 import { usePocketBaseRealtime } from "./useRealtime";
 
 const featureFlags = {
-  show_new_matchcard: "1lxt8jrs51k9onb",
   show_match_score: "7ri3e2tlxs7meht",
   show_bonus: "iegvq2vrg3uyynw",
   show_update_app: "srnwbr4pkcghb7e",
