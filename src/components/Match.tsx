@@ -15,7 +15,6 @@ import { pb } from "@/pb";
 import Flag from "./Flag";
 import AvatarListDrawer from "./AvatarListDrawer";
 import GameHistoryDrawer from "./GameHistoryDrawer";
-import { useFeatFlag } from "@/featureFlags";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
 import {
   getMatchPredictionsQuery,
@@ -145,7 +144,6 @@ export default function Match(props: Props) {
       _pointsColor = "blue";
     }
   }
-  const showLimitAvatars = useFeatFlag("show_limit_avatars");
   const _isBonusActive = isBonusActive || prediction?.isBonusActive;
 
   return (
@@ -273,10 +271,7 @@ export default function Match(props: Props) {
         </Flex>
         <Flex gap={3} p={1} alignItems="center">
           <Flex flex="1" overflow="auto">
-            <AvatarListDrawer
-              users={users}
-              max={showLimitAvatars ? 3 : undefined}
-            />
+            <AvatarListDrawer users={users} max={3} />
           </Flex>
           {!isGameStarted2 ? (
             <Button

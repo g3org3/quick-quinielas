@@ -9,7 +9,6 @@ const featureFlags = {
   show_match_score: "7ri3e2tlxs7meht",
   show_bonus: "iegvq2vrg3uyynw",
   show_update_app: "srnwbr4pkcghb7e",
-  show_limit_avatars: "osr72q7crt1sdpy",
   show_admin_bonus_enable_button: "eismui3kc6ykpoy",
   set_favorite_team: "gsugdab7mgzmg92",
 } as const;
