@@ -1,6 +1,5 @@
 import {
   Text,
-  Box,
   Flex,
   FormControl,
   FormLabel,
@@ -9,7 +8,6 @@ import {
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import {
-  MatchBetsResponse,
   MatchesFirstGoalFromOptions,
   MatchesFirstGoalOptions,
   MatchesPenaltyWinnerOptions,
@@ -22,11 +20,8 @@ import GameHistoryDrawer from "./GameHistoryDrawer";
 import { useEffect, useRef, useState } from "react";
 import { PhaseBadge } from "./PhaseBadge";
 import { MatchStatus } from "./MatchStatus";
-import { VoteBar } from "./VoteBar";
-import { countries } from "./countries";
 
 interface Props {
-  bet?: MatchBetsResponse<number, number, number>;
   match: MatchesResponse;
   tab?: string | null;
   prediction?: PredictionsResponse;
@@ -42,14 +37,12 @@ export default function SimpleMatch(props: Props) {
   const {
     match,
     tournamentId,
-    bet,
     homeScore,
     awayScore,
     firstGoal,
     firstGoalFrom,
     penaltyWinner,
   } = props;
-  const totalUsers = 12;
   const border = "border.subtle";
   const bg = "surface";
 
