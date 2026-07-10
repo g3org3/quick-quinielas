@@ -106,7 +106,13 @@ export default function GameHistoryDrawer({
             outline: "none",
           }}
         >
-          <Box bg={bg} borderTopRadius="2xl" h="50vh" overflowY="auto" pb={6}>
+          <Flex
+            bg={bg}
+            borderTopRadius="2xl"
+            h="50vh"
+            overflow="hidden"
+            direction="column"
+          >
             <Flex justifyContent="center" pt={3} pb={2}>
               <Box w="40px" h="6px" borderRadius="full" bg={handleColor} />
             </Flex>
@@ -149,52 +155,54 @@ export default function GameHistoryDrawer({
                 <Text px={4} pb={2} fontSize="xs" color={dateColor}>
                   El marcador de {country} aparece siempre a la izquierda.
                 </Text>
-                {matches.map((match) => {
-                  const { countryScore, opponentScore, opponent } =
-                    getCountryResult(match, country);
-                  const details = [
-                    match.startAtUtc
-                      ? DateTime.fromSQL(match.startAtUtc).toLocaleString(
-                          DateTime.DATE_MED,
-                        )
-                      : "",
-                    match.location,
-                  ].filter(Boolean);
+                <Box flex="1" minH={0} overflowY="auto" pb={6}>
+                  {matches.map((match) => {
+                    const { countryScore, opponentScore, opponent } =
+                      getCountryResult(match, country);
+                    const details = [
+                      match.startAtUtc
+                        ? DateTime.fromSQL(match.startAtUtc).toLocaleString(
+                            DateTime.DATE_MED,
+                          )
+                        : "",
+                      match.location,
+                    ].filter(Boolean);
 
-                  return (
-                    <Flex
-                      key={match.id}
-                      alignItems="center"
-                      gap={3}
-                      px={4}
-                      py={3}
-                      borderTopWidth="1px"
-                      borderColor={itemBorder}
-                    >
-                      <Flag height="24px" country={opponent} />
-                      <Box flex="1" minW={0}>
-                        <Text fontWeight="medium">{opponent}</Text>
-                        <Text fontSize="sm" color={dateColor} noOfLines={1}>
-                          {details.join(" · ")}
-                        </Text>
-                      </Box>
+                    return (
                       <Flex
-                        alignItems="baseline"
-                        gap={1}
-                        fontWeight="bold"
-                        fontFamily="monospace"
-                        fontSize="lg"
+                        key={match.id}
+                        alignItems="center"
+                        gap={3}
+                        px={4}
+                        py={3}
+                        borderTopWidth="1px"
+                        borderColor={itemBorder}
                       >
-                        <Text>{countryScore}</Text>
-                        <Text color={dateColor}>-</Text>
-                        <Text color={opponentScoreColor}>{opponentScore}</Text>
+                        <Flag height="24px" country={opponent} />
+                        <Box flex="1" minW={0}>
+                          <Text fontWeight="medium">{opponent}</Text>
+                          <Text fontSize="sm" color={dateColor} noOfLines={1}>
+                            {details.join(" · ")}
+                          </Text>
+                        </Box>
+                        <Flex
+                          alignItems="baseline"
+                          gap={1}
+                          fontWeight="bold"
+                          fontFamily="monospace"
+                          fontSize="lg"
+                        >
+                          <Text>{countryScore}</Text>
+                          <Text color={dateColor}>-</Text>
+                          <Text color={opponentScoreColor}>{opponentScore}</Text>
+                        </Flex>
                       </Flex>
-                    </Flex>
-                  );
-                })}
+                    );
+                  })}
+                </Box>
               </>
             )}
-          </Box>
+          </Flex>
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
