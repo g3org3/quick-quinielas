@@ -17,6 +17,7 @@ import { DateTime } from "luxon";
 import {
   MatchesPenaltyWinnerOptions,
   PredictionsFirstGoalFromOptions,
+  PredictionsPenaltyWinnerOptions,
 } from "@/pocketbase-types";
 import { getMatchQuery } from "@/api/matches";
 import { firstGoalLabel } from "@/api/predictions";
@@ -158,12 +159,25 @@ function SingleMatch() {
                                   : (countries[match.away]?.iso3 ?? match.away)}
                               </Badge>
                             ) : null}
+                            {prediction?.penalty_winner ? (
+                              <Badge alignSelf="center" colorScheme="purple">
+                                (P)
+                                {prediction.penalty_winner ===
+                                  PredictionsPenaltyWinnerOptions.home
+                                  ? (countries[match.home]?.iso3 ?? match.home)
+                                  : (countries[match.away]?.iso3 ?? match.away)}
+                              </Badge>
+                            ) : null}
                           </Flex>
                           <Flex gap={2} alignItems="center">
                             {result?.expand?.prediction_id?.created ? (
                               <Text
                                 fontSize="xs"
-                                color="text.muted"
+                                color={
+                                  prediction?.isBonusActive
+                                    ? "gray.200"
+                                    : "text.muted"
+                                }
                                 fontFamily="mono"
                               >
                                 {DateTime.fromSQL(
