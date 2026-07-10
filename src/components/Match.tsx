@@ -122,28 +122,6 @@ export default function Match(props: Props) {
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isGameStarted2]);
-  let _points = "";
-  let _pointsColor = "red";
-  // TODO: this should come up from results it seems
-  if (prediction && isGameStarted2) {
-    if (
-      match.homeScore === prediction.homeScore &&
-      match.awayScore === prediction.awayScore
-    ) {
-      _points = prediction.isBonusActive ? "+6" : "+3";
-      _pointsColor = "green";
-    } else if (
-      (match.homeScore > match.awayScore &&
-        prediction.homeScore > prediction.awayScore) ||
-      (match.homeScore < match.awayScore &&
-        prediction.homeScore < prediction.awayScore) ||
-      (match.homeScore === match.awayScore &&
-        prediction.homeScore === prediction.awayScore)
-    ) {
-      _points = prediction.isBonusActive ? "+2" : "+1";
-      _pointsColor = "blue";
-    }
-  }
   const _isBonusActive = isBonusActive || prediction?.isBonusActive;
 
   return (
@@ -161,16 +139,6 @@ export default function Match(props: Props) {
         py="5"
       >
         <Flex alignItems="center" position="relative" gap="3">
-          <Badge
-            rounded="full"
-            px={2}
-            colorScheme={_pointsColor}
-            position="absolute"
-            top={-2}
-            right={0}
-          >
-            {_points}
-          </Badge>
           <Flex flex="1" gap="3" alignItems="center">
             <Flex
               flex="1"
