@@ -161,18 +161,16 @@ export default function Match(props: Props) {
         py="5"
       >
         <Flex alignItems="center" position="relative" gap="3">
-          <FeatFlagComponent feature="show_points">
-            <Badge
-              rounded="full"
-              px={2}
-              colorScheme={_pointsColor}
-              position="absolute"
-              top={-2}
-              right={0}
-            >
-              {_points}
-            </Badge>
-          </FeatFlagComponent>
+          <Badge
+            rounded="full"
+            px={2}
+            colorScheme={_pointsColor}
+            position="absolute"
+            top={-2}
+            right={0}
+          >
+            {_points}
+          </Badge>
           <Flex flex="1" gap="3" alignItems="center">
             <Flex
               flex="1"

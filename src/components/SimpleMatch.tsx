@@ -20,7 +20,6 @@ import {
 } from "@/pocketbase-types";
 import Flag from "./Flag";
 import GameHistoryDrawer from "./GameHistoryDrawer";
-import FeatFlagComponent from "@/components/FeatFlagComponent";
 import { useEffect, useRef, useState } from "react";
 import { PhaseBadge } from "./PhaseBadge";
 import { MatchStatus } from "./MatchStatus";
@@ -175,18 +174,16 @@ export default function SimpleMatch(props: Props) {
         <MatchStatus isClosed={isGameStarted2} />
       </Flex>
       <Flex alignItems="center" position="relative" gap="3">
-        <FeatFlagComponent feature="show_points">
-          <Badge
-            rounded="full"
-            px={2}
-            colorScheme={_pointsColor}
-            position="absolute"
-            top={-2}
-            right={0}
-          >
-            {_points}
-          </Badge>
-        </FeatFlagComponent>
+        <Badge
+          rounded="full"
+          px={2}
+          colorScheme={_pointsColor}
+          position="absolute"
+          top={-2}
+          right={0}
+        >
+          {_points}
+        </Badge>
         <Flex flex="1" gap="3" alignItems="center">
           <Flex
             flex="1"
