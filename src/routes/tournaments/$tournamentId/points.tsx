@@ -32,7 +32,7 @@ function Points() {
   const blue = useColorModeValue("blue.100", "blue.800");
 
   const { data: leaderboard } = useSuspenseQuery(
-    getLeaderboardQuery(tournamentId),
+    getLeaderboardQuery(tournamentId)
   );
 
   let position = 0;
@@ -47,8 +47,13 @@ function Points() {
 
   return (
     <>
-      <Flex flex="1" flexDir="column" overflow="auto" overscrollBehavior="contain">
-        <Table variant="simple">
+      <Flex
+        flex="1"
+        flexDir="column"
+        overflow="auto"
+        overscrollBehavior="contain"
+      >
+        <Table variant="simple" size="sm">
           <Thead>
             <Tr>
               <Th>Participante</Th>
@@ -76,12 +81,12 @@ function Points() {
                       </Text>
                       <Img
                         rounded="full"
-                        w="40px"
-                        h="40px"
+                        w="50px"
+                        h="50px"
                         src={
                           row.expand?.user_id.img
                             ? row.expand?.user_id.img +
-                              "&thumb=100x100&cache=default"
+                            "&thumb=100x100&cache=default"
                             : `https://api.dicebear.com/9.x/initials/svg?seed=${row.expand?.user_id.username}`
                         }
                       />
@@ -97,7 +102,13 @@ function Points() {
                     </Flex>
                   </Link>
                 </Td>
-                <Td isNumeric fontWeight="bold" fontFamily="mono">
+                <Td
+                  fontSize={position <= 3 ? "xl" : "lg"}
+                  color={position <= 3 ? undefined : "text.muted"}
+                  isNumeric
+                  fontWeight="bold"
+                  fontFamily="mono"
+                >
                   {row.points}
                 </Td>
               </Tr>
@@ -120,5 +131,5 @@ function displayPoints(points: number) {
   if (points === 3) {
     return "🥉";
   }
-  return points + ".";
+  return points.toString().padStart(2, "0") + ".";
 }

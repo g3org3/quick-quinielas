@@ -7,6 +7,7 @@ import {
   Flex,
   Progress,
   Text,
+  DarkMode,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { usePostHog } from "@posthog/react";
@@ -25,9 +26,11 @@ export interface AvatarUser {
 interface Props {
   users: AvatarUser[];
   max?: number;
+  onDark?: boolean;
 }
 
-export default function AvatarListDrawer({ users, max }: Props) {
+export default function AvatarListDrawer(props: Props) {
+  const { users, max, onDark } = props;
   const posthog = usePostHog();
   const bg = useColorModeValue("white", "gray.800");
   const itemBorder = useColorModeValue("gray.100", "gray.700");
@@ -60,15 +63,29 @@ export default function AvatarListDrawer({ users, max }: Props) {
           cursor: "pointer",
         }}
       >
-        <AvatarGroup size="md" max={max}>
-          {sortedUsers.map((user, i) => (
-            <Avatar
-              key={user.img || user.name || i}
-              src={user.img}
-              name={user.name}
-            />
-          ))}
-        </AvatarGroup>
+        {onDark ? (
+          <DarkMode>
+            <AvatarGroup size="md" max={max}>
+              {sortedUsers.map((user, i) => (
+                <Avatar
+                  key={user.img || user.name || i}
+                  src={user.img}
+                  name={user.name}
+                />
+              ))}
+            </AvatarGroup>
+          </DarkMode>
+        ) : (
+          <AvatarGroup size="md" max={max}>
+            {sortedUsers.map((user, i) => (
+              <Avatar
+                key={user.img || user.name || i}
+                src={user.img}
+                name={user.name}
+              />
+            ))}
+          </AvatarGroup>
+        )}
       </Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Overlay

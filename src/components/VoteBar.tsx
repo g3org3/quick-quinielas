@@ -12,15 +12,16 @@ interface Props {
 }
 
 // Segmented vote bar: home win · tie/not voted · away win (guide.md §3 — labeled).
-export function VoteBar({
-  homeLabel,
-  awayLabel,
-  homeCount,
-  awayCount,
-  tieCount,
-  total,
-  onDark,
-}: Props) {
+export function VoteBar(props: Props) {
+  const {
+    homeLabel,
+    awayLabel,
+    homeCount,
+    awayCount,
+    tieCount,
+    total,
+    onDark,
+  } = props;
   const midColor = useColorModeValue("gray.300", "gray.600");
   const trackColor = useColorModeValue("gray.100", "gray.700");
   const labelColor = onDark ? "whiteAlpha.800" : "text.muted";

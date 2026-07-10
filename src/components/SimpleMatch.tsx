@@ -133,7 +133,13 @@ export default function SimpleMatch(props: Props) {
       bg={bg}
       py="5"
     >
-      <Flex alignItems="center" justifyContent="space-between" gap={2} px={2} pb={3}>
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
+        gap={2}
+        px={2}
+        pb={3}
+      >
         <PhaseBadge roundNumber={match.roundNumber} />
         <Flex
           flexDir="column"
@@ -180,11 +186,7 @@ export default function SimpleMatch(props: Props) {
               aria-label={`Goles de ${match.home}`}
               w="64px"
             />
-            <Flex
-              alignItems="center"
-              color="text.muted"
-              fontSize="4xl"
-            >
+            <Flex alignItems="center" color="text.muted" fontSize="4xl">
               -
             </Flex>
             <Input
@@ -214,16 +216,6 @@ export default function SimpleMatch(props: Props) {
           </Flex>
         </Flex>
       </Flex>
-      <Box px={2} pt={3} pb={1}>
-        <VoteBar
-          homeLabel={countries[match.home]?.iso3 ?? match.home}
-          awayLabel={countries[match.away]?.iso3 ?? match.away}
-          homeCount={bet?.home_per || 0}
-          awayCount={bet?.away_per || 0}
-          tieCount={bet?.tie_per || 0}
-          total={totalUsers}
-        />
-      </Box>
       <Flex gap={3} px={1} pb={2} alignItems="center" flexWrap="wrap">
         <FormControl flex="1 1 140px" minW={0}>
           <FormLabel

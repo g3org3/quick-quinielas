@@ -9,6 +9,7 @@ import {
   Input,
   Select,
   Badge,
+  DarkMode,
 } from "@chakra-ui/react";
 import { DateTime } from "luxon";
 import { Link } from "@tanstack/react-router";
@@ -205,9 +206,15 @@ export default function MatchV2(props: Props) {
             : "linear(to-br, red.600, red.900, orange.500)"
         }
         color={_isBonusActive ? "whiteAlpha.800" : undefined}
-        py="5"
+        p={4}
       >
-        <Flex alignItems="center" justifyContent="space-between" gap={2} px={2} pb={3}>
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
+          gap={2}
+          px={2}
+          pb={3}
+        >
           <PhaseBadge roundNumber={match.roundNumber} />
           <Flex
             flexDir="column"
@@ -420,7 +427,11 @@ export default function MatchV2(props: Props) {
         </Flex>
         <Flex gap={3} p={1} alignItems="center">
           <Flex flex="1" overflow="auto">
-            <AvatarListDrawer users={users} max={3} />
+            <AvatarListDrawer
+              onDark={!!prediction?.isBonusActive}
+              users={users}
+              max={3}
+            />
           </Flex>
           {!isGameStarted2 ? (
             <Button
@@ -436,13 +447,25 @@ export default function MatchV2(props: Props) {
               to="/tournaments/$tournamentId/matches/$matchId"
               params={{ tournamentId, matchId: match.id }}
             >
-              <Button
-                disabled={isAnyPending}
-                variant="secondary"
-                leftIcon={<FaEye />}
-              >
-                Ver resultados
-              </Button>
+              {prediction?.isBonusActive ? (
+                <DarkMode>
+                  <Button
+                    disabled={isAnyPending}
+                    variant="secondary"
+                    leftIcon={<FaEye />}
+                  >
+                    Ver resultados
+                  </Button>
+                </DarkMode>
+              ) : (
+                <Button
+                  disabled={isAnyPending}
+                  variant="secondary"
+                  leftIcon={<FaEye />}
+                >
+                  Ver resultados
+                </Button>
+              )}
             </Link>
           )}
         </Flex>
