@@ -430,7 +430,7 @@ export default function MatchV2(props: Props) {
             <AvatarListDrawer
               onDark={!!prediction?.isBonusActive}
               users={users}
-              max={3}
+              max={5}
             />
           </Flex>
           {!isGameStarted2 ? (

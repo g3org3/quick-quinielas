@@ -76,7 +76,7 @@ export default function AvatarListDrawer(props: Props) {
             </AvatarGroup>
           </DarkMode>
         ) : (
-          <AvatarGroup size="md" max={max}>
+          <AvatarGroup size="sm" max={max}>
             {sortedUsers.map((user, i) => (
               <Avatar
                 key={user.img || user.name || i}
