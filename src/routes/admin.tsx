@@ -58,7 +58,7 @@ function Component() {
       <Text fontWeight="bold" fontSize="xl">
         Admin
       </Text>
-      <Flex gap={2}>
+      <Flex gap={2} justifyContent="center">
         <Link to="/admin" search={{}}>
           <Button variant="ghost" isActive={tab === "matches"}>
             Partidos
