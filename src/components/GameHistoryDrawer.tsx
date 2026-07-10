@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Drawer } from "vaul";
-import { Box, Flex, Text, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Grid,
+  GridItem,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { usePostHog } from "@posthog/react";
 import { useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
@@ -13,6 +20,23 @@ interface Props {
   children: React.ReactNode;
 }
 
+const getCountryResult = (
+  match: {
+    home: string;
+    away: string;
+    homeScore: number;
+    awayScore: number;
+  },
+  country: string,
+) => {
+  const isHome = match.home === country;
+  const countryScore = isHome ? match.homeScore : match.awayScore;
+  const opponentScore = isHome ? match.awayScore : match.homeScore;
+  const opponent = isHome ? match.away : match.home;
+
+  return { countryScore, opponentScore, opponent };
+};
+
 export default function GameHistoryDrawer({
   tournamentId,
   country,
@@ -23,12 +47,28 @@ export default function GameHistoryDrawer({
   const itemBorder = useColorModeValue("gray.100", "gray.700");
   const handleColor = useColorModeValue("gray.300", "gray.600");
   const dateColor = useColorModeValue("gray.500", "gray.400");
+  const summaryBg = useColorModeValue("gray.50", "gray.700");
+  const opponentScoreColor = useColorModeValue("gray.400", "gray.500");
 
   const [open, setOpen] = useState(false);
   const { data: matches = [] } = useQuery({
     ...matchesQuery(tournamentId, country),
     enabled: open,
   });
+  const summary = matches.reduce(
+    (totals, match) => {
+      const { countryScore, opponentScore } = getCountryResult(match, country);
+
+      totals.goalsFor += countryScore;
+      totals.goalsAgainst += opponentScore;
+      if (countryScore > opponentScore) totals.wins += 1;
+      else if (countryScore < opponentScore) totals.losses += 1;
+      else totals.draws += 1;
+
+      return totals;
+    },
+    { wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0 },
+  );
 
   return (
     <Drawer.Root
@@ -81,46 +121,78 @@ export default function GameHistoryDrawer({
                 No hay partidos anteriores
               </Text>
             ) : (
-              matches.map((match) => (
-                <Flex
-                  key={match.id}
-                  alignItems="center"
-                  gap={3}
-                  px={4}
-                  py={3}
-                  borderTopWidth="1px"
-                  borderColor={itemBorder}
+              <>
+                <Grid
+                  templateColumns="repeat(5, 1fr)"
+                  gap={2}
+                  mx={4}
+                  my={2}
+                  p={3}
+                  borderRadius="xl"
+                  bg={summaryBg}
                 >
-                  <Flex flex="1" alignItems="center" gap={2}>
-                    <Flag height="24px" country={match.home} />
-                    <Text>{match.home}</Text>
-                  </Flex>
-                  <Text fontWeight="bold" fontFamily="monospace">
-                    {match.homeScore} - {match.awayScore}
-                  </Text>
-                  <Flex
-                    flex="1"
-                    alignItems="center"
-                    gap={2}
-                    justifyContent="flex-end"
-                  >
-                    <Text>{match.away}</Text>
-                    <Flag height="24px" country={match.away} />
-                  </Flex>
-                  <Text
-                    minW="70px"
-                    textAlign="right"
-                    fontSize="sm"
-                    color={dateColor}
-                  >
-                    {match.startAtUtc
+                  {[
+                    ["G", summary.wins],
+                    ["E", summary.draws],
+                    ["P", summary.losses],
+                    ["GF", summary.goalsFor],
+                    ["GC", summary.goalsAgainst],
+                  ].map(([label, value]) => (
+                    <GridItem key={label} textAlign="center">
+                      <Text fontSize="xs" color={dateColor} fontWeight="semibold">
+                        {label}
+                      </Text>
+                      <Text fontWeight="bold">{value}</Text>
+                    </GridItem>
+                  ))}
+                </Grid>
+                <Text px={4} pb={2} fontSize="xs" color={dateColor}>
+                  El marcador de {country} aparece siempre a la izquierda.
+                </Text>
+                {matches.map((match) => {
+                  const { countryScore, opponentScore, opponent } =
+                    getCountryResult(match, country);
+                  const details = [
+                    match.startAtUtc
                       ? DateTime.fromSQL(match.startAtUtc).toLocaleString(
-                          DateTime.DATE_SHORT,
+                          DateTime.DATE_MED,
                         )
-                      : ""}
-                  </Text>
-                </Flex>
-              ))
+                      : "",
+                    match.location,
+                  ].filter(Boolean);
+
+                  return (
+                    <Flex
+                      key={match.id}
+                      alignItems="center"
+                      gap={3}
+                      px={4}
+                      py={3}
+                      borderTopWidth="1px"
+                      borderColor={itemBorder}
+                    >
+                      <Flag height="24px" country={opponent} />
+                      <Box flex="1" minW={0}>
+                        <Text fontWeight="medium">{opponent}</Text>
+                        <Text fontSize="sm" color={dateColor} noOfLines={1}>
+                          {details.join(" · ")}
+                        </Text>
+                      </Box>
+                      <Flex
+                        alignItems="baseline"
+                        gap={1}
+                        fontWeight="bold"
+                        fontFamily="monospace"
+                        fontSize="lg"
+                      >
+                        <Text>{countryScore}</Text>
+                        <Text color={dateColor}>-</Text>
+                        <Text color={opponentScoreColor}>{opponentScore}</Text>
+                      </Flex>
+                    </Flex>
+                  );
+                })}
+              </>
             )}
           </Box>
         </Drawer.Content>
