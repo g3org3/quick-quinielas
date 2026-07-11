@@ -109,7 +109,7 @@ export default function GameHistoryDrawer({
           <Flex
             bg={bg}
             borderTopRadius="2xl"
-            h="50vh"
+            maxH="70vh"
             overflow="hidden"
             direction="column"
           >
