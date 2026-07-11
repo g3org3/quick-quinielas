@@ -21,6 +21,9 @@ import {
 const homeSchema = z.object({
   tab: z.enum(["todos", "ayer", "today", "proximos"]).nullish(),
 });
+type TournamentTab = z.infer<typeof homeSchema>["tab"];
+
+const ESTIMATED_MATCH_HEIGHT = 520;
 
 export const Route = createFileRoute("/tournaments/$tournamentId/")({
   component: HomeTournament,
@@ -135,7 +138,7 @@ interface MatchListProps {
   matches: MatchesResponse[];
   betsByMatchId: Map<string, Bet>;
   predictionsByMatchId: Map<string, PredictionsResponse>;
-  tab?: string | null;
+  tab: TournamentTab;
   tournamentId: string;
 }
 
@@ -169,11 +172,11 @@ function MatchList({
   return (
     <Flex flexDir="column" flex="1" minH={0} overflow="auto">
       {matches.map((match) => (
-        <MatchV2
+        <MatchListItem
           key={match.id}
           match={match}
-          bet={betsByMatchId.get(match.id)}
-          prediction={predictionsByMatchId.get(match.id)}
+          betsByMatchId={betsByMatchId}
+          predictionsByMatchId={predictionsByMatchId}
           tab={tab}
           tournamentId={tournamentId}
         />
@@ -189,7 +192,7 @@ function VirtualizedMatchList(props: MatchListProps) {
   const virtualizer = useVirtualizer({
     count: matches.length,
     getScrollElement: () => scrollRef.current,
-    estimateSize: () => 520,
+    estimateSize: () => ESTIMATED_MATCH_HEIGHT,
     getItemKey: (index) => matches[index].id,
     overscan: 2,
   });
@@ -218,10 +221,10 @@ function VirtualizedMatchList(props: MatchListProps) {
               w="100%"
               transform={`translateY(${virtualRow.start}px)`}
             >
-              <MatchV2
+              <MatchListItem
                 match={match}
-                bet={betsByMatchId.get(match.id)}
-                prediction={predictionsByMatchId.get(match.id)}
+                betsByMatchId={betsByMatchId}
+                predictionsByMatchId={predictionsByMatchId}
                 tab={tab}
                 tournamentId={tournamentId}
               />
@@ -230,5 +233,23 @@ function VirtualizedMatchList(props: MatchListProps) {
         })}
       </Box>
     </Box>
+  );
+}
+
+function MatchListItem({
+  match,
+  betsByMatchId,
+  predictionsByMatchId,
+  tab,
+  tournamentId,
+}: Omit<MatchListProps, "matches"> & { match: MatchesResponse }) {
+  return (
+    <MatchV2
+      match={match}
+      bet={betsByMatchId.get(match.id)}
+      prediction={predictionsByMatchId.get(match.id)}
+      tab={tab}
+      tournamentId={tournamentId}
+    />
   );
 }
