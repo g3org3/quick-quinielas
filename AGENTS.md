@@ -104,3 +104,26 @@ git push
 Run the PR-feedback command again whenever the user says new comments were
 added. Treat the latest returned comments and unresolved threads as the current
 requested changes.
+
+## Clean up after merge
+
+When the PR is merged, clean up its issue worktree and local branch. First
+confirm that the worktree has no uncommitted changes and that the issue branch
+is contained in the latest `origin/main`:
+
+```sh
+git -C /home/george/code/quick-quinielas-<issue-number> status --short
+cd /home/george/code/quick-quinielas
+git fetch origin main
+git merge-base --is-ancestor issue-<number>-<short-name> origin/main
+```
+
+Do not remove a dirty worktree or an unmerged branch. Once both checks pass,
+remove only that issue's worktree and delete its merged local branch:
+
+```sh
+git worktree remove /home/george/code/quick-quinielas-<issue-number>
+git branch -d issue-<number>-<short-name>
+```
+
+Leave the main checkout and all other issue worktrees untouched.
