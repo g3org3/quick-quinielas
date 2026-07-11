@@ -5,6 +5,7 @@ import {
   Flex,
   Grid,
   GridItem,
+  Skeleton,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -51,7 +52,7 @@ export default function GameHistoryDrawer({
   const opponentScoreColor = useColorModeValue("gray.400", "gray.500");
 
   const [open, setOpen] = useState(false);
-  const { data: matches = [] } = useQuery({
+  const { data: matches = [], isLoading } = useQuery({
     ...matchesQuery(tournamentId, country),
     enabled: open,
   });
@@ -109,7 +110,7 @@ export default function GameHistoryDrawer({
           <Flex
             bg={bg}
             borderTopRadius="2xl"
-            maxH="70vh"
+            h="70vh"
             overflow="hidden"
             direction="column"
           >
@@ -122,7 +123,32 @@ export default function GameHistoryDrawer({
                 {country}
               </Text>
             </Flex>
-            {matches.length === 0 ? (
+            {isLoading ? (
+              <Flex direction="column" flex="1" minH={0}>
+                <Skeleton height="76px" mx={4} my={2} borderRadius="xl" />
+                <Skeleton height="16px" mx={4} mb={2} width="70%" />
+                <Box flex="1" minH={0} overflow="hidden" pb={6}>
+                  {[0, 1, 2, 3, 4].map((row) => (
+                    <Flex
+                      key={row}
+                      alignItems="center"
+                      gap={3}
+                      px={4}
+                      py={3}
+                      borderTopWidth="1px"
+                      borderColor={itemBorder}
+                    >
+                      <Skeleton width="32px" height="24px" />
+                      <Box flex="1">
+                        <Skeleton height="16px" width="45%" mb={2} />
+                        <Skeleton height="14px" width="65%" />
+                      </Box>
+                      <Skeleton height="22px" width="48px" />
+                    </Flex>
+                  ))}
+                </Box>
+              </Flex>
+            ) : matches.length === 0 ? (
               <Text px={4} py={2} color={dateColor}>
                 No hay partidos anteriores
               </Text>
