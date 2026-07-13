@@ -57,7 +57,14 @@ export default function MinimalMatch(props: Props) {
           </Text>
         </Flex>
 
-        <Flex flexDir="column" alignItems="center" gap={1} flexShrink={0}>
+        <Flex
+          flexDir="column"
+          alignItems="center"
+          gap={1}
+          flexShrink={0}
+          minW={0}
+          maxW={{ base: "44vw", sm: "none" }}
+        >
           <Flex
             alignItems="center"
             gap={2}
@@ -71,21 +78,31 @@ export default function MinimalMatch(props: Props) {
             <Text>{match.awayScore}</Text>
           </Flex>
           <Flex
+            flexDir="column"
             alignItems="center"
-            justifyContent="center"
-            flexWrap="wrap"
-            gap={2}
+            gap={1}
             color="text.muted"
             fontSize="sm"
           >
-            <Text>Tu predicción</Text>
-            <Text fontWeight="semibold">
-              {prediction
-                ? `${prediction.homeScore} - ${prediction.awayScore}`
-                : "- - -"}
-            </Text>
-            {result ? <PredictionOutcomeBadge result={result} /> : null}
-            {prediction?.isBonusActive ? <BonusBadge /> : null}
+            <Flex alignItems="center" justifyContent="center" gap={2}>
+              <Text>Tu predicción</Text>
+              <Text fontWeight="semibold">
+                {prediction
+                  ? `${prediction.homeScore} - ${prediction.awayScore}`
+                  : "- - -"}
+              </Text>
+            </Flex>
+            {result || prediction?.isBonusActive ? (
+              <Flex
+                alignItems="center"
+                justifyContent="center"
+                flexWrap="wrap"
+                gap={1}
+              >
+                {result ? <PredictionOutcomeBadge result={result} /> : null}
+                {prediction?.isBonusActive ? <BonusBadge /> : null}
+              </Flex>
+            ) : null}
           </Flex>
         </Flex>
 
