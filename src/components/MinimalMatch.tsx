@@ -1,21 +1,27 @@
-import { Button, Flex, Text } from "@chakra-ui/react";
+import { Badge, Button, Flex, Text } from "@chakra-ui/react";
 import { Link } from "@tanstack/react-router";
 import { DateTime } from "luxon";
 import { FaEye } from "react-icons/fa";
 
-import { MatchesResponse, PredictionsResponse } from "@/pocketbase-types";
+import {
+  MatchesResponse,
+  PredictionsResponse,
+  ResultsResponse,
+} from "@/pocketbase-types";
 
 import Flag from "./Flag";
+import { BonusBadge } from "./BonusBadge";
 import { PhaseBadge } from "./PhaseBadge";
 
 interface Props {
   match: MatchesResponse;
   prediction?: PredictionsResponse;
+  result?: ResultsResponse;
   tournamentId: string;
 }
 
 export default function MinimalMatch(props: Props) {
-  const { match, prediction, tournamentId } = props;
+  const { match, prediction, result, tournamentId } = props;
   const matchDate = DateTime.fromSQL(match.startAtUtc);
 
   return (
@@ -64,11 +70,22 @@ export default function MinimalMatch(props: Props) {
             <Text color="text.muted">-</Text>
             <Text>{match.awayScore}</Text>
           </Flex>
-          <Flex alignItems="center" gap={2} color="text.muted" fontSize="sm">
+          <Flex
+            alignItems="center"
+            justifyContent="center"
+            flexWrap="wrap"
+            gap={2}
+            color="text.muted"
+            fontSize="sm"
+          >
             <Text>Tu predicción</Text>
             <Text fontWeight="semibold">
-              {prediction ? `${prediction.homeScore} - ${prediction.awayScore}` : "- - -"}
+              {prediction
+                ? `${prediction.homeScore} - ${prediction.awayScore}`
+                : "- - -"}
             </Text>
+            {result ? <PredictionOutcomeBadge result={result} /> : null}
+            {prediction?.isBonusActive ? <BonusBadge /> : null}
           </Flex>
         </Flex>
 
@@ -92,4 +109,16 @@ export default function MinimalMatch(props: Props) {
       </Flex>
     </Flex>
   );
+}
+
+function PredictionOutcomeBadge({ result }: { result: ResultsResponse }) {
+  if (result.exact_score) {
+    return <Badge colorScheme="green">Marcador exacto</Badge>;
+  }
+
+  if (result.correct_result) {
+    return <Badge colorScheme="yellow">Resultado correcto</Badge>;
+  }
+
+  return <Badge colorScheme="red">Sin acierto</Badge>;
 }

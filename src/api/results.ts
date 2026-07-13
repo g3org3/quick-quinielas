@@ -19,6 +19,8 @@ export const resultsKeys = {
   lists: () => [...resultsKeys.all, "list"] as const,
   byUser: (tournamentId: string, userId: string) =>
     [...resultsKeys.lists(), "user", tournamentId, userId] as const,
+  outcomesByUser: (tournamentId: string, userId: string) =>
+    [...resultsKeys.lists(), "outcomes", tournamentId, userId] as const,
   byMatch: (matchId: string) =>
     [...resultsKeys.lists(), "match", matchId] as const,
 };
@@ -36,6 +38,17 @@ export const getUserResultsQuery = (tournamentId: string, userId: string) =>
             `&& points > 0`,
           expand: "match_id,prediction_id",
         });
+    },
+  });
+
+export const getUserOutcomesQuery = (tournamentId: string, userId: string) =>
+  queryOptions({
+    queryKey: resultsKeys.outcomesByUser(tournamentId, userId),
+    queryFn() {
+      return pb.collection(Collections.Results).getFullList<ResultsResponse>({
+        filter:
+          `tournament_id = '${tournamentId}' ` + `&& user_id = '${userId}'`,
+      });
     },
   });
 

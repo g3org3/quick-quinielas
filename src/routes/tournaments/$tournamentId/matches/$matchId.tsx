@@ -25,6 +25,7 @@ import { getMatchResultsQuery } from "@/api/results";
 import { usersQuery } from "@/api/users";
 import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
+import { BonusBadge } from "@/components/BonusBadge";
 import SimpleMatch from "@/components/SimpleMatch";
 import { queryClient } from "@/queryClient";
 import Flag from "@/components/Flag";
@@ -187,16 +188,7 @@ function SingleMatch() {
                               </Text>
                             ) : null}
                             {prediction?.isBonusActive ? (
-                              <Badge
-                                bg="gold.50"
-                                borderWidth="1px"
-                                borderColor="gold.200"
-                                color="gold.700"
-                                fontFamily="mono"
-                                rounded="md"
-                              >
-                                ×2
-                              </Badge>
+                              <BonusBadge />
                             ) : null}
                           </Flex>
                         </Flex>

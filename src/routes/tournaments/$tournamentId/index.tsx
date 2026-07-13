@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useMemo, useRef } from "react";
 import { z } from "zod";
@@ -12,11 +12,14 @@ import TournamentLoading from "@/components/TournamentLoading";
 import { getMatchesQuery } from "@/api/matches";
 import { matchBetsQuery } from "@/api/matchBets";
 import { getPredictionsQuery } from "@/api/predictions";
+import { getUserOutcomesQuery } from "@/api/results";
+import { pb } from "@/pb";
 import { queryClient } from "@/queryClient";
 import {
   MatchesResponse,
   MatchBetsResponse,
   PredictionsResponse,
+  ResultsResponse,
 } from "@/pocketbase-types";
 
 const homeSchema = z.object({
@@ -32,6 +35,7 @@ export const Route = createFileRoute("/tournaments/$tournamentId/")({
   validateSearch: homeSchema,
   loaderDeps: ({ search: { tab } }) => ({ tab }),
   loader: async ({ params, deps }) => {
+    const userId = pb.authStore.model?.id;
     await queryClient.ensureQueryData(matchBetsQuery);
     await queryClient.ensureQueryData(
       getMatchesQuery(params.tournamentId, deps.tab),
@@ -39,6 +43,11 @@ export const Route = createFileRoute("/tournaments/$tournamentId/")({
     await queryClient.ensureQueryData(
       getPredictionsQuery(params.tournamentId, deps.tab),
     );
+    if (deps.tab === "todos" && userId) {
+      await queryClient.ensureQueryData(
+        getUserOutcomesQuery(params.tournamentId, userId),
+      );
+    }
   },
 });
 
@@ -51,6 +60,11 @@ function HomeTournament() {
   const { data: bets } = useSuspenseQuery(matchBetsQuery);
   const predictionsQuery = getPredictionsQuery(tournamentId, tab);
   const { data: predictions } = useSuspenseQuery(predictionsQuery);
+  const userId = pb.authStore.model?.id ?? "";
+  const { data: results = [] } = useQuery({
+    ...getUserOutcomesQuery(tournamentId, userId),
+    enabled: tab === "todos" && !!userId,
+  });
   const betsByMatchId = useMemo(
     () => new Map(bets.map((bet) => [bet.match_id, bet])),
     [bets],
@@ -61,6 +75,10 @@ function HomeTournament() {
         predictions.map((prediction) => [prediction.match, prediction]),
       ),
     [predictions],
+  );
+  const resultsByMatchId = useMemo(
+    () => new Map(results.map((result) => [result.match_id, result])),
+    [results],
   );
 
   return (
@@ -114,6 +132,7 @@ function HomeTournament() {
           <VirtualizedMatchList
             matches={matches}
             predictionsByMatchId={predictionsByMatchId}
+            resultsByMatchId={resultsByMatchId}
             tournamentId={tournamentId}
           />
         ) : (
@@ -144,6 +163,7 @@ interface MatchListProps {
 interface VirtualizedMatchListProps {
   matches: MatchesResponse[];
   predictionsByMatchId: Map<string, PredictionsResponse>;
+  resultsByMatchId: Map<string, ResultsResponse>;
   tournamentId: string;
 }
 
@@ -191,7 +211,8 @@ function MatchList({
 }
 
 function VirtualizedMatchList(props: VirtualizedMatchListProps) {
-  const { matches, predictionsByMatchId, tournamentId } = props;
+  const { matches, predictionsByMatchId, resultsByMatchId, tournamentId } =
+    props;
   const scrollRef = useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({
     count: matches.length,
@@ -228,6 +249,7 @@ function VirtualizedMatchList(props: VirtualizedMatchListProps) {
               <MinimalMatch
                 match={match}
                 prediction={predictionsByMatchId.get(match.id)}
+                result={resultsByMatchId.get(match.id)}
                 tournamentId={tournamentId}
               />
             </Box>
