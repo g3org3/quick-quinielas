@@ -31,6 +31,7 @@ import Flag from "@/components/Flag";
 import { countries } from "@/components/countries";
 import { useGetRowStyle } from "@/useGetRowStyle";
 import { sortUsers } from "@/sortUsers";
+import { pb } from "@/pb";
 
 export const Route = createFileRoute(
   "/tournaments/$tournamentId/matches/$matchId"
@@ -51,7 +52,7 @@ function SingleMatch() {
   const { data: users } = useSuspenseQuery(usersQuery);
   const { data: results } = useSuspenseQuery(getMatchResultsQuery(matchId));
   const getRowStyle = useGetRowStyle();
-  const sortedUsers = sortUsers(users, results);
+  const sortedUsers = sortUsers(users, results, pb.authStore.model?.id);
 
   return (
     <>

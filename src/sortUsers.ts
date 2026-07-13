@@ -1,28 +1,28 @@
-import { DateTime } from "luxon";
 import type { ResultsResponseWithUserAndPrediction } from "./api/results";
-import { UsersResponse } from "./pocketbase-types";
-
-const _predictionUpdatedAt = (
-  results: ResultsResponseWithUserAndPrediction[],
-  userId: string
-) => {
-  const result = results.find((p) => p.expand?.user_id?.id === userId);
-  const updated = result?.expand?.prediction_id?.updated ?? result?.updated;
-  return updated ? DateTime.fromSQL(updated).toMillis() : null;
-};
+import type { UsersResponse } from "./pocketbase-types";
 
 export function sortUsers(
   users: UsersResponse[],
-  results: ResultsResponseWithUserAndPrediction[]
+  results: ResultsResponseWithUserAndPrediction[],
+  currentUserId?: string
 ) {
+  const resultsByUserId = new Map(
+    results.map((result) => [result.expand?.user_id?.id, result])
+  );
+
   return [...users].sort((a, b) => {
-    const ta = _predictionUpdatedAt(results, a.id);
-    const tb = _predictionUpdatedAt(results, b.id);
-    // users without a prediction go to the bottom
-    if (ta === null && tb === null) return 0;
-    if (ta === null) return 1;
-    if (tb === null) return -1;
-    // both have a prediction: newest updated first
-    return tb - ta;
+    const aIsCurrentUser = a.id === currentUserId;
+    const bIsCurrentUser = b.id === currentUserId;
+    if (aIsCurrentUser !== bIsCurrentUser) return aIsCurrentUser ? -1 : 1;
+
+    const aResult = resultsByUserId.get(a.id);
+    const bResult = resultsByUserId.get(b.id);
+    const aHasPrediction = !!aResult?.expand?.prediction_id;
+    const bHasPrediction = !!bResult?.expand?.prediction_id;
+
+    if (aHasPrediction !== bHasPrediction) return aHasPrediction ? -1 : 1;
+    if (!aHasPrediction) return 0;
+
+    return (bResult?.points ?? 0) - (aResult?.points ?? 0);
   });
 }
