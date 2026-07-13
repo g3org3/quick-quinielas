@@ -125,14 +125,26 @@ function Points() {
                         isFirstPlace ? "md" : isSecondPlace ? "sm" : "none"
                       }
                     >
-                      <Text
-                        fontFamily="mono"
-                        fontWeight="bold"
-                        fontSize={{ base: "md", sm: "lg" }}
+                      <Flex
+                        alignItems="center"
+                        gap={1}
                         color={isFirstPlace ? "brand.600" : "text.secondary"}
                       >
-                        #{position}
-                      </Text>
+                        <Text
+                          as="span"
+                          aria-hidden
+                          fontSize={{ base: "lg", sm: "xl" }}
+                        >
+                          {displayPodiumEmoji(position)}
+                        </Text>
+                        <Text
+                          as="span"
+                          fontWeight="bold"
+                          fontSize={{ base: "xs", sm: "sm" }}
+                        >
+                          Puesto {position}
+                        </Text>
+                      </Flex>
                       <Avatar
                         size={{
                           base: isFirstPlace ? "md" : "sm",
@@ -249,6 +261,16 @@ function Points() {
 
 function displayPosition(position: number) {
   return position.toString().padStart(2, "0") + ".";
+}
+
+function displayPodiumEmoji(position: number) {
+  if (position === 1) {
+    return "🏆";
+  }
+  if (position === 2) {
+    return "🥈";
+  }
+  return "🥉";
 }
 
 function getAvatarUrl(image: string | undefined, username: string | undefined) {
