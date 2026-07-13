@@ -14,6 +14,7 @@ import {
   Tr,
   Img,
   useColorModeValue,
+  VisuallyHidden,
 } from "@chakra-ui/react";
 import { getLeaderboardQuery } from "@/api/leaderboard";
 import { pb } from "@/pb";
@@ -33,8 +34,14 @@ export const Route = createFileRoute("/tournaments/$tournamentId/points")({
 function Points() {
   const { tournamentId } = Route.useParams();
   const blue = useColorModeValue("blue.100", "blue.800");
-  const secondPlaceBorder = useColorModeValue("gray.400", "gray.300");
-  const thirdPlaceBorder = useColorModeValue("orange.400", "orange.300");
+  const currentUserInset = useColorModeValue(
+    "inset 0 0 0 2px var(--chakra-colors-blue-100)",
+    "inset 0 0 0 2px var(--chakra-colors-blue-800)"
+  );
+  const firstPlaceBase = useColorModeValue("gold.50", "gray.700");
+  const firstPlaceAccent = useColorModeValue("gold.700", "gold.200");
+  const secondPlaceRing = useColorModeValue("gray.300", "gray.400");
+  const thirdPlaceRing = useColorModeValue("orange.200", "orange.500");
 
   const { data: leaderboard } = useSuspenseQuery(
     getLeaderboardQuery(tournamentId)
@@ -73,117 +80,184 @@ function Points() {
               Podio
             </Text>
             <Grid
-              templateColumns={`repeat(${podium.length}, minmax(0, 1fr))`}
+              templateColumns="repeat(3, minmax(0, 1fr))"
               alignItems="end"
-              gap={{ base: 1, sm: 3 }}
+              gap={{ base: 1, sm: 4 }}
+              maxW="720px"
+              mx="auto"
             >
-              {podiumDisplayOrder.map(({ row, position }) => {
+              {podiumDisplayOrder.map(({ row, position }, index) => {
                 const isFirstPlace = position === 1;
                 const isSecondPlace = position === 2;
-                const borderColor = isFirstPlace
-                  ? "brand.500"
+                const isCurrentUser = pb.authStore.model?.id === row.user_id;
+                const ringColor = isFirstPlace
+                  ? "gold.200"
                   : isSecondPlace
-                    ? secondPlaceBorder
-                    : thirdPlaceBorder;
+                    ? secondPlaceRing
+                    : thirdPlaceRing;
+                const badgeColor = isFirstPlace
+                  ? "gold.700"
+                  : isSecondPlace
+                    ? "gray.500"
+                    : "orange.600";
+                const gridColumn = hasDistinctPodiumRanks
+                  ? position === 1
+                    ? 2
+                    : position === 2
+                      ? 1
+                      : 3
+                  : podium.length === 1
+                    ? 2
+                    : index + 1;
 
                 return (
                   <Link
                     key={row.id}
                     to="/tournaments/$tournamentId/$userId"
                     params={{ tournamentId, userId: row.user_id }}
-                    style={{ display: "block", minWidth: 0 }}
+                    style={{
+                      display: "block",
+                      gridColumn,
+                      minWidth: 0,
+                    }}
                   >
                     <Flex
                       minW={0}
-                      minH={{
-                        base: isFirstPlace
-                          ? "164px"
-                          : isSecondPlace
-                            ? "152px"
-                            : "144px",
-                        sm: isFirstPlace
-                          ? "184px"
-                          : isSecondPlace
-                            ? "172px"
-                            : "164px",
-                      }}
-                      px={{ base: 1, sm: 3 }}
-                      py={{ base: 2, sm: 3 }}
                       flexDir="column"
                       alignItems="center"
-                      justifyContent="space-between"
+                      justifyContent="flex-end"
                       textAlign="center"
-                      rounded="xl"
-                      borderWidth={isFirstPlace ? "2px" : "1px"}
-                      borderColor={borderColor}
-                      bg={
-                        pb.authStore.model?.id === row.user_id
-                          ? blue
-                          : "surface"
-                      }
-                      boxShadow={
-                        isFirstPlace ? "md" : isSecondPlace ? "sm" : "none"
-                      }
                     >
                       <Flex
-                        alignItems="center"
-                        gap={1}
-                        color={isFirstPlace ? "brand.600" : "text.secondary"}
-                      >
-                        <Text
-                          as="span"
-                          aria-hidden
-                          fontSize={{ base: "lg", sm: "xl" }}
-                        >
-                          {displayPodiumEmoji(position)}
-                        </Text>
-                        <Text
-                          as="span"
-                          fontWeight="bold"
-                          fontSize={{ base: "xs", sm: "sm" }}
-                        >
-                          Puesto {position}
-                        </Text>
-                      </Flex>
-                      <Avatar
-                        size={{
-                          base: isFirstPlace ? "md" : "sm",
-                          sm: isFirstPlace ? "lg" : "md",
-                        }}
-                        name={row.expand?.user_id.name}
-                        src={getAvatarUrl(
-                          row.expand?.user_id.img,
-                          row.expand?.user_id.username
-                        )}
-                      />
-                      <Flex
                         minW={0}
-                        maxW="100%"
+                        w="100%"
+                        flexDir="column"
                         alignItems="center"
-                        gap={1}
+                        pb={{ base: 2, sm: 3 }}
+                      >
+                        <Box
+                          position="relative"
+                          mb={{ base: 4, sm: 5 }}
+                        >
+                          <Avatar
+                            boxSize={{
+                              base: isFirstPlace ? "72px" : "62px",
+                              sm: isFirstPlace ? "104px" : "84px",
+                            }}
+                            borderWidth={{ base: "4px", sm: "5px" }}
+                            borderColor={ringColor}
+                            name={row.expand?.user_id.name}
+                            src={getAvatarUrl(
+                              row.expand?.user_id.img,
+                              row.expand?.user_id.username
+                            )}
+                          />
+                          <Flex
+                            position="absolute"
+                            left="50%"
+                            bottom={{ base: "-12px", sm: "-16px" }}
+                            transform="translateX(-50%)"
+                            boxSize={{ base: "28px", sm: "36px" }}
+                            alignItems="center"
+                            justifyContent="center"
+                            rounded="full"
+                            borderWidth="3px"
+                            borderColor="surface"
+                            bg={badgeColor}
+                            color="white"
+                            fontFamily="mono"
+                            fontSize={{ base: "sm", sm: "lg" }}
+                            fontWeight="bold"
+                          >
+                            <VisuallyHidden>Puesto {position}</VisuallyHidden>
+                            <Text as="span" aria-hidden>
+                              {position}
+                            </Text>
+                          </Flex>
+                        </Box>
+                        <Flex
+                          minW={0}
+                          maxW="100%"
+                          alignItems="center"
+                          justifyContent="center"
+                          gap={{ base: 0.5, sm: 1 }}
+                        >
+                          <Text
+                            minW={0}
+                            fontSize={{ base: "sm", sm: "lg" }}
+                            fontWeight="bold"
+                            noOfLines={1}
+                          >
+                            {row.expand?.user_id.name}
+                          </Text>
+                          <Text
+                            as="span"
+                            aria-hidden
+                            flexShrink={0}
+                            fontSize={{ base: "sm", sm: "lg" }}
+                          >
+                            {displayPodiumEmoji(position)}
+                          </Text>
+                        </Flex>
+                        <Flex
+                          minW={0}
+                          maxW="100%"
+                          alignItems="center"
+                          justifyContent="center"
+                          gap={1}
+                        >
+                          <Text
+                            minW={0}
+                            color={
+                              isFirstPlace
+                                ? firstPlaceAccent
+                                : "text.secondary"
+                            }
+                            fontFamily="mono"
+                            fontWeight="bold"
+                            fontSize={{ base: "sm", sm: "lg" }}
+                            noOfLines={1}
+                          >
+                            {row.points} puntos
+                          </Text>
+                          {row.expand?.user_id.favorite_team && (
+                            <Box flexShrink={0}>
+                              <Flag
+                                height="16px"
+                                country={row.expand.user_id.favorite_team}
+                              />
+                            </Box>
+                          )}
+                        </Flex>
+                      </Flex>
+                      <Flex
+                        w="100%"
+                        h={{
+                          base: isFirstPlace ? "88px" : "60px",
+                          sm: isFirstPlace ? "120px" : "84px",
+                        }}
+                        alignItems="center"
+                        justifyContent="center"
+                        roundedTop="xl"
+                        borderWidth={isFirstPlace ? "2px" : "1px"}
+                        borderColor={
+                          isFirstPlace ? "gold.200" : "border.subtle"
+                        }
+                        bg={isFirstPlace ? firstPlaceBase : "surface"}
+                        boxShadow={isCurrentUser ? currentUserInset : "none"}
                       >
                         <Text
-                          minW={0}
-                          fontSize={{ base: "xs", sm: "sm" }}
-                          fontWeight="semibold"
-                          noOfLines={1}
+                          aria-hidden
+                          color={
+                            isFirstPlace ? firstPlaceAccent : "text.muted"
+                          }
+                          fontFamily="mono"
+                          fontSize={{ base: "2xl", sm: "4xl" }}
+                          fontWeight="bold"
                         >
-                          {row.expand?.user_id.name}
+                          {position}
                         </Text>
-                        {row.expand?.user_id.favorite_team && (
-                          <Flag
-                            height="16px"
-                            country={row.expand.user_id.favorite_team}
-                          />
-                        )}
                       </Flex>
-                      <Text
-                        fontFamily="mono"
-                        fontWeight="bold"
-                        fontSize={{ base: "md", sm: "lg" }}
-                      >
-                        {row.points} puntos
-                      </Text>
                     </Flex>
                   </Link>
                 );
