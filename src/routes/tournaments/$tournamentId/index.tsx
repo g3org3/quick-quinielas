@@ -7,6 +7,7 @@ import { z } from "zod";
 
 import BottomNav from "@/components/BottomNav";
 import MatchV2 from "@/components/MatchV2";
+import MinimalMatch from "@/components/MinimalMatch";
 import TournamentLoading from "@/components/TournamentLoading";
 import { getMatchesQuery } from "@/api/matches";
 import { matchBetsQuery } from "@/api/matchBets";
@@ -23,7 +24,7 @@ const homeSchema = z.object({
 });
 type TournamentTab = z.infer<typeof homeSchema>["tab"];
 
-const ESTIMATED_MATCH_HEIGHT = 520;
+const ESTIMATED_MINIMAL_MATCH_HEIGHT = 230;
 
 export const Route = createFileRoute("/tournaments/$tournamentId/")({
   component: HomeTournament,
@@ -112,9 +113,7 @@ function HomeTournament() {
         {tab === "todos" ? (
           <VirtualizedMatchList
             matches={matches}
-            betsByMatchId={betsByMatchId}
             predictionsByMatchId={predictionsByMatchId}
-            tab={tab}
             tournamentId={tournamentId}
           />
         ) : (
@@ -139,6 +138,12 @@ interface MatchListProps {
   betsByMatchId: Map<string, Bet>;
   predictionsByMatchId: Map<string, PredictionsResponse>;
   tab: TournamentTab;
+  tournamentId: string;
+}
+
+interface VirtualizedMatchListProps {
+  matches: MatchesResponse[];
+  predictionsByMatchId: Map<string, PredictionsResponse>;
   tournamentId: string;
 }
 
@@ -185,14 +190,13 @@ function MatchList({
   );
 }
 
-function VirtualizedMatchList(props: MatchListProps) {
-  const { matches, betsByMatchId, predictionsByMatchId, tab, tournamentId } =
-    props;
+function VirtualizedMatchList(props: VirtualizedMatchListProps) {
+  const { matches, predictionsByMatchId, tournamentId } = props;
   const scrollRef = useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({
     count: matches.length,
     getScrollElement: () => scrollRef.current,
-    estimateSize: () => ESTIMATED_MATCH_HEIGHT,
+    estimateSize: () => ESTIMATED_MINIMAL_MATCH_HEIGHT,
     getItemKey: (index) => matches[index].id,
     overscan: 2,
   });
@@ -221,11 +225,9 @@ function VirtualizedMatchList(props: MatchListProps) {
               w="100%"
               transform={`translateY(${virtualRow.start}px)`}
             >
-              <MatchListItem
+              <MinimalMatch
                 match={match}
-                betsByMatchId={betsByMatchId}
-                predictionsByMatchId={predictionsByMatchId}
-                tab={tab}
+                prediction={predictionsByMatchId.get(match.id)}
                 tournamentId={tournamentId}
               />
             </Box>
