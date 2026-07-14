@@ -27,7 +27,7 @@ const homeSchema = z.object({
 });
 type TournamentTab = z.infer<typeof homeSchema>["tab"];
 
-const ESTIMATED_MINIMAL_MATCH_HEIGHT = 230;
+const ESTIMATED_MINIMAL_MATCH_HEIGHT = 280;
 
 export const Route = createFileRoute("/tournaments/$tournamentId/")({
   component: HomeTournament,
@@ -130,6 +130,7 @@ function HomeTournament() {
         </Flex>
         {tab === "todos" ? (
           <VirtualizedMatchList
+            betsByMatchId={betsByMatchId}
             matches={matches}
             predictionsByMatchId={predictionsByMatchId}
             resultsByMatchId={resultsByMatchId}
@@ -161,6 +162,7 @@ interface MatchListProps {
 }
 
 interface VirtualizedMatchListProps {
+  betsByMatchId: Map<string, Bet>;
   matches: MatchesResponse[];
   predictionsByMatchId: Map<string, PredictionsResponse>;
   resultsByMatchId: Map<string, ResultsResponse>;
@@ -211,8 +213,13 @@ function MatchList({
 }
 
 function VirtualizedMatchList(props: VirtualizedMatchListProps) {
-  const { matches, predictionsByMatchId, resultsByMatchId, tournamentId } =
-    props;
+  const {
+    betsByMatchId,
+    matches,
+    predictionsByMatchId,
+    resultsByMatchId,
+    tournamentId,
+  } = props;
   const scrollRef = useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({
     count: matches.length,
@@ -235,6 +242,7 @@ function VirtualizedMatchList(props: VirtualizedMatchListProps) {
       <Box position="relative" h={`${virtualizer.getTotalSize()}px`}>
         {virtualizer.getVirtualItems().map((virtualRow) => {
           const match = matches[virtualRow.index];
+          const bet = betsByMatchId.get(match.id);
           return (
             <Box
               key={match.id}
@@ -247,9 +255,12 @@ function VirtualizedMatchList(props: VirtualizedMatchListProps) {
               transform={`translateY(${virtualRow.start}px)`}
             >
               <MinimalMatch
+                awayVoteCount={bet?.away_per || 0}
+                homeVoteCount={bet?.home_per || 0}
                 match={match}
                 prediction={predictionsByMatchId.get(match.id)}
                 result={resultsByMatchId.get(match.id)}
+                tieVoteCount={bet?.tie_per || 0}
                 tournamentId={tournamentId}
               />
             </Box>

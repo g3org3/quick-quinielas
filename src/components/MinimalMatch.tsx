@@ -1,4 +1,4 @@
-import { Badge, Button, Flex, Text } from "@chakra-ui/react";
+import { Badge, Box, Button, Flex, Text } from "@chakra-ui/react";
 import { Link } from "@tanstack/react-router";
 import { DateTime } from "luxon";
 import { FaEye } from "react-icons/fa";
@@ -12,16 +12,29 @@ import {
 import Flag from "./Flag";
 import { BonusBadge } from "./BonusBadge";
 import { PhaseBadge } from "./PhaseBadge";
+import { VoteBar, VOTE_BAR_TOTAL_PARTICIPANTS } from "./VoteBar";
+import { countries } from "./countries";
 
 interface Props {
+  awayVoteCount: number;
+  homeVoteCount: number;
   match: MatchesResponse;
   prediction?: PredictionsResponse;
   result?: ResultsResponse;
+  tieVoteCount: number;
   tournamentId: string;
 }
 
 export default function MinimalMatch(props: Props) {
-  const { match, prediction, result, tournamentId } = props;
+  const {
+    awayVoteCount,
+    homeVoteCount,
+    match,
+    prediction,
+    result,
+    tieVoteCount,
+    tournamentId,
+  } = props;
   const matchDate = DateTime.fromSQL(match.startAtUtc);
 
   return (
@@ -113,6 +126,17 @@ export default function MinimalMatch(props: Props) {
           </Text>
         </Flex>
       </Flex>
+
+      <Box px={1}>
+        <VoteBar
+          homeLabel={countries[match.home]?.iso3 ?? match.home}
+          awayLabel={countries[match.away]?.iso3 ?? match.away}
+          homeCount={homeVoteCount}
+          awayCount={awayVoteCount}
+          tieCount={tieVoteCount}
+          total={VOTE_BAR_TOTAL_PARTICIPANTS}
+        />
+      </Box>
 
       <Flex justifyContent="flex-end">
         <Link
