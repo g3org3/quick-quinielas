@@ -2,7 +2,6 @@ import { Drawer } from "vaul";
 import {
   Avatar,
   AvatarGroup,
-  Badge,
   Box,
   Flex,
   Progress,
@@ -14,6 +13,7 @@ import { usePostHog } from "@posthog/react";
 import { DateTime } from "luxon";
 
 import Flag from "@/components/Flag";
+import { BonusBadge } from "@/components/BonusBadge";
 
 export interface AvatarUser {
   img: string;
@@ -156,19 +156,7 @@ export default function AvatarListDrawer(props: Props) {
                   {user.favoriteTeam && (
                     <Flag height="24px" country={user.favoriteTeam} />
                   )}
-                  {user.isBonusActive && (
-                    <Badge
-                      alignSelf="center"
-                      bg="gold.50"
-                      borderWidth="1px"
-                      borderColor="gold.200"
-                      color="gold.700"
-                      fontFamily="mono"
-                      rounded="md"
-                    >
-                      ×2
-                    </Badge>
-                  )}
+                  {user.isBonusActive && <BonusBadge />}
                   <Text ml="auto" fontSize="sm" color={dateColor}>
                     {user.updatedAt
                       ? DateTime.fromSQL(user.updatedAt)

@@ -11,6 +11,8 @@ interface Props {
   onDark?: boolean;
 }
 
+export const VOTE_BAR_TOTAL_PARTICIPANTS = 12;
+
 // Segmented vote bar: home win · tie/not voted · away win (guide.md §3 — labeled).
 export function VoteBar(props: Props) {
   const {

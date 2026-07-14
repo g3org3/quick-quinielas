@@ -39,7 +39,7 @@ import { useUserQuery } from "@/api/users";
 import { useEffect, useState } from "react";
 import { PhaseBadge } from "./PhaseBadge";
 import { MatchStatus } from "./MatchStatus";
-import { VoteBar } from "./VoteBar";
+import { VoteBar, VOTE_BAR_TOTAL_PARTICIPANTS } from "./VoteBar";
 import { countries } from "./countries";
 
 interface Props {
@@ -60,7 +60,6 @@ export default function MatchV2(props: Props) {
   const { data: user } = useUserQuery(pb.authStore.model?.id);
 
   // const { data: allUsers = [] } = useQuery(usersQuery);
-  const totalUsers = 12;
   // CHAPUZ BELOW
   const { data: bets = [] } = useQuery(getMatchPredictionsQuery(match.id));
   const users = bets.map((bet) => ({
@@ -337,7 +336,7 @@ export default function MatchV2(props: Props) {
             homeCount={bet?.home_per || 0}
             awayCount={bet?.away_per || 0}
             tieCount={bet?.tie_per || 0}
-            total={totalUsers}
+            total={VOTE_BAR_TOTAL_PARTICIPANTS}
             onDark={!!_isBonusActive}
           />
         </Box>
