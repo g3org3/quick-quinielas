@@ -76,9 +76,6 @@ function Points() {
       >
         {podium.length > 0 && (
           <Box px={{ base: 2, sm: 4 }} pt={3} pb={4}>
-            <Text fontWeight="bold" mb={3}>
-              Podio
-            </Text>
             <Grid
               templateColumns="repeat(3, minmax(0, 1fr))"
               alignItems="end"
