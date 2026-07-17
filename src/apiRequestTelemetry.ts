@@ -1,4 +1,5 @@
 import posthog from "posthog-js";
+import { pb } from "./pb";
 
 export const API_REQUEST_COMPLETED_EVENT = "api_request_completed";
 
@@ -11,16 +12,17 @@ export interface ApiRequestCompletedProperties {
   status: number;
   success: boolean;
   service: ApiService;
+  user_email: string;
 }
 
 type Capture = (
   event: typeof API_REQUEST_COMPLETED_EVENT,
-  properties: ApiRequestCompletedProperties,
+  properties: ApiRequestCompletedProperties
 ) => unknown;
 
 type Fetch = (
   input: RequestInfo | URL,
-  init?: RequestInit,
+  init?: RequestInit
 ) => Promise<Response>;
 
 interface InstrumentedFetchOptions {
@@ -31,7 +33,8 @@ interface InstrumentedFetchOptions {
 
 const pocketBaseRecordMarker = "records";
 const numericSegment = /^\d+$/;
-const uuidSegment = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const uuidSegment =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function requestUrl(input: RequestInfo | URL): string {
   if (typeof input === "string") return input;
@@ -48,7 +51,9 @@ function requestMethod(input: RequestInfo | URL, init?: RequestInit): string {
 }
 
 function baseUrl(): string {
-  return typeof window === "undefined" ? "http://localhost" : window.location.origin;
+  return typeof window === "undefined"
+    ? "http://localhost"
+    : window.location.origin;
 }
 
 /** Returns only a low-cardinality path; query strings and fragments are discarded. */
@@ -85,7 +90,7 @@ function safeNow(now: () => number): number {
 
 function capturePostHogEvent(
   event: typeof API_REQUEST_COMPLETED_EVENT,
-  properties: ApiRequestCompletedProperties,
+  properties: ApiRequestCompletedProperties
 ): void {
   posthog.capture(event, properties);
 }
@@ -93,7 +98,7 @@ function capturePostHogEvent(
 /** Wraps a real network fetch without changing its response or rejection. */
 export function createInstrumentedFetch(
   service: ApiService,
-  options: InstrumentedFetchOptions = {},
+  options: InstrumentedFetchOptions = {}
 ): Fetch {
   const fetchImpl = options.fetchImpl ?? globalThis.fetch.bind(globalThis);
   const capture = options.capture ?? capturePostHogEvent;
@@ -112,6 +117,7 @@ export function createInstrumentedFetch(
           status: response?.status ?? 0,
           success: response?.ok ?? false,
           service,
+          user_email: pb.authStore.model?.email,
         });
       } catch {
         // Analytics must never affect the request result.
