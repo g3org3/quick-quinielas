@@ -10,6 +10,7 @@ import {
 } from "@/pocketbase-types";
 
 import Flag from "./Flag";
+import GameHistoryDrawer from "./GameHistoryDrawer";
 import { BonusBadge } from "./BonusBadge";
 import { PhaseBadge } from "./PhaseBadge";
 import { VoteBar, VOTE_BAR_TOTAL_PARTICIPANTS } from "./VoteBar";
@@ -64,7 +65,9 @@ export default function MinimalMatch(props: Props) {
 
       <Flex alignItems="center" gap={3}>
         <Flex flex="1" minW={0} flexDir="column" alignItems="center" gap={1}>
-          <Flag height="36px" country={match.home} />
+          <GameHistoryDrawer tournamentId={tournamentId} country={match.home}>
+            <Flag height="36px" country={match.home} />
+          </GameHistoryDrawer>
           <Text fontWeight="semibold" noOfLines={1} textAlign="center">
             {match.home}
           </Text>
@@ -120,7 +123,9 @@ export default function MinimalMatch(props: Props) {
         </Flex>
 
         <Flex flex="1" minW={0} flexDir="column" alignItems="center" gap={1}>
-          <Flag height="36px" country={match.away} />
+          <GameHistoryDrawer tournamentId={tournamentId} country={match.away}>
+            <Flag height="36px" country={match.away} />
+          </GameHistoryDrawer>
           <Text fontWeight="semibold" noOfLines={1} textAlign="center">
             {match.away}
           </Text>
