@@ -1,5 +1,5 @@
 import { Flex, Text, useColorModeValue } from "@chakra-ui/react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 // Funny World Cup themed messages shown while the tournament loads.
@@ -17,8 +17,6 @@ const MESSAGES = [
   { emoji: "🤫", text: "Sobornando al árbitro..." },
 ];
 
-const MotionText = motion(Text);
-
 export default function TournamentLoading() {
   const color = useColorModeValue("gray.600", "gray.300");
   const [index, setIndex] = useState(() =>
@@ -32,44 +30,55 @@ export default function TournamentLoading() {
     return () => clearInterval(id);
   }, []);
 
+  const message = MESSAGES[index];
+
   return (
     <Flex
       flexDir="column"
       flex="1"
       justifyContent="center"
       alignItems="center"
-      gap="6"
       px="4"
     >
-      <motion.div
-        key={index}
-        animate={{ y: [0, -16, 0] }}
-        transition={{
-          y: { repeat: Infinity, duration: 1, ease: "easeInOut" },
-        }}
-        style={{
-          fontSize: "72px",
-          lineHeight: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {MESSAGES[index].emoji}
-      </motion.div>
-      <MotionText
-        key={index}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -8 }}
-        transition={{ duration: 0.4 }}
-        color={color}
-        fontWeight="bold"
-        fontSize="xl"
-        textAlign="center"
-      >
-        {MESSAGES[index].text}
-      </MotionText>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.4 }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "24px",
+          }}
+        >
+          <motion.div
+            animate={{ y: [0, -16, 0] }}
+            transition={{
+              y: { repeat: Infinity, duration: 1, ease: "easeInOut" },
+            }}
+            style={{
+              fontSize: "72px",
+              lineHeight: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {message.emoji}
+          </motion.div>
+          <Text
+            color={color}
+            fontWeight="bold"
+            fontSize="xl"
+            textAlign="center"
+          >
+            {message.text}
+          </Text>
+        </motion.div>
+      </AnimatePresence>
     </Flex>
   );
 }
