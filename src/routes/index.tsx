@@ -1,28 +1,29 @@
 import { Button, Flex, Heading, Img } from "@chakra-ui/react";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, redirect } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { tournamentsQuery } from "@/api/tournaments";
 import { queryClient } from "@/queryClient";
 import TournamentLoading from "@/components/TournamentLoading";
-import { useEffect } from "react";
 
+const tournamentId = "izl4jbo5w25yf6b";
 export const Route = createFileRoute("/")({
   component: Home,
   pendingComponent: TournamentLoading,
+  beforeLoad: () => {
+    throw redirect({
+      to: "/tournaments/$tournamentId",
+      params: { tournamentId },
+      search: { tab: "today" },
+    });
+  },
   loader: async () => {
     await queryClient.ensureQueryData(tournamentsQuery);
   },
 });
 
 function Home() {
-  const navigate = Route.useNavigate();
   const { data } = useSuspenseQuery(tournamentsQuery);
-
-  useEffect(() => {
-    const tournamentId = "izl4jbo5w25yf6b";
-    navigate({ to: "/tournaments/$tournamentId", params: { tournamentId } });
-  }, [navigate]);
 
   return (
     <>
