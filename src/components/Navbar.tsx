@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { useFeatFlag } from "@/featureFlags";
 import { useUserQuery } from "@/api/users";
 import Swal from "sweetalert2";
+import { netlifyFetch } from "@/apiRequestTelemetry";
 
 export default function Navbar() {
   const bg = useColorModeValue("white", "gray.800");
@@ -27,12 +28,12 @@ export default function Navbar() {
   const { data, isLoading } = useQuery({
     queryKey: ["version"],
     async queryFn() {
-      const res = await fetch("/.netlify/functions/hello");
+      const res = await netlifyFetch("/.netlify/functions/hello");
       return (await res.json()) as { version: number };
     },
   });
   const flag_showUpdateApp = useFeatFlag("show_update_app");
-  if (user) posthog.identify(user.email);
+  if (user) posthog.identify(user.id);
 
   useEffect(() => {
     if (data?.version === undefined) {
