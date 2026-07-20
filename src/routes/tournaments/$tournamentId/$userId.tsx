@@ -41,8 +41,8 @@ function UserPredictions() {
   const getRowStyle = useGetRowStyle();
 
   const total = results.reduce((sum, p) => sum + (p.points || 0), 0);
-  const perfect_count = results.filter((p) => p.points === 3).length;
-  const acertados_count = results.filter((p) => (p.points || 0) > 0).length;
+  const perfect_count = ""
+  const acertados_count = ""
 
   return (
     <>
