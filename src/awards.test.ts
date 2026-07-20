@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   AWARD_STORIES,
   groupAwardRanks,
+  isAwardScoreEligible,
   rankAwardRows,
   wrapStoryIndex,
   type AwardScoreRow,
@@ -38,6 +39,12 @@ describe("AWARD_STORIES", () => {
 });
 
 describe("award ranking", () => {
+  it("excludes zero scores only from the penalty-winner award", () => {
+    expect(isAwardScoreEligible("correct_penalty_winner", 0)).toBe(false);
+    expect(isAwardScoreEligible("correct_penalty_winner", 1)).toBe(true);
+    expect(isAwardScoreEligible("exact_score", 0)).toBe(true);
+  });
+
   it("sorts descending and uses dense shared ranks", () => {
     const ranked = rankAwardRows([
       row("f", 0),

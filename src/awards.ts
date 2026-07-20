@@ -44,6 +44,13 @@ export interface AwardScoreRow {
   userId: string;
 }
 
+export function isAwardScoreEligible(
+  category: AwardCategory,
+  score: number
+): boolean {
+  return category !== "correct_penalty_winner" || score > 0;
+}
+
 export interface RankedAwardRow<T extends AwardScoreRow = AwardScoreRow> {
   rank: number;
   row: T;

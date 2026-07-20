@@ -28,6 +28,7 @@ import { getAwardsQuery } from "@/api/awards";
 import {
   AWARD_STORIES,
   groupAwardRanks,
+  isAwardScoreEligible,
   rankAwardRows,
   wrapStoryIndex,
   type AwardScoreRow,
@@ -158,7 +159,11 @@ function Awards() {
         };
       });
 
-    return rankAwardRows(visibleRows);
+    return rankAwardRows(
+      visibleRows.filter((row) =>
+        isAwardScoreEligible(story.category, row.score)
+      )
+    );
   }, [awards, story.category]);
 
   const { podium, fourth } = useMemo(
