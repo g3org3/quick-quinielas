@@ -27,6 +27,11 @@ export const countries: Record<
     iso3: "bel",
     iso2: "be",
   },
+  Bolivia: {
+    name: "Bolivia",
+    iso3: "bol",
+    iso2: "bo",
+  },
   "Bosnia and Herzegovina": {
     name: "Bosnia and Herzegovina",
     iso3: "bih",
@@ -47,6 +52,11 @@ export const countries: Record<
     iso3: "can",
     iso2: "ca",
   },
+  Chile: {
+    name: "Chile",
+    iso3: "chl",
+    iso2: "cl",
+  },
   Colombia: {
     name: "Colombia",
     iso3: "col",
@@ -56,6 +66,11 @@ export const countries: Record<
     name: "Congo DR",
     iso3: "cod",
     iso2: "cd",
+  },
+  "Costa Rica": {
+    name: "Costa Rica",
+    iso3: "cri",
+    iso2: "cr",
   },
   Croatia: {
     name: "Croatia",
@@ -122,6 +137,11 @@ export const countries: Record<
     iso3: "irq",
     iso2: "iq",
   },
+  Jamaica: {
+    name: "Jamaica",
+    iso3: "jam",
+    iso2: "jm",
+  },
   Japan: {
     name: "Japan",
     iso3: "jpn",
@@ -171,6 +191,11 @@ export const countries: Record<
     name: "Paraguay",
     iso3: "pry",
     iso2: "py",
+  },
+  Peru: {
+    name: "Peru",
+    iso3: "per",
+    iso2: "pe",
   },
   Portugal: {
     name: "Portugal",
@@ -227,6 +252,11 @@ export const countries: Record<
     iso3: "tur",
     iso2: "tr",
   },
+  "United States": {
+    name: "USA",
+    iso3: "usa",
+    iso2: "us",
+  },
   USA: {
     name: "USA",
     iso3: "usa",
@@ -241,5 +271,10 @@ export const countries: Record<
     name: "Uzbekistan",
     iso3: "uzb",
     iso2: "uz",
+  },
+  Venezuela: {
+    name: "Venezuela",
+    iso3: "ven",
+    iso2: "ve",
   },
 };
