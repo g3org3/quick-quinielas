@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import confetti from "@hiseb/confetti";
 import {
   Table,
   Thead,
@@ -36,6 +35,7 @@ import { countries } from "@/components/countries";
 import { useGetRowStyle } from "@/useGetRowStyle";
 import { sortUsers } from "@/sortUsers";
 import { pb } from "@/pb";
+import { launchCelebrationConfetti } from "@/confetti";
 
 export const Route = createFileRoute(
   "/tournaments/$tournamentId/matches/$matchId"
@@ -70,16 +70,12 @@ function SingleMatch() {
     if (celebratedMatchId.current === match.id) return;
 
     celebratedMatchId.current = match.id;
-    let positionList = [
-      { x: window.innerWidth * 0.5, y: window.innerHeight * 0.6 },
-      { x: window.innerWidth * 0.25, y: window.innerHeight * 0.1 },
-      { x: window.innerWidth * 0.25, y: window.innerHeight * 0.4 },
-      { x: window.innerWidth * 0.1, y: window.innerHeight * 0.8 },
-      { x: window.innerWidth * 0.75, y: window.innerHeight * 0.3 },
-    ];
-    for (let i = 0; i < positionList.length; i++) {
-      setTimeout(() => confetti({ position: positionList[i] }), i * 250);
-    }
+    const cancelConfetti = launchCelebrationConfetti();
+
+    return () => {
+      cancelConfetti();
+      celebratedMatchId.current = undefined;
+    };
   }, [match.id, match.roundNumber]);
 
   return (

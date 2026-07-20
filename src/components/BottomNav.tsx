@@ -1,7 +1,8 @@
+import { Button, Flex, useColorModeValue } from "@chakra-ui/react";
 import { Link } from "@tanstack/react-router";
-import { Flex, Button, useColorModeValue } from "@chakra-ui/react";
-import { pb } from "@/pb";
+
 import { useUserQuery } from "@/api/users";
+import { pb } from "@/pb";
 
 export default function BottomNav({
   tournamentId,
@@ -12,39 +13,50 @@ export default function BottomNav({
 }) {
   const { data: user } = useUserQuery(pb.authStore.model?.id);
   const userId = user?.id ?? "";
-  const borderColor = useColorModeValue('gray.200', 'gray.600')
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const buttonProps = {
+    flex: "1",
+    minW: 0,
+    variant: "ghost",
+  } as const;
 
   return (
-    <>
-      <Flex borderTop="1px solid" borderColor={borderColor} pt={2} flexShrink={0} alignItems="center" gap="2" mb="3">
-        <Link
-          style={{ width: "100%" }}
-          to="/tournaments/$tournamentId/$userId"
-          params={{ tournamentId, userId }}
-        >
-          <Button isActive={state === "perfil"} w="100%" variant="ghost">
-            Perfil
-          </Button>
-        </Link>
-        <Link
-          style={{ width: "100%" }}
-          to="/tournaments/$tournamentId"
-          params={{ tournamentId }}
-        >
-          <Button isActive={state === "vaticinios"} w="100%" variant="ghost">
-            Vaticinios
-          </Button>
-        </Link>
-        <Link
-          style={{ width: "100%" }}
-          to="/tournaments/$tournamentId/points"
-          params={{ tournamentId }}
-        >
-          <Button isActive={state === "puntos"} w="100%" variant="ghost">
-            Puntos
-          </Button>
-        </Link>
-      </Flex>
-    </>
+    <Flex
+      borderTop="1px solid"
+      borderColor={borderColor}
+      pt={2}
+      flexShrink={0}
+      alignItems="center"
+      gap="2"
+      mb="3"
+    >
+      <Button
+        as={Link}
+        to="/tournaments/$tournamentId/$userId"
+        params={{ tournamentId, userId }}
+        isActive={state === "perfil"}
+        {...buttonProps}
+      >
+        Perfil
+      </Button>
+      <Button
+        as={Link}
+        to="/tournaments/$tournamentId"
+        params={{ tournamentId }}
+        isActive={state === "vaticinios"}
+        {...buttonProps}
+      >
+        Vaticinios
+      </Button>
+      <Button
+        as={Link}
+        to="/tournaments/$tournamentId/points"
+        params={{ tournamentId }}
+        isActive={state === "puntos"}
+        {...buttonProps}
+      >
+        Puntos
+      </Button>
+    </Flex>
   );
 }
