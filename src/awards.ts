@@ -34,6 +34,13 @@ export const AWARD_STORIES = [
     emoji: "🥅",
     gradient: "linear(to-br, pink.700, red.400)",
   },
+  {
+    category: "points",
+    label: "Campeón por puntos",
+    description: "Mayor puntaje total del torneo",
+    emoji: "👑",
+    gradient: "linear(to-br, gold.700, brand.600)",
+  },
 ] as const;
 
 export type AwardCategory = (typeof AWARD_STORIES)[number]["category"];

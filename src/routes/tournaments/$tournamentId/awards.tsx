@@ -31,6 +31,7 @@ import {
 } from "react-icons/fi";
 
 import { getAwardsQuery } from "@/api/awards";
+import { getLeaderboardQuery } from "@/api/leaderboard";
 import {
   AWARD_STORIES,
   groupAwardRanks,
@@ -41,6 +42,7 @@ import {
   type RankedAwardRow,
 } from "@/awards";
 import TournamentLoading from "@/components/TournamentLoading";
+import { launchCelebrationConfetti } from "@/confetti";
 import { pb } from "@/pb";
 import type { UsersResponse } from "@/pocketbase-types";
 import { queryClient } from "@/queryClient";
@@ -55,6 +57,7 @@ const fillProgress = keyframes`
 `;
 
 interface DisplayAwardRow extends AwardScoreRow {
+  scoreUnit: "acierto" | "punto";
   user?: UsersResponse;
 }
 
@@ -62,13 +65,19 @@ export const Route = createFileRoute("/tournaments/$tournamentId/awards")({
   component: Awards,
   pendingComponent: TournamentLoading,
   loader: async ({ params }) => {
-    await queryClient.ensureQueryData(getAwardsQuery(params.tournamentId));
+    await Promise.all([
+      queryClient.ensureQueryData(getAwardsQuery(params.tournamentId)),
+      queryClient.ensureQueryData(getLeaderboardQuery(params.tournamentId)),
+    ]);
   },
 });
 
 function Awards() {
   const { tournamentId } = Route.useParams();
   const { data: awards } = useSuspenseQuery(getAwardsQuery(tournamentId));
+  const { data: leaderboard } = useSuspenseQuery(
+    getLeaderboardQuery(tournamentId)
+  );
   const prefersReducedMotion = useReducedMotion();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(Boolean(prefersReducedMotion));
@@ -131,6 +140,11 @@ function Awards() {
     return clearTimer;
   }, [activeIndex, clearTimer, isPaused]);
 
+  useEffect(() => {
+    if (activeIndex !== AWARD_STORIES.length - 1) return;
+    return launchCelebrationConfetti();
+  }, [activeIndex]);
+
   const togglePaused = () => {
     if (!isPaused) pauseTimer();
     setIsPaused((currentValue) => !currentValue);
@@ -151,23 +165,36 @@ function Awards() {
   };
 
   const rankedRows = useMemo(() => {
-    const visibleRows: DisplayAwardRow[] = awards
-      .filter((award) => award.expand?.user_id?.ignore !== true)
-      .map((award) => {
-        const parsedScore = Number(award[story.category] ?? 0);
+    const category = story.category;
+    const visibleRows: DisplayAwardRow[] =
+      category === "points"
+        ? leaderboard
+            .filter((entry) => entry.expand?.user_id?.ignore !== true)
+            .map((entry) => ({
+              id: entry.id,
+              score: entry.points,
+              scoreUnit: "punto",
+              user: entry.expand?.user_id,
+              userId: entry.user_id,
+            }))
+        : awards
+            .filter((award) => award.expand?.user_id?.ignore !== true)
+            .map((award) => {
+              const parsedScore = Number(award[category] ?? 0);
 
-        return {
-          id: award.id,
-          score: Number.isFinite(parsedScore) ? parsedScore : 0,
-          user: award.expand?.user_id,
-          userId: award.user_id,
-        };
-      });
+              return {
+                id: award.id,
+                score: Number.isFinite(parsedScore) ? parsedScore : 0,
+                scoreUnit: "acierto",
+                user: award.expand?.user_id,
+                userId: award.user_id,
+              };
+            });
 
     return rankAwardRows(
       visibleRows.filter((row) => isAwardScoreEligible(row.score))
     );
-  }, [awards, story.category]);
+  }, [awards, leaderboard, story.category]);
 
   const { podium, fourth } = useMemo(
     () => groupAwardRanks(rankedRows),
@@ -559,7 +586,7 @@ function AwardParticipant({
             fontSize="xs"
             fontWeight="bold"
           >
-            {row.score} {row.score === 1 ? "acierto" : "aciertos"}
+            {row.score} {row.score === 1 ? row.scoreUnit : `${row.scoreUnit}s`}
           </Text>
         </Box>
       </Flex>

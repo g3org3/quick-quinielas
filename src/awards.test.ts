@@ -16,7 +16,7 @@ const row = (id: string, score: number): AwardScoreRow => ({
 });
 
 describe("AWARD_STORIES", () => {
-  it("keeps the five requested categories in story order with Spanish labels", () => {
+  it("keeps the requested categories in story order with points last", () => {
     expect(
       AWARD_STORIES.map(({ category, label }) => ({ category, label }))
     ).toEqual([
@@ -34,6 +34,7 @@ describe("AWARD_STORIES", () => {
         category: "correct_penalty_winner",
         label: "Ganadores en penales",
       },
+      { category: "points", label: "Campeón por puntos" },
     ]);
   });
 });
