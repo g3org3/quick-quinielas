@@ -11,6 +11,7 @@ import {
 import { keyframes } from "@emotion/react";
 import { useReducedMotion } from "framer-motion";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { usePostHog } from "@posthog/react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   Avatar,
@@ -56,6 +57,8 @@ const fillProgress = keyframes`
   to { transform: scaleX(1); }
 `;
 
+type StoryChangeSource = "auto" | "button" | "keyboard" | "swipe" | "tap";
+
 interface DisplayAwardRow extends AwardScoreRow {
   scoreUnit: "acierto" | "punto";
   user?: UsersResponse;
@@ -75,6 +78,7 @@ export const Route = createFileRoute("/tournaments/$tournamentId/awards")({
 function Awards() {
   const { tournamentId } = Route.useParams();
   const navigate = Route.useNavigate();
+  const posthog = usePostHog();
   const { data: awards } = useSuspenseQuery(getAwardsQuery(tournamentId));
   const { data: leaderboard } = useSuspenseQuery(
     getLeaderboardQuery(tournamentId)
@@ -83,11 +87,21 @@ function Awards() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(Boolean(prefersReducedMotion));
   const remainingDuration = useRef(STORY_DURATION_MS);
+  const hasTrackedView = useRef(false);
   const timerStartedAt = useRef<number>();
   const timerId = useRef<number>();
   const swipeStart = useRef<{ x: number; y: number }>();
   const swipeWasHandled = useRef(false);
   const story = AWARD_STORIES[activeIndex];
+
+  useEffect(() => {
+    if (hasTrackedView.current) return;
+
+    hasTrackedView.current = true;
+    posthog.capture("view_awards", {
+      tournament_id: tournamentId,
+    });
+  }, [posthog, tournamentId]);
 
   const clearTimer = useCallback(() => {
     if (timerId.current !== undefined) {
@@ -105,10 +119,30 @@ function Awards() {
     });
   }, [navigate, tournamentId]);
 
+  const closeAwards = useCallback(() => {
+    posthog.capture("click_close_awards", {
+      category: AWARD_STORIES[activeIndex].category,
+      tournament_id: tournamentId,
+    });
+    finishAwards();
+  }, [activeIndex, finishAwards, posthog, tournamentId]);
+
   const changeStory = useCallback(
-    (offset: number) => {
+    (offset: number, source: StoryChangeSource) => {
       clearTimer();
       remainingDuration.current = STORY_DURATION_MS;
+
+      if (offset > 0 && source !== "auto") {
+        posthog.capture("click_next_award_category", {
+          from_category: AWARD_STORIES[activeIndex].category,
+          interaction: source,
+          to_category:
+            activeIndex === AWARD_STORIES.length - 1
+              ? "points_page"
+              : AWARD_STORIES[activeIndex + 1].category,
+          tournament_id: tournamentId,
+        });
+      }
 
       if (offset > 0 && activeIndex === AWARD_STORIES.length - 1) {
         finishAwards();
@@ -119,7 +153,7 @@ function Awards() {
         wrapStoryIndex(currentIndex + offset, AWARD_STORIES.length)
       );
     },
-    [activeIndex, clearTimer, finishAwards]
+    [activeIndex, clearTimer, finishAwards, posthog, tournamentId]
   );
 
   const pauseTimer = useCallback(() => {
@@ -147,7 +181,7 @@ function Awards() {
     timerStartedAt.current = performance.now();
     timerId.current = window.setTimeout(() => {
       timerId.current = undefined;
-      changeStory(1);
+      changeStory(1, "auto");
     }, remainingDuration.current);
 
     return clearTimer;
@@ -170,10 +204,10 @@ function Awards() {
 
     if (event.key === "ArrowLeft") {
       event.preventDefault();
-      changeStory(-1);
+      changeStory(-1, "keyboard");
     } else if (event.key === "ArrowRight") {
       event.preventDefault();
-      changeStory(1);
+      changeStory(1, "keyboard");
     }
   };
 
@@ -241,7 +275,7 @@ function Awards() {
     }
 
     swipeWasHandled.current = true;
-    changeStory(distanceX > 0 ? -1 : 1);
+    changeStory(distanceX > 0 ? -1 : 1, "swipe");
   };
 
   const handleStoryClick = (event: ReactMouseEvent<HTMLDivElement>) => {
@@ -256,7 +290,7 @@ function Awards() {
 
     const bounds = event.currentTarget.getBoundingClientRect();
     const tappedLeftSide = event.clientX - bounds.left < bounds.width / 2;
-    changeStory(tappedLeftSide ? -1 : 1);
+    changeStory(tappedLeftSide ? -1 : 1, "tap");
   };
 
   return (
@@ -371,7 +405,7 @@ function Awards() {
               />
               <IconButton
                 aria-label="Cerrar premios"
-                onClick={finishAwards}
+                onClick={closeAwards}
                 icon={<FiX />}
                 rounded="full"
                 color="white"
@@ -438,7 +472,7 @@ function Awards() {
             <IconButton
               aria-label="Premio anterior"
               icon={<FiChevronLeft />}
-              onClick={() => changeStory(-1)}
+              onClick={() => changeStory(-1, "button")}
               rounded="full"
               color="white"
               bg="blackAlpha.400"
@@ -447,7 +481,7 @@ function Awards() {
             <IconButton
               aria-label="Siguiente premio"
               icon={<FiChevronRight />}
-              onClick={() => changeStory(1)}
+              onClick={() => changeStory(1, "button")}
               rounded="full"
               color="white"
               bg="blackAlpha.400"
