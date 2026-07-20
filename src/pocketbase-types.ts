@@ -6,6 +6,7 @@ import type PocketBase from "pocketbase";
 import type { RecordService } from "pocketbase";
 
 export enum Collections {
+  Awards = "awards",
   Flags = "flags",
   Leaderboard = "leaderboard",
   MatchBets = "match_bets",
@@ -39,6 +40,22 @@ export type AuthSystemFields<T = never> = {
 } & BaseSystemFields<T>;
 
 // Record types for each collection
+
+export type AwardsRecord<
+  Tcorrect_first_goal = unknown,
+  Tcorrect_first_goal_from = unknown,
+  Tcorrect_penalty_winner = unknown,
+  Tcorrect_result = unknown,
+  Texact_score = unknown,
+> = {
+  correct_first_goal?: null | Tcorrect_first_goal;
+  correct_first_goal_from?: null | Tcorrect_first_goal_from;
+  correct_penalty_winner?: null | Tcorrect_penalty_winner;
+  correct_result?: null | Tcorrect_result;
+  exact_score?: null | Texact_score;
+  tournament?: RecordIdString;
+  user_id?: RecordIdString;
+};
 
 export type FlagsRecord = {
   feature: string;
@@ -134,6 +151,7 @@ export type ResultsRecord = {
 };
 
 export type TournamentsRecord = {
+  is_open?: boolean;
   logo?: string;
   name?: string;
 };
@@ -157,6 +175,23 @@ export type UsersRecord = {
 };
 
 // Response types include system fields and match responses from the PocketBase API
+export type AwardsResponse<
+  Tcorrect_first_goal = unknown,
+  Tcorrect_first_goal_from = unknown,
+  Tcorrect_penalty_winner = unknown,
+  Tcorrect_result = unknown,
+  Texact_score = unknown,
+  Texpand = unknown,
+> = Required<
+  AwardsRecord<
+    Tcorrect_first_goal,
+    Tcorrect_first_goal_from,
+    Tcorrect_penalty_winner,
+    Tcorrect_result,
+    Texact_score
+  >
+> &
+  BaseSystemFields<Texpand>;
 export type FlagsResponse<Texpand = unknown> = Required<FlagsRecord> &
   BaseSystemFields<Texpand>;
 export type LeaderboardResponse<Texpand = unknown> =
@@ -182,6 +217,7 @@ export type UsersResponse<Texpand = unknown> = Required<UsersRecord> &
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
+  awards: AwardsRecord;
   flags: FlagsRecord;
   leaderboard: LeaderboardRecord;
   match_bets: MatchBetsRecord;
@@ -193,6 +229,7 @@ export type CollectionRecords = {
 };
 
 export type CollectionResponses = {
+  awards: AwardsResponse;
   flags: FlagsResponse;
   leaderboard: LeaderboardResponse;
   match_bets: MatchBetsResponse;
@@ -207,6 +244,7 @@ export type CollectionResponses = {
 // https://github.com/pocketbase/js-sdk#specify-typescript-definitions
 
 export type TypedPocketBase = PocketBase & {
+  collection(idOrName: "awards"): RecordService<AwardsResponse>;
   collection(idOrName: "flags"): RecordService<FlagsResponse>;
   collection(idOrName: "leaderboard"): RecordService<LeaderboardResponse>;
   collection(idOrName: "match_bets"): RecordService<MatchBetsResponse>;

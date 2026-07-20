@@ -564,6 +564,16 @@
           "exceptDomains": null,
           "onlyDomains": null
         }
+      },
+      {
+        "system": false,
+        "id": "mhk1vptw",
+        "name": "is_open",
+        "type": "bool",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {}
       }
     ],
     "indexes": [],
@@ -573,6 +583,115 @@
     "updateRule": null,
     "deleteRule": null,
     "options": {}
+  },
+  {
+    "id": "5476fyxq5feicy1",
+    "name": "awards",
+    "type": "view",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "4akhcaql",
+        "name": "user_id",
+        "type": "relation",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "collectionId": "_pb_users_auth_",
+          "cascadeDelete": false,
+          "minSelect": null,
+          "maxSelect": 1,
+          "displayFields": null
+        }
+      },
+      {
+        "system": false,
+        "id": "mli9sjgf",
+        "name": "tournament",
+        "type": "relation",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "collectionId": "a8upuky9dg8vff5",
+          "cascadeDelete": false,
+          "minSelect": null,
+          "maxSelect": 1,
+          "displayFields": null
+        }
+      },
+      {
+        "system": false,
+        "id": "kigwblmu",
+        "name": "exact_score",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 1
+        }
+      },
+      {
+        "system": false,
+        "id": "uoj79ook",
+        "name": "correct_result",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 1
+        }
+      },
+      {
+        "system": false,
+        "id": "iny37log",
+        "name": "correct_first_goal",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 1
+        }
+      },
+      {
+        "system": false,
+        "id": "bztspavp",
+        "name": "correct_first_goal_from",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 1
+        }
+      },
+      {
+        "system": false,
+        "id": "q0m2xgmq",
+        "name": "correct_penalty_winner",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 1
+        }
+      }
+    ],
+    "indexes": [],
+    "listRule": null,
+    "viewRule": null,
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {
+      "query": "SELECT \n (ROW_NUMBER() OVER()) as id,\n r.user_id,\n m.tournament,\n sum(\n  case\n    when r.exact_score then 1\n    else 0\n   end\n  ) as exact_score,\n  sum(\n  case\n    when r.correct_result then 1\n    else 0\n   end\n  ) as correct_result,\n  sum(\n  case\n    when r.correct_first_goal then 1\n    else 0\n   end\n  ) as correct_first_goal,\n  sum(\n  case\n    when r.correct_first_goal_from then 1\n    else 0\n   end\n  ) as correct_first_goal_from,\n  sum(\n  case\n    when r.correct_penalty_winner then 1\n    else 0\n   end\n  ) as correct_penalty_winner\nFROM results r\nJOIN matches m on m.id = r.match_id\nGROUP BY r.user_id, m.tournament"
+    }
   },
   {
     "id": "fws82vvwsfzvzn7",
