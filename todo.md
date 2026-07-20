@@ -1,0 +1,3 @@
+- [ ] move the phase name to the DB
+- [ ] move the version number to the DB
+- [ ] move the favorite team to the tournaments table or new table?
