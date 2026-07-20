@@ -9,7 +9,7 @@ export default function BottomNav({
   state,
 }: {
   tournamentId: string;
-  state?: "vaticinios" | "puntos" | "premios" | "perfil";
+  state?: "vaticinios" | "puntos" | "perfil";
 }) {
   const { data: user } = useUserQuery(pb.authStore.model?.id);
   const userId = user?.id ?? "";
@@ -17,8 +17,6 @@ export default function BottomNav({
   const buttonProps = {
     flex: "1",
     minW: 0,
-    px: { base: 1, sm: 4 },
-    fontSize: { base: "xs", sm: "sm" },
     variant: "ghost",
   } as const;
 
@@ -29,7 +27,7 @@ export default function BottomNav({
       pt={2}
       flexShrink={0}
       alignItems="center"
-      gap="1"
+      gap="2"
       mb="3"
     >
       <Button
@@ -58,15 +56,6 @@ export default function BottomNav({
         {...buttonProps}
       >
         Puntos
-      </Button>
-      <Button
-        as={Link}
-        to="/tournaments/$tournamentId/awards"
-        params={{ tournamentId }}
-        isActive={state === "premios"}
-        {...buttonProps}
-      >
-        Premios
       </Button>
     </Flex>
   );

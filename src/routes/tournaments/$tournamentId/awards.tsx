@@ -331,7 +331,7 @@ function Awards() {
               />
               <IconButton
                 as={Link}
-                to="/tournaments/$tournamentId"
+                to="/tournaments/$tournamentId/points"
                 params={{ tournamentId }}
                 aria-label="Cerrar premios"
                 icon={<FiX />}

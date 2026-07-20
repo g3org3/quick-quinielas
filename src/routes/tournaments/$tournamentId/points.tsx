@@ -3,6 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   Avatar,
   Box,
+  Button,
   Text,
   Flex,
   Grid,
@@ -74,6 +75,16 @@ function Points() {
         overflow="auto"
         overscrollBehavior="contain"
       >
+        <Flex justifyContent="flex-end" px={{ base: 2, sm: 4 }} pt={3}>
+          <Button
+            as={Link}
+            to="/tournaments/$tournamentId/awards"
+            params={{ tournamentId }}
+            variant="secondary"
+          >
+            Ver premiación
+          </Button>
+        </Flex>
         {podium.length > 0 && (
           <Box px={{ base: 2, sm: 4 }} pt={3} pb={4}>
             <Grid
