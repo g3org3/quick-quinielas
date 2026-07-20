@@ -39,10 +39,9 @@ describe("AWARD_STORIES", () => {
 });
 
 describe("award ranking", () => {
-  it("excludes zero scores only from the penalty-winner award", () => {
-    expect(isAwardScoreEligible("correct_penalty_winner", 0)).toBe(false);
-    expect(isAwardScoreEligible("correct_penalty_winner", 1)).toBe(true);
-    expect(isAwardScoreEligible("exact_score", 0)).toBe(true);
+  it("excludes zero scores from every award", () => {
+    expect(isAwardScoreEligible(0)).toBe(false);
+    expect(isAwardScoreEligible(1)).toBe(true);
   });
 
   it("sorts descending and uses dense shared ranks", () => {
@@ -67,20 +66,12 @@ describe("award ranking", () => {
     ]);
   });
 
-  it("keeps explicit zero scores and gives all-zero rows the shared first rank", () => {
-    const ranked = rankAwardRows([row("c", 0), row("a", 0), row("b", 0)]);
+  it("leaves an all-zero award without ranked participants", () => {
+    const eligibleRows = [row("c", 0), row("a", 0), row("b", 0)].filter(
+      ({ score }) => isAwardScoreEligible(score)
+    );
 
-    expect(
-      ranked.map(({ row: rankedRow, rank }) => [
-        rankedRow.id,
-        rankedRow.score,
-        rank,
-      ])
-    ).toEqual([
-      ["a", 0, 1],
-      ["b", 0, 1],
-      ["c", 0, 1],
-    ]);
+    expect(rankAwardRows(eligibleRows)).toEqual([]);
   });
 
   it("groups every tie in podium ranks one through three and rank four", () => {

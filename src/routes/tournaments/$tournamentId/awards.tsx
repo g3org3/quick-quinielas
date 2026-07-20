@@ -160,9 +160,7 @@ function Awards() {
       });
 
     return rankAwardRows(
-      visibleRows.filter((row) =>
-        isAwardScoreEligible(story.category, row.score)
-      )
+      visibleRows.filter((row) => isAwardScoreEligible(row.score))
     );
   }, [awards, story.category]);
 
