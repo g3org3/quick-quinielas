@@ -4,6 +4,8 @@ interface Props {
   roundNumber: number;
 }
 
+export const FINAL_ROUND_NUMBER = 8;
+
 const label = [
   "Fase Grupos",
   "Fase Grupos",

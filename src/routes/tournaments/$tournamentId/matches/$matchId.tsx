@@ -1,5 +1,7 @@
+import { useEffect, useRef } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import confetti from "@hiseb/confetti";
 import {
   Table,
   Thead,
@@ -25,6 +27,7 @@ import { getMatchResultsQuery } from "@/api/results";
 import { usersQuery } from "@/api/users";
 import TournamentLoading from "@/components/TournamentLoading";
 import BottomNav from "@/components/BottomNav";
+import { FINAL_ROUND_NUMBER } from "@/components/PhaseBadge";
 import { BonusBadge } from "@/components/BonusBadge";
 import SimpleMatch from "@/components/SimpleMatch";
 import { queryClient } from "@/queryClient";
@@ -48,12 +51,27 @@ export const Route = createFileRoute(
 
 function SingleMatch() {
   const { matchId, tournamentId } = Route.useParams();
+  const celebratedMatchId = useRef<string>();
 
   const { data: match } = useSuspenseQuery(getMatchQuery(matchId));
   const { data: users } = useSuspenseQuery(usersQuery);
   const { data: results } = useSuspenseQuery(getMatchResultsQuery(matchId));
   const getRowStyle = useGetRowStyle();
   const sortedUsers = sortUsers(users, results, pb.authStore.model?.id);
+
+  useEffect(() => {
+    const isFinal = match.roundNumber === FINAL_ROUND_NUMBER;
+
+    if (!isFinal) {
+      celebratedMatchId.current = undefined;
+      return;
+    }
+
+    if (celebratedMatchId.current === match.id) return;
+
+    celebratedMatchId.current = match.id;
+    confetti({});
+  }, [match.id, match.roundNumber]);
 
   return (
     <>
