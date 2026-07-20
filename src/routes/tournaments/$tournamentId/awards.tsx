@@ -22,7 +22,13 @@ import {
   Text,
   VisuallyHidden,
 } from "@chakra-ui/react";
-import { FiChevronLeft, FiChevronRight, FiPause, FiPlay } from "react-icons/fi";
+import {
+  FiChevronLeft,
+  FiChevronRight,
+  FiPause,
+  FiPlay,
+  FiX,
+} from "react-icons/fi";
 
 import { getAwardsQuery } from "@/api/awards";
 import {
@@ -34,7 +40,6 @@ import {
   type AwardScoreRow,
   type RankedAwardRow,
 } from "@/awards";
-import BottomNav from "@/components/BottomNav";
 import TournamentLoading from "@/components/TournamentLoading";
 import { pb } from "@/pb";
 import type { UsersResponse } from "@/pocketbase-types";
@@ -217,17 +222,21 @@ function Awards() {
   return (
     <>
       <Flex
-        flex="1"
-        minH={0}
+        position="fixed"
+        inset={0}
+        zIndex="modal"
+        minH="100dvh"
         flexDir="column"
-        overflow="auto"
+        overflow="hidden"
         overscrollBehavior="contain"
-        px={{ base: 2, sm: 4 }}
-        pb={3}
+        bg="gray.900"
+        p={{ base: 0, sm: 3 }}
       >
         <Flex
           mb={3}
           gap={1}
+          px={{ base: 2, sm: 0 }}
+          pt={{ base: 2, sm: 0 }}
           aria-label={`Historia ${activeIndex + 1} de ${AWARD_STORIES.length}`}
         >
           {AWARD_STORIES.map((item, index) => {
@@ -266,14 +275,12 @@ function Awards() {
         <Flex
           position="relative"
           flex="1"
-          minH={{ base: "560px", md: "620px" }}
-          maxW="760px"
+          minH={0}
           w="100%"
-          mx="auto"
           flexDir="column"
           overflowX="hidden"
           overflowY="auto"
-          rounded="3xl"
+          rounded={{ base: "none", sm: "2xl" }}
           bgGradient={story.gradient}
           color="white"
           boxShadow="xl"
@@ -310,17 +317,30 @@ function Awards() {
                 {story.description}
               </Text>
             </Box>
-            <IconButton
-              ml="auto"
-              flexShrink={0}
-              aria-label={isPaused ? "Reanudar historias" : "Pausar historias"}
-              icon={isPaused ? <FiPlay /> : <FiPause />}
-              onClick={togglePaused}
-              rounded="full"
-              color="white"
-              bg="blackAlpha.400"
-              _hover={{ bg: "blackAlpha.500" }}
-            />
+            <Flex ml="auto" flexShrink={0} gap={2}>
+              <IconButton
+                aria-label={
+                  isPaused ? "Reanudar historias" : "Pausar historias"
+                }
+                icon={isPaused ? <FiPlay /> : <FiPause />}
+                onClick={togglePaused}
+                rounded="full"
+                color="white"
+                bg="blackAlpha.400"
+                _hover={{ bg: "blackAlpha.500" }}
+              />
+              <IconButton
+                as={Link}
+                to="/tournaments/$tournamentId"
+                params={{ tournamentId }}
+                aria-label="Cerrar premios"
+                icon={<FiX />}
+                rounded="full"
+                color="white"
+                bg="blackAlpha.400"
+                _hover={{ bg: "blackAlpha.500" }}
+              />
+            </Flex>
           </Flex>
 
           {rankedRows.length > 0 && (
@@ -410,7 +430,6 @@ function Awards() {
           </Flex>
         </Flex>
       </Flex>
-      <BottomNav tournamentId={tournamentId} state="premios" />
     </>
   );
 }
