@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { z } from "zod";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   Avatar,
@@ -27,6 +28,18 @@ import Flag from "@/components/Flag";
 export const Route = createFileRoute("/tournaments/$tournamentId/points")({
   component: Points,
   pendingComponent: TournamentLoading,
+  validateSearch: z.object({
+    awards: z.literal("seen").optional(),
+  }),
+  beforeLoad: ({ params, search }) => {
+    if (search.awards !== "seen") {
+      throw redirect({
+        to: "/tournaments/$tournamentId/awards",
+        params,
+        replace: true,
+      });
+    }
+  },
   loader: async ({ params }) => {
     await queryClient.ensureQueryData(getLeaderboardQuery(params.tournamentId));
   },
@@ -75,14 +88,14 @@ function Points() {
         overflow="auto"
         overscrollBehavior="contain"
       >
-        <Flex justifyContent="flex-end" px={{ base: 2, sm: 4 }} pt={3}>
+        <Flex justifyContent="center" px={{ base: 2, sm: 4 }} pt={3}>
           <Button
             as={Link}
             to="/tournaments/$tournamentId/awards"
             params={{ tournamentId }}
             variant="secondary"
           >
-            Ver premiación
+            🏆 Ver premiación
           </Button>
         </Flex>
         {podium.length > 0 && (

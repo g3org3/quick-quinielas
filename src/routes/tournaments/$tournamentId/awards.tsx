@@ -74,6 +74,7 @@ export const Route = createFileRoute("/tournaments/$tournamentId/awards")({
 
 function Awards() {
   const { tournamentId } = Route.useParams();
+  const navigate = Route.useNavigate();
   const { data: awards } = useSuspenseQuery(getAwardsQuery(tournamentId));
   const { data: leaderboard } = useSuspenseQuery(
     getLeaderboardQuery(tournamentId)
@@ -95,15 +96,30 @@ function Awards() {
     }
   }, []);
 
+  const finishAwards = useCallback(() => {
+    navigate({
+      to: "/tournaments/$tournamentId/points",
+      params: { tournamentId },
+      search: { awards: "seen" },
+      replace: true,
+    });
+  }, [navigate, tournamentId]);
+
   const changeStory = useCallback(
     (offset: number) => {
       clearTimer();
       remainingDuration.current = STORY_DURATION_MS;
+
+      if (offset > 0 && activeIndex === AWARD_STORIES.length - 1) {
+        finishAwards();
+        return;
+      }
+
       setActiveIndex((currentIndex) =>
         wrapStoryIndex(currentIndex + offset, AWARD_STORIES.length)
       );
     },
-    [clearTimer]
+    [activeIndex, clearTimer, finishAwards]
   );
 
   const pauseTimer = useCallback(() => {
@@ -131,14 +147,11 @@ function Awards() {
     timerStartedAt.current = performance.now();
     timerId.current = window.setTimeout(() => {
       timerId.current = undefined;
-      remainingDuration.current = STORY_DURATION_MS;
-      setActiveIndex((currentIndex) =>
-        wrapStoryIndex(currentIndex + 1, AWARD_STORIES.length)
-      );
+      changeStory(1);
     }, remainingDuration.current);
 
     return clearTimer;
-  }, [activeIndex, clearTimer, isPaused]);
+  }, [activeIndex, changeStory, clearTimer, isPaused]);
 
   useEffect(() => {
     if (activeIndex !== AWARD_STORIES.length - 1) return;
@@ -357,10 +370,8 @@ function Awards() {
                 _hover={{ bg: "blackAlpha.500" }}
               />
               <IconButton
-                as={Link}
-                to="/tournaments/$tournamentId/points"
-                params={{ tournamentId }}
                 aria-label="Cerrar premios"
+                onClick={finishAwards}
                 icon={<FiX />}
                 rounded="full"
                 color="white"
