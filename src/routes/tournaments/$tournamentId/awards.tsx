@@ -11,7 +11,7 @@ import {
 import { keyframes } from "@emotion/react";
 import { useReducedMotion } from "framer-motion";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   Avatar,
   Box,
@@ -394,14 +394,7 @@ function Awards() {
                 const entries = podium.get(rank);
                 if (!entries?.length) return null;
 
-                return (
-                  <PodiumRank
-                    key={rank}
-                    entries={entries}
-                    rank={rank}
-                    tournamentId={tournamentId}
-                  />
-                );
+                return <PodiumRank key={rank} entries={entries} rank={rank} />;
               })}
             </Grid>
           )}
@@ -435,12 +428,7 @@ function Awards() {
               </Text>
               <Flex gap={3} flexWrap="wrap">
                 {fourth.map(({ row }) => (
-                  <AwardParticipant
-                    key={row.id}
-                    compact
-                    row={row}
-                    tournamentId={tournamentId}
-                  />
+                  <AwardParticipant key={row.id} compact row={row} />
                 ))}
               </Flex>
             </Box>
@@ -475,11 +463,9 @@ function Awards() {
 function PodiumRank({
   entries,
   rank,
-  tournamentId,
 }: {
   entries: RankedAwardRow<DisplayAwardRow>[];
   rank: 1 | 2 | 3;
-  tournamentId: string;
 }) {
   const isFirst = rank === 1;
   const gridColumn = rank === 1 ? 2 : rank === 2 ? 1 : 3;
@@ -506,12 +492,7 @@ function PodiumRank({
         pb={{ base: 2, sm: 3 }}
       >
         {entries.map(({ row }) => (
-          <AwardParticipant
-            key={row.id}
-            row={row}
-            tournamentId={tournamentId}
-            isFirst={isFirst}
-          />
+          <AwardParticipant key={row.id} row={row} isFirst={isFirst} />
         ))}
       </Flex>
       <Flex
@@ -542,66 +523,58 @@ function AwardParticipant({
   compact = false,
   isFirst = false,
   row,
-  tournamentId,
 }: {
   compact?: boolean;
   isFirst?: boolean;
   row: DisplayAwardRow;
-  tournamentId: string;
 }) {
   const isCurrentUser = pb.authStore.model?.id === row.userId;
   const participantName =
     row.user?.name || row.user?.username || "Participante";
 
   return (
-    <Link
-      to="/tournaments/$tournamentId/$userId"
-      params={{ tournamentId, userId: row.userId }}
-      style={{ minWidth: 0, maxWidth: "100%" }}
+    <Flex
+      minW={0}
+      maxW="100%"
+      flexDir={compact ? "row" : "column"}
+      alignItems="center"
+      gap={compact ? 2 : 1}
+      p={compact ? 0 : 1}
+      rounded="xl"
+      boxShadow={isCurrentUser ? "0 0 0 2px white" : "none"}
     >
-      <Flex
-        minW={0}
-        maxW="100%"
-        flexDir={compact ? "row" : "column"}
-        alignItems="center"
-        gap={compact ? 2 : 1}
-        p={compact ? 0 : 1}
-        rounded="xl"
-        boxShadow={isCurrentUser ? "0 0 0 2px white" : "none"}
-      >
-        <Avatar
-          boxSize={
-            compact
-              ? "36px"
-              : {
-                  base: isFirst ? "58px" : "48px",
-                  sm: isFirst ? "76px" : "62px",
-                }
-          }
-          borderWidth={compact ? "2px" : "4px"}
-          borderColor={isFirst ? "gold.200" : "whiteAlpha.700"}
-          name={participantName}
-          src={getAvatarUrl(row.user?.img, row.user?.username || row.userId)}
-        />
-        <Box minW={0} maxW="100%">
-          <Text
-            fontSize={compact ? "xs" : { base: "xs", sm: "sm" }}
-            fontWeight="bold"
-            noOfLines={1}
-          >
-            {participantName}
-          </Text>
-          <Text
-            color="whiteAlpha.800"
-            fontFamily="mono"
-            fontSize="xs"
-            fontWeight="bold"
-          >
-            {row.score} {row.score === 1 ? row.scoreUnit : `${row.scoreUnit}s`}
-          </Text>
-        </Box>
-      </Flex>
-    </Link>
+      <Avatar
+        boxSize={
+          compact
+            ? "36px"
+            : {
+                base: isFirst ? "58px" : "48px",
+                sm: isFirst ? "76px" : "62px",
+              }
+        }
+        borderWidth={compact ? "2px" : "4px"}
+        borderColor={isFirst ? "gold.200" : "whiteAlpha.700"}
+        name={participantName}
+        src={getAvatarUrl(row.user?.img, row.user?.username || row.userId)}
+      />
+      <Box minW={0} maxW="100%">
+        <Text
+          fontSize={compact ? "xs" : { base: "xs", sm: "sm" }}
+          fontWeight="bold"
+          noOfLines={1}
+        >
+          {participantName}
+        </Text>
+        <Text
+          color="whiteAlpha.800"
+          fontFamily="mono"
+          fontSize="xs"
+          fontWeight="bold"
+        >
+          {row.score} {row.score === 1 ? row.scoreUnit : `${row.scoreUnit}s`}
+        </Text>
+      </Box>
+    </Flex>
   );
 }
 
