@@ -16,6 +16,7 @@ import { Route as IndexImport } from './routes/index'
 import { Route as TournamentsTournamentIdImport } from './routes/tournaments/$tournamentId'
 import { Route as TournamentsTournamentIdIndexImport } from './routes/tournaments/$tournamentId/index'
 import { Route as TournamentsTournamentIdPointsImport } from './routes/tournaments/$tournamentId/points'
+import { Route as TournamentsTournamentIdAwardsImport } from './routes/tournaments/$tournamentId/awards'
 import { Route as TournamentsTournamentIdUserIdImport } from './routes/tournaments/$tournamentId/$userId'
 import { Route as TournamentsTournamentIdMatchesMatchIdImport } from './routes/tournaments/$tournamentId/matches/$matchId'
 
@@ -45,6 +46,12 @@ const TournamentsTournamentIdIndexRoute =
 const TournamentsTournamentIdPointsRoute =
   TournamentsTournamentIdPointsImport.update({
     path: '/points',
+    getParentRoute: () => TournamentsTournamentIdRoute,
+  } as any)
+
+const TournamentsTournamentIdAwardsRoute =
+  TournamentsTournamentIdAwardsImport.update({
+    path: '/awards',
     getParentRoute: () => TournamentsTournamentIdRoute,
   } as any)
 
@@ -92,6 +99,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TournamentsTournamentIdUserIdImport
       parentRoute: typeof TournamentsTournamentIdImport
     }
+    '/tournaments/$tournamentId/awards': {
+      id: '/tournaments/$tournamentId/awards'
+      path: '/awards'
+      fullPath: '/tournaments/$tournamentId/awards'
+      preLoaderRoute: typeof TournamentsTournamentIdAwardsImport
+      parentRoute: typeof TournamentsTournamentIdImport
+    }
     '/tournaments/$tournamentId/points': {
       id: '/tournaments/$tournamentId/points'
       path: '/points'
@@ -123,6 +137,7 @@ export const routeTree = rootRoute.addChildren({
   AdminRoute,
   TournamentsTournamentIdRoute: TournamentsTournamentIdRoute.addChildren({
     TournamentsTournamentIdUserIdRoute,
+    TournamentsTournamentIdAwardsRoute,
     TournamentsTournamentIdPointsRoute,
     TournamentsTournamentIdIndexRoute,
     TournamentsTournamentIdMatchesMatchIdRoute,
@@ -152,6 +167,7 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "tournaments/$tournamentId.tsx",
       "children": [
         "/tournaments/$tournamentId/$userId",
+        "/tournaments/$tournamentId/awards",
         "/tournaments/$tournamentId/points",
         "/tournaments/$tournamentId/",
         "/tournaments/$tournamentId/matches/$matchId"
@@ -159,6 +175,10 @@ export const routeTree = rootRoute.addChildren({
     },
     "/tournaments/$tournamentId/$userId": {
       "filePath": "tournaments/$tournamentId/$userId.tsx",
+      "parent": "/tournaments/$tournamentId"
+    },
+    "/tournaments/$tournamentId/awards": {
+      "filePath": "tournaments/$tournamentId/awards.tsx",
       "parent": "/tournaments/$tournamentId"
     },
     "/tournaments/$tournamentId/points": {
