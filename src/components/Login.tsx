@@ -35,7 +35,7 @@ export default function Login() {
       });
       posthog.capture("user_logged_in", { method: "google" });
       toaster.success("Bienvenido");
-      document.location = "/tournaments/izl4jbo5w25yf6b";
+      document.location = "/tournaments/t301godsibnxtnj";
     } catch (e) {
       const err = e as ClientResponseError;
       posthog.captureException(err);
@@ -61,7 +61,7 @@ export default function Login() {
       });
       posthog.capture("user_logged_in", { method: "email" });
       toaster.success("Bienvenido");
-      document.location = "/tournaments/izl4jbo5w25yf6b";
+      document.location = "/tournaments/t301godsibnxtnj";
     } catch (e) {
       const err = e as ClientResponseError;
       if (err.message === "Failed to authenticate.") {

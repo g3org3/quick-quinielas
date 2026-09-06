@@ -20,6 +20,7 @@ import {
   VisuallyHidden,
 } from "@chakra-ui/react";
 import { getLeaderboardQuery } from "@/api/leaderboard";
+import { getTournamentQuery } from "@/api/tournaments";
 import { pb } from "@/pb";
 import { queryClient } from "@/queryClient";
 import TournamentLoading from "@/components/TournamentLoading";
@@ -32,8 +33,12 @@ export const Route = createFileRoute("/tournaments/$tournamentId/points")({
   validateSearch: z.object({
     awards: z.literal("seen").optional(),
   }),
-  beforeLoad: ({ params, search }) => {
-    if (search.awards !== "seen") {
+  beforeLoad: async ({ params, search }) => {
+    const tournament = await queryClient.ensureQueryData(
+      getTournamentQuery(params.tournamentId)
+    );
+
+    if (isTournamentDone(tournament) && search.awards !== "seen") {
       throw redirect({
         to: "/tournaments/$tournamentId/awards",
         params,
@@ -42,7 +47,10 @@ export const Route = createFileRoute("/tournaments/$tournamentId/points")({
     }
   },
   loader: async ({ params }) => {
-    await queryClient.ensureQueryData(getLeaderboardQuery(params.tournamentId));
+    await Promise.all([
+      queryClient.ensureQueryData(getLeaderboardQuery(params.tournamentId)),
+      queryClient.ensureQueryData(getTournamentQuery(params.tournamentId)),
+    ]);
   },
 });
 
@@ -61,6 +69,9 @@ function Points() {
 
   const { data: leaderboard } = useSuspenseQuery(
     getLeaderboardQuery(tournamentId)
+  );
+  const { data: tournament } = useSuspenseQuery(
+    getTournamentQuery(tournamentId)
   );
 
   let position = 0;
@@ -90,21 +101,23 @@ function Points() {
         overflow="auto"
         overscrollBehavior="contain"
       >
-        <Flex justifyContent="center" px={{ base: 2, sm: 4 }} pt={3}>
-          <Button
-            as={Link}
-            to="/tournaments/$tournamentId/awards"
-            params={{ tournamentId }}
-            variant="secondary"
-            onClick={() =>
-              posthog.capture("click_view_awards", {
-                tournament_id: tournamentId,
-              })
-            }
-          >
-            🏆 Ver premiación
-          </Button>
-        </Flex>
+        {isTournamentDone(tournament) && (
+          <Flex justifyContent="center" px={{ base: 2, sm: 4 }} pt={3}>
+            <Button
+              as={Link}
+              to="/tournaments/$tournamentId/awards"
+              params={{ tournamentId }}
+              variant="secondary"
+              onClick={() =>
+                posthog.capture("click_view_awards", {
+                  tournament_id: tournamentId,
+                })
+              }
+            >
+              🏆 Ver premiación
+            </Button>
+          </Flex>
+        )}
         {podium.length > 0 && (
           <Box px={{ base: 2, sm: 4 }} pt={3} pb={4}>
             <Grid
@@ -358,6 +371,15 @@ function Points() {
       </Flex>
       <BottomNav tournamentId={tournamentId} state="puntos" />
     </>
+  );
+}
+
+function isTournamentDone(tournament: unknown) {
+  return (
+    typeof tournament === "object" &&
+    tournament !== null &&
+    "status" in tournament &&
+    tournament.status === "done"
   );
 }
 

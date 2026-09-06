@@ -4,6 +4,8 @@ import { DateTime } from "luxon";
 import { pb } from "@/pb";
 import { Collections, MatchesResponse } from "@/pocketbase-types";
 
+const UPCOMING_MATCH_LIMIT = 10;
+
 export const matchesKeys = {
   all: [Collections.Matches] as const,
   lists: () => [...matchesKeys.all, "list"] as const,
@@ -32,19 +34,27 @@ export const getMatchesQuery = (tournamentId: string, tab?: string | null) => {
     filter += ` && startAtUtc >= '${startat}' && startAtUtc < '${endat}'`;
     sort = "-startAtUtc";
   } else if (tab === "proximos") {
-    const startat = nextDayUtc;
-    const endat = today.plus({ day: 4 }).endOf("day").toUTC().toSQL();
-    filter += ` && startAtUtc >= '${startat}' && startAtUtc < '${endat}'`;
+    filter += ` && startAtUtc >= '${nextDayUtc}'`;
   } else {
     filter += ` && startAtUtc >= '${todayUtc}' && startAtUtc < '${nextDayUtc}'`;
   }
   return queryOptions({
     queryKey: matchesKeys.list(tournamentId, tab),
-    queryFn: () =>
-      pb.collection(Collections.Matches).getFullList<MatchesResponse>({
-        filter,
-        sort,
-      }),
+    queryFn: async () => {
+      const matches = pb.collection(Collections.Matches);
+      const options = { filter, sort };
+
+      if (tab === "proximos") {
+        const result = await matches.getList<MatchesResponse>(
+          1,
+          UPCOMING_MATCH_LIMIT,
+          options,
+        );
+        return result.items;
+      }
+
+      return matches.getFullList<MatchesResponse>(options);
+    },
   });
 };
 

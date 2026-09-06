@@ -6,7 +6,7 @@ import { tournamentsQuery } from "@/api/tournaments";
 import { queryClient } from "@/queryClient";
 import TournamentLoading from "@/components/TournamentLoading";
 
-const tournamentId = "izl4jbo5w25yf6b";
+const tournamentId = "t301godsibnxtnj";
 export const Route = createFileRoute("/")({
   component: Home,
   pendingComponent: TournamentLoading,
