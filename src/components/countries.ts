@@ -7,10 +7,25 @@ export const countries: Record<
     iso3: "dza",
     iso2: "dz",
   },
+  Anguilla: {
+    name: "Anguilla",
+    iso3: "aia",
+    iso2: "ai",
+  },
+  "Antigua and Barbuda": {
+    name: "Antigua and Barbuda",
+    iso3: "atg",
+    iso2: "ag",
+  },
   Argentina: {
     name: "Argentina",
     iso3: "arg",
     iso2: "ar",
+  },
+  Aruba: {
+    name: "Aruba",
+    iso3: "abw",
+    iso2: "aw",
   },
   Australia: {
     name: "Australia",
@@ -22,15 +37,40 @@ export const countries: Record<
     iso3: "aut",
     iso2: "at",
   },
+  Bahamas: {
+    name: "Bahamas",
+    iso3: "bhs",
+    iso2: "bs",
+  },
+  Barbados: {
+    name: "Barbados",
+    iso3: "brb",
+    iso2: "bb",
+  },
   Belgium: {
     name: "Belgium",
     iso3: "bel",
     iso2: "be",
   },
+  Belize: {
+    name: "Belize",
+    iso3: "blz",
+    iso2: "bz",
+  },
+  Bermuda: {
+    name: "Bermuda",
+    iso3: "bmu",
+    iso2: "bm",
+  },
   Bolivia: {
     name: "Bolivia",
     iso3: "bol",
     iso2: "bo",
+  },
+  Bonaire: {
+    name: "Bonaire",
+    iso3: "bes",
+    iso2: "bq",
   },
   "Bosnia and Herzegovina": {
     name: "Bosnia and Herzegovina",
@@ -42,6 +82,11 @@ export const countries: Record<
     iso3: "bra",
     iso2: "br",
   },
+  "British Virgin Islands": {
+    name: "British Virgin Islands",
+    iso3: "vgb",
+    iso2: "vg",
+  },
   "Cabo Verde": {
     name: "Cabo Verde",
     iso3: "cpv",
@@ -51,6 +96,11 @@ export const countries: Record<
     name: "Canada",
     iso3: "can",
     iso2: "ca",
+  },
+  "Cayman Islands": {
+    name: "Cayman Islands",
+    iso3: "cym",
+    iso2: "ky",
   },
   Chile: {
     name: "Chile",
@@ -72,12 +122,22 @@ export const countries: Record<
     iso3: "cri",
     iso2: "cr",
   },
+  "Côte d'Ivoire": {
+    name: "Côte d'Ivoire",
+    iso3: "civ",
+    iso2: "ci",
+  },
   Croatia: {
     name: "Croatia",
     iso3: "hrv",
     iso2: "hr",
   },
-  Curaçao: {
+  Cuba: {
+    name: "Cuba",
+    iso3: "cub",
+    iso2: "cu",
+  },
+  "Curaçao": {
     name: "Curaçao",
     iso3: "cuw",
     iso2: "cw",
@@ -87,10 +147,15 @@ export const countries: Record<
     iso3: "cze",
     iso2: "cz",
   },
-  "Côte d'Ivoire": {
-    name: "Côte d'Ivoire",
-    iso3: "civ",
-    iso2: "ci",
+  Dominica: {
+    name: "Dominica",
+    iso3: "dma",
+    iso2: "dm",
+  },
+  "Dominican Republic": {
+    name: "Dominican Republic",
+    iso3: "dom",
+    iso2: "do",
   },
   Ecuador: {
     name: "Ecuador",
@@ -102,6 +167,11 @@ export const countries: Record<
     iso3: "egy",
     iso2: "eg",
   },
+  "El Salvador": {
+    name: "El Salvador",
+    iso3: "slv",
+    iso2: "sv",
+  },
   England: {
     name: "England",
     iso3: "eng",
@@ -111,6 +181,11 @@ export const countries: Record<
     name: "France",
     iso3: "fra",
     iso2: "fr",
+  },
+  "French Guiana": {
+    name: "French Guiana",
+    iso3: "guf",
+    iso2: "gf",
   },
   Germany: {
     name: "Germany",
@@ -122,10 +197,35 @@ export const countries: Record<
     iso3: "gha",
     iso2: "gh",
   },
+  Grenada: {
+    name: "Grenada",
+    iso3: "grd",
+    iso2: "gd",
+  },
+  Guadeloupe: {
+    name: "Guadeloupe",
+    iso3: "glp",
+    iso2: "gp",
+  },
+  Guatemala: {
+    name: "Guatemala",
+    iso3: "gtm",
+    iso2: "gt",
+  },
+  Guyana: {
+    name: "Guyana",
+    iso3: "guy",
+    iso2: "gy",
+  },
   Haiti: {
     name: "Haiti",
     iso3: "hti",
     iso2: "ht",
+  },
+  Honduras: {
+    name: "Honduras",
+    iso3: "hnd",
+    iso2: "hn",
   },
   "IR Iran": {
     name: "IR Iran",
@@ -157,10 +257,20 @@ export const countries: Record<
     iso3: "kor",
     iso2: "kr",
   },
+  Martinique: {
+    name: "Martinique",
+    iso3: "mtq",
+    iso2: "mq",
+  },
   Mexico: {
     name: "Mexico",
     iso3: "mex",
     iso2: "mx",
+  },
+  Montserrat: {
+    name: "Montserrat",
+    iso3: "msr",
+    iso2: "ms",
   },
   Morocco: {
     name: "Morocco",
@@ -176,6 +286,11 @@ export const countries: Record<
     name: "New Zealand",
     iso3: "nzl",
     iso2: "nz",
+  },
+  Nicaragua: {
+    name: "Nicaragua",
+    iso3: "nic",
+    iso2: "ni",
   },
   Norway: {
     name: "Norway",
@@ -202,10 +317,35 @@ export const countries: Record<
     iso3: "prt",
     iso2: "pt",
   },
+  "Puerto Rico": {
+    name: "Puerto Rico",
+    iso3: "pri",
+    iso2: "pr",
+  },
   Qatar: {
     name: "Qatar",
     iso3: "qat",
     iso2: "qa",
+  },
+  "Saint Kitts and Nevis": {
+    name: "Saint Kitts and Nevis",
+    iso3: "kna",
+    iso2: "kn",
+  },
+  "Saint Lucia": {
+    name: "Saint Lucia",
+    iso3: "lca",
+    iso2: "lc",
+  },
+  "Saint Martin": {
+    name: "Saint Martin",
+    iso3: "maf",
+    iso2: "mf",
+  },
+  "Saint Vincent and the Grenadines": {
+    name: "Saint Vincent and the Grenadines",
+    iso3: "vct",
+    iso2: "vc",
   },
   "Saudi Arabia": {
     name: "Saudi Arabia",
@@ -222,6 +362,11 @@ export const countries: Record<
     iso3: "sen",
     iso2: "sn",
   },
+  "Sint Maarten": {
+    name: "Sint Maarten",
+    iso3: "sxm",
+    iso2: "sx",
+  },
   "South Africa": {
     name: "South Africa",
     iso3: "zaf",
@@ -231,6 +376,11 @@ export const countries: Record<
     name: "Spain",
     iso3: "esp",
     iso2: "es",
+  },
+  Suriname: {
+    name: "Suriname",
+    iso3: "sur",
+    iso2: "sr",
   },
   Sweden: {
     name: "Sweden",
@@ -242,22 +392,27 @@ export const countries: Record<
     iso3: "che",
     iso2: "ch",
   },
+  "Trinidad and Tobago": {
+    name: "Trinidad and Tobago",
+    iso3: "tto",
+    iso2: "tt",
+  },
   Tunisia: {
     name: "Tunisia",
     iso3: "tun",
     iso2: "tn",
   },
-  Türkiye: {
+  "Türkiye": {
     name: "Türkiye",
     iso3: "tur",
     iso2: "tr",
   },
-  "United States": {
-    name: "USA",
-    iso3: "usa",
-    iso2: "us",
+  "Turks and Caicos Islands": {
+    name: "Turks and Caicos Islands",
+    iso3: "tca",
+    iso2: "tc",
   },
-  USA: {
+  "United States": {
     name: "USA",
     iso3: "usa",
     iso2: "us",
@@ -266,6 +421,16 @@ export const countries: Record<
     name: "Uruguay",
     iso3: "ury",
     iso2: "uy",
+  },
+  "US Virgin Islands": {
+    name: "US Virgin Islands",
+    iso3: "vir",
+    iso2: "vi",
+  },
+  USA: {
+    name: "USA",
+    iso3: "usa",
+    iso2: "us",
   },
   Uzbekistan: {
     name: "Uzbekistan",
