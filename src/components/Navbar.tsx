@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { usePostHog } from "@posthog/react";
 import { Link } from "@tanstack/react-router";
+import { captureEvent, identifyUser } from "@/analytics";
 import ColorModeSwitcher from "./ColorModeSwitcher";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -33,7 +34,7 @@ export default function Navbar() {
     },
   });
   const flag_showUpdateApp = useFeatFlag("show_update_app");
-  if (user) posthog.identify(user.id);
+  if (user) identifyUser(user.id);
 
   useEffect(() => {
     if (data?.version === undefined) {
@@ -49,7 +50,7 @@ export default function Navbar() {
         title: "Hay una nueva actualizacion",
         confirmButtonText: "Actualizar",
       }).then(() => {
-        posthog.capture("user_reload_page");
+        captureEvent("user_reload_page");
         window.document.location.reload();
       });
     }
@@ -57,7 +58,7 @@ export default function Navbar() {
   }, [data?.version]);
 
   const onLogout = () => {
-    posthog.capture("user_logged_out");
+    captureEvent("user_logged_out");
     posthog.reset();
     pb.authStore.clear();
     localStorage.clear()

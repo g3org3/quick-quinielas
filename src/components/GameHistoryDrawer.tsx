@@ -9,9 +9,9 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { usePostHog } from "@posthog/react";
 import { useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
+import { captureEvent } from "@/analytics";
 import { matchesQuery } from "@/api/matches";
 import Flag from "./Flag";
 
@@ -43,7 +43,6 @@ export default function GameHistoryDrawer({
   country,
   children,
 }: Props) {
-  const posthog = usePostHog();
   const bg = useColorModeValue("white", "gray.800");
   const itemBorder = useColorModeValue("gray.100", "gray.700");
   const handleColor = useColorModeValue("gray.300", "gray.600");
@@ -75,7 +74,7 @@ export default function GameHistoryDrawer({
     <Drawer.Root
       onOpenChange={(isOpen) => {
         setOpen(isOpen);
-        if (isOpen) posthog.capture("open_game_history", { country });
+        if (isOpen) captureEvent("open_game_history", { country });
       }}
     >
       <Drawer.Trigger

@@ -3,6 +3,7 @@ import { usePostHog } from "@posthog/react";
 import toaster from "react-hot-toast";
 
 import { useSetFavoriteTeam } from "@/api/users";
+import { captureEvent } from "@/analytics";
 import CountryDrawer from "@/components/CountryDrawer";
 import FeatFlagComponent from "@/components/FeatFlagComponent";
 import Flag from "@/components/Flag";
@@ -53,7 +54,7 @@ export default function FavoriteTeam({ userId, favoriteTeam }: Props) {
   const setTeam = (team: string) => {
     mutate(team, {
       onSuccess() {
-        posthog.capture("set_favorite_team", { team });
+        captureEvent("set_favorite_team", { team });
         toaster.success(
           team ? "Equipo favorito guardado!" : "Equipo favorito eliminado!"
         );

@@ -1,4 +1,4 @@
-import posthog from "posthog-js";
+import { captureEvent } from "./analytics";
 import { pb } from "./pb";
 
 export const API_REQUEST_COMPLETED_EVENT = "api_request_completed";
@@ -88,11 +88,12 @@ function safeNow(now: () => number): number {
   }
 }
 
-function capturePostHogEvent(
+function captureAnalyticsEvent(
   event: typeof API_REQUEST_COMPLETED_EVENT,
   properties: ApiRequestCompletedProperties
 ): void {
-  posthog.capture(event, properties);
+  // Spread avoids TS2352: interface types lack implicit index signatures.
+  captureEvent(event, { ...properties });
 }
 
 /** Wraps a real network fetch without changing its response or rejection. */
@@ -101,7 +102,7 @@ export function createInstrumentedFetch(
   options: InstrumentedFetchOptions = {}
 ): Fetch {
   const fetchImpl = options.fetchImpl ?? globalThis.fetch.bind(globalThis);
-  const capture = options.capture ?? capturePostHogEvent;
+  const capture = options.capture ?? captureAnalyticsEvent;
   const now = options.now ?? (() => performance.now());
 
   return async (input, init) => {

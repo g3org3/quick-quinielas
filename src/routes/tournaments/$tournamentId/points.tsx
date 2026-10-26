@@ -1,7 +1,7 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { usePostHog } from "@posthog/react";
+import { captureEvent } from "@/analytics";
 import {
   Avatar,
   Box,
@@ -56,7 +56,6 @@ export const Route = createFileRoute("/tournaments/$tournamentId/points")({
 
 function Points() {
   const { tournamentId } = Route.useParams();
-  const posthog = usePostHog();
   const blue = useColorModeValue("blue.100", "blue.800");
   const currentUserInset = useColorModeValue(
     "inset 0 0 0 2px var(--chakra-colors-blue-100)",
@@ -109,7 +108,7 @@ function Points() {
               params={{ tournamentId }}
               variant="secondary"
               onClick={() =>
-                posthog.capture("click_view_awards", {
+                captureEvent("click_view_awards", {
                   tournament_id: tournamentId,
                 })
               }

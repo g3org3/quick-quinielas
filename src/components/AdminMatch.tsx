@@ -16,6 +16,7 @@ import { DateTime } from "luxon";
 import { FaSave } from "react-icons/fa";
 
 import { matchesKeys } from "@/api/matches";
+import { captureEvent } from "@/analytics";
 import Flag from "@/components/Flag";
 import { pb } from "@/pb";
 import {
@@ -53,7 +54,7 @@ export default function AdminMatch({ match, tournamentId }: Props) {
       return pb.collection(Collections.Matches).update(match.id, data);
     },
     onSuccess(_data, score) {
-      posthog.capture("admin_match_score_updated", {
+      captureEvent("admin_match_score_updated", {
         match_id: match.id,
         tournament_id: tournamentId,
         home_team: match.home,
@@ -68,7 +69,7 @@ export default function AdminMatch({ match, tournamentId }: Props) {
       queryClient.invalidateQueries({ queryKey: matchesKeys.all });
     },
     onError(err) {
-      posthog.capture("admin_match_score_update_failed", {
+      captureEvent("admin_match_score_update_failed", {
         match_id: match.id,
         tournament_id: tournamentId,
         home_team: match.home,
@@ -94,7 +95,7 @@ export default function AdminMatch({ match, tournamentId }: Props) {
       !Number.isFinite(homeScore) ||
       !Number.isFinite(awayScore)
     ) {
-      posthog.capture("admin_match_score_update_failed", {
+      captureEvent("admin_match_score_update_failed", {
         match_id: match.id,
         tournament_id: tournamentId,
         home_team: match.home,
