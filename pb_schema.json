@@ -1,973 +1,1296 @@
 [
   {
     "id": "_pb_users_auth_",
-    "name": "users",
-    "type": "auth",
-    "system": false,
-    "schema": [
-      {
-        "system": false,
-        "id": "users_name",
-        "name": "name",
-        "type": "text",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
-      },
-      {
-        "system": false,
-        "id": "users_avatar",
-        "name": "avatar",
-        "type": "file",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "mimeTypes": [
-            "image/jpeg",
-            "image/png",
-            "image/svg+xml",
-            "image/gif",
-            "image/webp"
-          ],
-          "thumbs": null,
-          "maxSelect": 1,
-          "maxSize": 5242880,
-          "protected": false
-        }
-      },
-      {
-        "system": false,
-        "id": "1goa5bvt",
-        "name": "img",
-        "type": "url",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "exceptDomains": null,
-          "onlyDomains": null
-        }
-      },
-      {
-        "system": false,
-        "id": "bmsfn1ws",
-        "name": "isAdmin",
-        "type": "bool",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {}
-      },
-      {
-        "system": false,
-        "id": "v7abihrf",
-        "name": "phone",
-        "type": "number",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "noDecimal": false
-        }
-      },
-      {
-        "system": false,
-        "id": "hehpqbae",
-        "name": "tags",
-        "type": "select",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSelect": 5,
-          "values": [
-            "Gonzalez",
-            "Caravantes",
-            "Primos",
-            "Mendia",
-            "Rodas"
-          ]
-        }
-      },
-      {
-        "system": false,
-        "id": "skmpugjb",
-        "name": "ignore",
-        "type": "bool",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {}
-      },
-      {
-        "system": false,
-        "id": "vm4kzhl4",
-        "name": "favorite_team",
-        "type": "text",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
-      }
-    ],
-    "indexes": [],
     "listRule": "@request.auth.id != \"\"",
     "viewRule": "@request.auth.id != \"\"",
     "createRule": "@request.auth.id != \"\"",
     "updateRule": "id = @request.auth.id",
     "deleteRule": "id = @request.auth.id",
-    "options": {
-      "allowEmailAuth": true,
-      "allowOAuth2Auth": true,
-      "allowUsernameAuth": true,
-      "exceptEmailDomains": null,
-      "manageRule": null,
-      "minPasswordLength": 8,
-      "onlyEmailDomains": null,
-      "onlyVerified": false,
-      "requireEmail": false
+    "name": "users",
+    "type": "auth",
+    "fields": [
+      {
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "help": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "cost": 10,
+        "help": "",
+        "hidden": true,
+        "id": "password901924565",
+        "max": 0,
+        "min": 8,
+        "name": "password",
+        "pattern": "",
+        "presentable": false,
+        "required": true,
+        "system": true,
+        "type": "password"
+      },
+      {
+        "autogeneratePattern": "[a-zA-Z0-9_]{50}",
+        "help": "",
+        "hidden": true,
+        "id": "text2504183744",
+        "max": 60,
+        "min": 30,
+        "name": "tokenKey",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "exceptDomains": [],
+        "help": "",
+        "hidden": false,
+        "id": "email3885137012",
+        "name": "email",
+        "onlyDomains": [],
+        "presentable": false,
+        "required": false,
+        "system": true,
+        "type": "email"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "bool1547992806",
+        "name": "emailVisibility",
+        "presentable": false,
+        "required": false,
+        "system": true,
+        "type": "bool"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "bool256245529",
+        "name": "verified",
+        "presentable": false,
+        "required": false,
+        "system": true,
+        "type": "bool"
+      },
+      {
+        "autogeneratePattern": "users[0-9]{6}",
+        "help": "",
+        "hidden": false,
+        "id": "text4166911607",
+        "max": 150,
+        "min": 3,
+        "name": "username",
+        "pattern": "^[\\w][\\w\\.\\-]*$",
+        "presentable": false,
+        "primaryKey": false,
+        "required": true,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "help": "",
+        "hidden": false,
+        "id": "users_name",
+        "max": 0,
+        "min": 0,
+        "name": "name",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "users_avatar",
+        "maxSelect": 1,
+        "maxSize": 5242880,
+        "mimeTypes": [
+          "image/jpeg",
+          "image/png",
+          "image/svg+xml",
+          "image/gif",
+          "image/webp"
+        ],
+        "name": "avatar",
+        "presentable": false,
+        "protected": false,
+        "required": false,
+        "system": false,
+        "thumbs": [],
+        "type": "file"
+      },
+      {
+        "exceptDomains": [],
+        "help": "",
+        "hidden": false,
+        "id": "1goa5bvt",
+        "name": "img",
+        "onlyDomains": [],
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "url"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "bmsfn1ws",
+        "name": "isAdmin",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "v7abihrf",
+        "max": null,
+        "min": null,
+        "name": "phone",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "hehpqbae",
+        "maxSelect": 5,
+        "name": "tags",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "select",
+        "values": [
+          "Gonzalez",
+          "Caravantes",
+          "Primos",
+          "Mendia",
+          "Rodas"
+        ]
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "skmpugjb",
+        "name": "ignore",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "autogeneratePattern": "",
+        "help": "",
+        "hidden": false,
+        "id": "vm4kzhl4",
+        "max": 0,
+        "min": 0,
+        "name": "favorite_team",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "autodate2990389176",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate3332085495",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      }
+    ],
+    "indexes": [
+      "CREATE UNIQUE INDEX `__pb_users_auth__username_idx` ON `users` (username COLLATE NOCASE)",
+      "CREATE UNIQUE INDEX `__pb_users_auth__email_idx` ON `users` (`email`) WHERE `email` != ''",
+      "CREATE UNIQUE INDEX `__pb_users_auth__tokenKey_idx` ON `users` (`tokenKey`)"
+    ],
+    "system": false,
+    "authRule": "",
+    "manageRule": null,
+    "authAlert": {
+      "enabled": true,
+      "emailTemplate": {
+        "subject": "Login from a new location",
+        "body": "<p>Hello,</p>\n<p>We noticed a login to your {APP_NAME} account from a new location:</p>\n<p><em>{ALERT_INFO}</em></p>\n<p><strong>If this wasn't you, you should immediately change your {APP_NAME} account password to revoke access from all other locations.</strong></p>\n<p>If this was you, you may disregard this email.</p>\n<p>\n  Thanks,<br/>\n  {APP_NAME} team\n</p>"
+      }
+    },
+    "oauth2": {
+      "mappedFields": {
+        "id": "",
+        "name": "",
+        "username": "username",
+        "avatarURL": ""
+      },
+      "enabled": true
+    },
+    "passwordAuth": {
+      "enabled": true,
+      "identityFields": [
+        "email",
+        "username"
+      ]
+    },
+    "mfa": {
+      "enabled": false,
+      "duration": 600,
+      "rule": ""
+    },
+    "otp": {
+      "enabled": false,
+      "duration": 180,
+      "length": 8,
+      "emailTemplate": {
+        "subject": "OTP for {APP_NAME}",
+        "body": "<p>Hello,</p>\n<p>Your one-time password is: <strong>{OTP}</strong></p>\n<p><i>If you didn't ask for the one-time password, you can ignore this email.</i></p>\n<p>\n  Thanks,<br/>\n  {APP_NAME} team\n</p>"
+      }
+    },
+    "authToken": {
+      "duration": 1209600
+    },
+    "passwordResetToken": {
+      "duration": 1800
+    },
+    "emailChangeToken": {
+      "duration": 1800
+    },
+    "verificationToken": {
+      "duration": 604800
+    },
+    "fileToken": {
+      "duration": 120
+    },
+    "verificationTemplate": {
+      "subject": "Verify your {APP_NAME} email",
+      "body": "<p>Hello,</p>\n<p>Thank you for joining us at {APP_NAME}.</p>\n<p>Click on the button below to verify your email address.</p>\n<p>\n  <a class=\"btn\" href=\"{APP_URL}/_/#/auth/confirm-verification/{TOKEN}\" target=\"_blank\" rel=\"noopener\">Verify</a>\n</p>\n<p>\n  Thanks,<br/>\n  {APP_NAME} team\n</p>"
+    },
+    "resetPasswordTemplate": {
+      "subject": "Reset your {APP_NAME} password",
+      "body": "<p>Hello,</p>\n<p>Click on the button below to reset your password.</p>\n<p>\n  <a class=\"btn\" href=\"{APP_URL}/_/#/auth/confirm-password-reset/{TOKEN}\" target=\"_blank\" rel=\"noopener\">Reset password</a>\n</p>\n<p><i>If you didn't ask to reset your password, you can ignore this email.</i></p>\n<p>\n  Thanks,<br/>\n  {APP_NAME} team\n</p>"
+    },
+    "confirmEmailChangeTemplate": {
+      "subject": "Confirm your {APP_NAME} new email address",
+      "body": "<p>Hello,</p>\n<p>Click on the button below to confirm your new email address.</p>\n<p>\n  <a class=\"btn\" href=\"{APP_URL}/_/#/auth/confirm-email-change/{TOKEN}\" target=\"_blank\" rel=\"noopener\">Confirm new email</a>\n</p>\n<p><i>If you didn't ask to change your email address, you can ignore this email.</i></p>\n<p>\n  Thanks,<br/>\n  {APP_NAME} team\n</p>"
     }
   },
   {
     "id": "jfp6wiophk2o29j",
-    "name": "flags",
-    "type": "base",
-    "system": false,
-    "schema": [
-      {
-        "system": false,
-        "id": "k4azniyy",
-        "name": "feature",
-        "type": "text",
-        "required": true,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
-      },
-      {
-        "system": false,
-        "id": "7w0pg1ow",
-        "name": "isActive",
-        "type": "bool",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {}
-      }
-    ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_vjtWD3K` ON `flags` (`feature`)"
-    ],
     "listRule": "",
     "viewRule": "",
     "createRule": "",
     "updateRule": "",
     "deleteRule": "",
-    "options": {}
+    "name": "flags",
+    "type": "base",
+    "fields": [
+      {
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "help": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "help": "",
+        "hidden": false,
+        "id": "k4azniyy",
+        "max": 0,
+        "min": 0,
+        "name": "feature",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": true,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "7w0pg1ow",
+        "name": "isActive",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "hidden": false,
+        "id": "autodate2990389176",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate3332085495",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      }
+    ],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_vjtWD3K` ON `flags` (`feature`)"
+    ],
+    "system": false
   },
   {
     "id": "v4sce7qii76p0jl",
-    "name": "matches",
-    "type": "base",
-    "system": false,
-    "schema": [
-      {
-        "system": false,
-        "id": "zvzvb9hz",
-        "name": "home",
-        "type": "text",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
-      },
-      {
-        "system": false,
-        "id": "qx0lnwam",
-        "name": "away",
-        "type": "text",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
-      },
-      {
-        "system": false,
-        "id": "fmirfyce",
-        "name": "homeScore",
-        "type": "number",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "noDecimal": false
-        }
-      },
-      {
-        "system": false,
-        "id": "olfvzkob",
-        "name": "awayScore",
-        "type": "number",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "noDecimal": false
-        }
-      },
-      {
-        "system": false,
-        "id": "ffulilsq",
-        "name": "tournament",
-        "type": "relation",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "a8upuky9dg8vff5",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "pzght9k0",
-        "name": "startAtUtc",
-        "type": "date",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": "",
-          "max": ""
-        }
-      },
-      {
-        "system": false,
-        "id": "nhqvahqs",
-        "name": "matchNumber",
-        "type": "number",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "noDecimal": false
-        }
-      },
-      {
-        "system": false,
-        "id": "d5autnqk",
-        "name": "roundNumber",
-        "type": "number",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "noDecimal": false
-        }
-      },
-      {
-        "system": false,
-        "id": "q8o5enyk",
-        "name": "location",
-        "type": "text",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
-      },
-      {
-        "system": false,
-        "id": "sazkqq5m",
-        "name": "enableBonus",
-        "type": "bool",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {}
-      },
-      {
-        "system": false,
-        "id": "jcanlr92",
-        "name": "first_goal",
-        "type": "select",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "values": [
-            "primer_tiempo",
-            "segundo_tiempo",
-            "tiempo_extra"
-          ]
-        }
-      },
-      {
-        "system": false,
-        "id": "f31ig3fd",
-        "name": "first_goal_from",
-        "type": "select",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "values": [
-            "home",
-            "away"
-          ]
-        }
-      },
-      {
-        "system": false,
-        "id": "za3ri8aq",
-        "name": "group",
-        "type": "text",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
-      },
-      {
-        "system": false,
-        "id": "ekmpyc9y",
-        "name": "penalty_winner",
-        "type": "select",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "values": [
-            "home",
-            "away"
-          ]
-        }
-      }
-    ],
-    "indexes": [],
     "listRule": "",
     "viewRule": "@request.auth.id != \"\"",
     "createRule": "",
     "updateRule": "",
     "deleteRule": null,
-    "options": {}
-  },
-  {
-    "id": "d3f6aq6gcuo403s",
-    "name": "predictions",
+    "name": "matches",
     "type": "base",
-    "system": false,
-    "schema": [
+    "fields": [
       {
-        "system": false,
-        "id": "xv8sfolv",
-        "name": "user",
-        "type": "relation",
-        "required": false,
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "help": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
         "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "_pb_users_auth_",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
       },
       {
+        "autogeneratePattern": "",
+        "help": "",
+        "hidden": false,
+        "id": "zvzvb9hz",
+        "max": 0,
+        "min": 0,
+        "name": "home",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
         "system": false,
-        "id": "oroqwfsd",
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "help": "",
+        "hidden": false,
+        "id": "qx0lnwam",
+        "max": 0,
+        "min": 0,
+        "name": "away",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "fmirfyce",
+        "max": null,
+        "min": null,
         "name": "homeScore",
-        "type": "number",
-        "required": false,
+        "onlyInt": false,
         "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "noDecimal": false
-        }
+        "required": false,
+        "system": false,
+        "type": "number"
       },
       {
-        "system": false,
-        "id": "8bxcke9m",
+        "help": "",
+        "hidden": false,
+        "id": "olfvzkob",
+        "max": null,
+        "min": null,
         "name": "awayScore",
-        "type": "number",
-        "required": false,
+        "onlyInt": false,
         "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "noDecimal": false
-        }
+        "required": false,
+        "system": false,
+        "type": "number"
       },
       {
-        "system": false,
-        "id": "klnh6pdk",
-        "name": "match",
-        "type": "relation",
-        "required": false,
+        "cascadeDelete": false,
+        "collectionId": "a8upuky9dg8vff5",
+        "help": "",
+        "hidden": false,
+        "id": "ffulilsq",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "tournament",
         "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "v4sce7qii76p0jl",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
+        "required": false,
+        "system": false,
+        "type": "relation"
       },
       {
-        "system": false,
-        "id": "6qg5p6rn",
-        "name": "isBonusActive",
-        "type": "bool",
-        "required": false,
+        "help": "",
+        "hidden": false,
+        "id": "pzght9k0",
+        "max": "",
+        "min": "",
+        "name": "startAtUtc",
         "presentable": false,
-        "unique": false,
-        "options": {}
+        "required": false,
+        "system": false,
+        "type": "date"
       },
       {
+        "help": "",
+        "hidden": false,
+        "id": "nhqvahqs",
+        "max": null,
+        "min": null,
+        "name": "matchNumber",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
         "system": false,
-        "id": "tfaoit56",
+        "type": "number"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "d5autnqk",
+        "max": null,
+        "min": null,
+        "name": "roundNumber",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "autogeneratePattern": "",
+        "help": "",
+        "hidden": false,
+        "id": "q8o5enyk",
+        "max": 0,
+        "min": 0,
+        "name": "location",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "sazkqq5m",
+        "name": "enableBonus",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "jcanlr92",
+        "maxSelect": 1,
         "name": "first_goal",
-        "type": "select",
-        "required": false,
         "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "values": [
-            "primer_tiempo",
-            "segundo_tiempo",
-            "tiempo_extra"
-          ]
-        }
+        "required": false,
+        "system": false,
+        "type": "select",
+        "values": [
+          "primer_tiempo",
+          "segundo_tiempo",
+          "tiempo_extra"
+        ]
       },
       {
-        "system": false,
-        "id": "jur3dsr3",
+        "help": "",
+        "hidden": false,
+        "id": "f31ig3fd",
+        "maxSelect": 1,
         "name": "first_goal_from",
-        "type": "select",
-        "required": false,
         "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "values": [
-            "home",
-            "away"
-          ]
-        }
+        "required": false,
+        "system": false,
+        "type": "select",
+        "values": [
+          "home",
+          "away"
+        ]
       },
       {
-        "system": false,
-        "id": "qaobugaw",
-        "name": "penalty_winner",
-        "type": "select",
-        "required": false,
+        "autogeneratePattern": "",
+        "help": "",
+        "hidden": false,
+        "id": "za3ri8aq",
+        "max": 0,
+        "min": 0,
+        "name": "group",
+        "pattern": "",
         "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "values": [
-            "home",
-            "away"
-          ]
-        }
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "ekmpyc9y",
+        "maxSelect": 1,
+        "name": "penalty_winner",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "select",
+        "values": [
+          "home",
+          "away"
+        ]
+      },
+      {
+        "hidden": false,
+        "id": "autodate2990389176",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate3332085495",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
       }
     ],
     "indexes": [
-      "CREATE UNIQUE INDEX `idx_Yevu50Q` ON `predictions` (\n  `user`,\n  `match`\n)"
+      "CREATE UNIQUE INDEX `idx_bl9Igf2` ON `matches` (\n  `tournament`,\n  `matchNumber`\n)"
     ],
+    "system": false
+  },
+  {
+    "id": "d3f6aq6gcuo403s",
     "listRule": "@request.auth.id != \"\"",
     "viewRule": "@request.auth.id != \"\"",
     "createRule": "user.id = @request.auth.id && match.startAtUtc > @now",
     "updateRule": "user.id = @request.auth.id && match.startAtUtc > @now",
     "deleteRule": "@request.auth.id != \"\"",
-    "options": {}
+    "name": "predictions",
+    "type": "base",
+    "fields": [
+      {
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "help": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "_pb_users_auth_",
+        "help": "",
+        "hidden": false,
+        "id": "xv8sfolv",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "user",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "oroqwfsd",
+        "max": null,
+        "min": null,
+        "name": "homeScore",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "8bxcke9m",
+        "max": null,
+        "min": null,
+        "name": "awayScore",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "v4sce7qii76p0jl",
+        "help": "",
+        "hidden": false,
+        "id": "klnh6pdk",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "match",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "6qg5p6rn",
+        "name": "isBonusActive",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "tfaoit56",
+        "maxSelect": 1,
+        "name": "first_goal",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "select",
+        "values": [
+          "primer_tiempo",
+          "segundo_tiempo",
+          "tiempo_extra"
+        ]
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "jur3dsr3",
+        "maxSelect": 1,
+        "name": "first_goal_from",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "select",
+        "values": [
+          "home",
+          "away"
+        ]
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "qaobugaw",
+        "maxSelect": 1,
+        "name": "penalty_winner",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "select",
+        "values": [
+          "home",
+          "away"
+        ]
+      },
+      {
+        "hidden": false,
+        "id": "autodate2990389176",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate3332085495",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      }
+    ],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_Yevu50Q` ON `predictions` (\n  `user`,\n  `match`\n)"
+    ],
+    "system": false
   },
   {
     "id": "a8upuky9dg8vff5",
-    "name": "tournaments",
-    "type": "base",
-    "system": false,
-    "schema": [
-      {
-        "system": false,
-        "id": "cnahi4pj",
-        "name": "name",
-        "type": "text",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
-      },
-      {
-        "system": false,
-        "id": "e8cqvyow",
-        "name": "logo",
-        "type": "url",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "exceptDomains": null,
-          "onlyDomains": null
-        }
-      },
-      {
-        "system": false,
-        "id": "mhk1vptw",
-        "name": "is_open",
-        "type": "bool",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {}
-      }
-    ],
-    "indexes": [],
     "listRule": "@request.auth.id != \"\"",
     "viewRule": "@request.auth.id != \"\"",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
-    "options": {}
+    "name": "tournaments",
+    "type": "base",
+    "fields": [
+      {
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "help": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "help": "",
+        "hidden": false,
+        "id": "cnahi4pj",
+        "max": 0,
+        "min": 0,
+        "name": "name",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "exceptDomains": [],
+        "help": "",
+        "hidden": false,
+        "id": "e8cqvyow",
+        "name": "logo",
+        "onlyDomains": [],
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "url"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "crlgwdun",
+        "maxSelect": 1,
+        "name": "status",
+        "presentable": false,
+        "required": true,
+        "system": false,
+        "type": "select",
+        "values": [
+          "open",
+          "started",
+          "done",
+          "closed"
+        ]
+      },
+      {
+        "hidden": false,
+        "id": "autodate2990389176",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate3332085495",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      }
+    ],
+    "indexes": [],
+    "system": false
   },
   {
     "id": "5476fyxq5feicy1",
-    "name": "awards",
-    "type": "view",
-    "system": false,
-    "schema": [
-      {
-        "system": false,
-        "id": "4akhcaql",
-        "name": "user_id",
-        "type": "relation",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "_pb_users_auth_",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "mli9sjgf",
-        "name": "tournament",
-        "type": "relation",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "a8upuky9dg8vff5",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "kigwblmu",
-        "name": "exact_score",
-        "type": "json",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 1
-        }
-      },
-      {
-        "system": false,
-        "id": "uoj79ook",
-        "name": "correct_result",
-        "type": "json",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 1
-        }
-      },
-      {
-        "system": false,
-        "id": "iny37log",
-        "name": "correct_first_goal",
-        "type": "json",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 1
-        }
-      },
-      {
-        "system": false,
-        "id": "bztspavp",
-        "name": "correct_first_goal_from",
-        "type": "json",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 1
-        }
-      },
-      {
-        "system": false,
-        "id": "q0m2xgmq",
-        "name": "correct_penalty_winner",
-        "type": "json",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 1
-        }
-      }
-    ],
-    "indexes": [],
-    "listRule": "@request.auth.id != \"\"",
-    "viewRule": "@request.auth.id != \"\"",
+    "listRule": "",
+    "viewRule": "",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
-    "options": {
-      "query": "SELECT \n (ROW_NUMBER() OVER()) as id,\n r.user_id,\n m.tournament,\n sum(\n  case\n    when r.exact_score then 1\n    else 0\n   end\n  ) as exact_score,\n  sum(\n  case\n    when r.correct_result then 1\n    else 0\n   end\n  ) as correct_result,\n  sum(\n  case\n    when r.correct_first_goal then 1\n    else 0\n   end\n  ) as correct_first_goal,\n  sum(\n  case\n    when r.correct_first_goal_from then 1\n    else 0\n   end\n  ) as correct_first_goal_from,\n  sum(\n  case\n    when r.correct_penalty_winner then 1\n    else 0\n   end\n  ) as correct_penalty_winner\nFROM results r\nJOIN matches m on m.id = r.match_id\nGROUP BY r.user_id, m.tournament"
-    }
+    "name": "awards",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "help": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "_pb_users_auth_",
+        "help": "",
+        "hidden": false,
+        "id": "_clone_nUwD",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "user_id",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "a8upuky9dg8vff5",
+        "help": "",
+        "hidden": false,
+        "id": "_clone_1GkO",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "tournament",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "json2879582739",
+        "maxSize": 1,
+        "name": "exact_score",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "json"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "json1806974166",
+        "maxSize": 1,
+        "name": "correct_result",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "json"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "json3066346290",
+        "maxSize": 1,
+        "name": "correct_first_goal",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "json"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "json3516187828",
+        "maxSize": 1,
+        "name": "correct_first_goal_from",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "json"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "json325727573",
+        "maxSize": 1,
+        "name": "correct_penalty_winner",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "json"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "SELECT \n (ROW_NUMBER() OVER()) as id,\n r.user_id,\n m.tournament,\n sum(\n  case\n    when r.exact_score then 1\n    else 0\n   end\n  ) as exact_score,\n  sum(\n  case\n    when r.correct_result then 1\n    else 0\n   end\n  ) as correct_result,\n  sum(\n  case\n    when r.correct_first_goal then 1\n    else 0\n   end\n  ) as correct_first_goal,\n  sum(\n  case\n    when r.correct_first_goal_from then 1\n    else 0\n   end\n  ) as correct_first_goal_from,\n  sum(\n  case\n    when r.correct_penalty_winner then 1\n    else 0\n   end\n  ) as correct_penalty_winner\nFROM results r\nJOIN matches m on m.id = r.match_id\nGROUP BY r.user_id, m.tournament"
   },
   {
     "id": "fws82vvwsfzvzn7",
-    "name": "leaderboard",
-    "type": "view",
-    "system": false,
-    "schema": [
-      {
-        "system": false,
-        "id": "xqpujthf",
-        "name": "user_id",
-        "type": "relation",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "_pb_users_auth_",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "mwvlnku2",
-        "name": "tournament_id",
-        "type": "relation",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "a8upuky9dg8vff5",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "7snd8meb",
-        "name": "points",
-        "type": "number",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "noDecimal": false
-        }
-      }
-    ],
-    "indexes": [],
     "listRule": "@request.auth.id != \"\"",
     "viewRule": "@request.auth.id != \"\"",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
-    "options": {
-      "query": "select \n  concat(r.tournament_id, '_', r.user_id) as id,\n  r.user_id,\n  r.tournament_id,\n  cast(sum(points) as int) as points\nfrom users u\ninner join results r on r.user_id = u.id\n  where u.ignore != true\ngroup by r.user_id, r.tournament_id"
-    }
+    "name": "leaderboard",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "help": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "_pb_users_auth_",
+        "help": "",
+        "hidden": false,
+        "id": "_clone_cfry",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "user_id",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "a8upuky9dg8vff5",
+        "help": "",
+        "hidden": false,
+        "id": "_clone_7tIw",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "tournament_id",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "number666537513",
+        "max": null,
+        "min": null,
+        "name": "points",
+        "onlyInt": true,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "select \n  concat(r.tournament_id, '_', r.user_id) as id,\n  r.user_id,\n  r.tournament_id,\n  cast(sum(points) as int) as points\nfrom users u\ninner join results r on r.user_id = u.id\n  where u.ignore != true\ngroup by r.user_id, r.tournament_id"
   },
   {
     "id": "qr9m2vgd484a9or",
-    "name": "match_bets",
-    "type": "view",
-    "system": false,
-    "schema": [
-      {
-        "system": false,
-        "id": "obufx3oy",
-        "name": "match_id",
-        "type": "relation",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "v4sce7qii76p0jl",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "sudoqmtr",
-        "name": "home_per",
-        "type": "json",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 1
-        }
-      },
-      {
-        "system": false,
-        "id": "rffujmdu",
-        "name": "away_per",
-        "type": "json",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 1
-        }
-      },
-      {
-        "system": false,
-        "id": "eoob13y9",
-        "name": "tie_per",
-        "type": "json",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 1
-        }
-      }
-    ],
-    "indexes": [],
     "listRule": "@request.auth.id != \"\"",
     "viewRule": null,
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
-    "options": {
-      "query": "select \n  r.match as id,\n  r.match as match_id,\n  sum(case \n    when r.homeScore > r.awayScore  then 1\n    else 0\n    end\n  ) as home_per,\n  sum(case \n    when r.homeScore < r.awayScore  then 1\n    else 0\n    end\n  ) as away_per,\n  sum(case \n    when r.homeScore = r.awayScore  then 1\n    else 0\n    end\n  ) as tie_per\nfrom predictions r\ngroup by r.match"
-    }
+    "name": "match_bets",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "help": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "v4sce7qii76p0jl",
+        "help": "",
+        "hidden": false,
+        "id": "_clone_ciBC",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "match_id",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "json2675197060",
+        "maxSize": 1,
+        "name": "home_per",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "json"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "json114833406",
+        "maxSize": 1,
+        "name": "away_per",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "json"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "json2591847871",
+        "maxSize": 1,
+        "name": "tie_per",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "json"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "select \n  r.match as id,\n  r.match as match_id,\n  sum(case \n    when r.homeScore > r.awayScore  then 1\n    else 0\n    end\n  ) as home_per,\n  sum(case \n    when r.homeScore < r.awayScore  then 1\n    else 0\n    end\n  ) as away_per,\n  sum(case \n    when r.homeScore = r.awayScore  then 1\n    else 0\n    end\n  ) as tie_per\nfrom predictions r\ngroup by r.match"
   },
   {
     "id": "aerykh5cycey5eq",
-    "name": "results",
-    "type": "view",
-    "system": false,
-    "schema": [
-      {
-        "system": false,
-        "id": "sbd8bj0s",
-        "name": "prediction_id",
-        "type": "relation",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "d3f6aq6gcuo403s",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "8vhzyzjv",
-        "name": "tournament_id",
-        "type": "relation",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "a8upuky9dg8vff5",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "xcxhgmrf",
-        "name": "match_id",
-        "type": "relation",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "v4sce7qii76p0jl",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "bnjnfnyp",
-        "name": "user_id",
-        "type": "relation",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "_pb_users_auth_",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "mshntjdr",
-        "name": "points",
-        "type": "number",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "noDecimal": false
-        }
-      },
-      {
-        "system": false,
-        "id": "xkgtjqsc",
-        "name": "exact_score",
-        "type": "bool",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {}
-      },
-      {
-        "system": false,
-        "id": "bp1lmzfk",
-        "name": "correct_result",
-        "type": "bool",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {}
-      },
-      {
-        "system": false,
-        "id": "etot1yay",
-        "name": "correct_first_goal",
-        "type": "bool",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {}
-      },
-      {
-        "system": false,
-        "id": "vs89cviw",
-        "name": "correct_first_goal_from",
-        "type": "bool",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {}
-      },
-      {
-        "system": false,
-        "id": "3c1qvolv",
-        "name": "correct_penalty_winner",
-        "type": "bool",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {}
-      }
-    ],
-    "indexes": [],
     "listRule": "@request.auth.id != \"\"",
     "viewRule": null,
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
-    "options": {
-      "query": "WITH scored AS (\n    SELECT\n      p.id AS prediction_id,\n      p.homeScore = m.homeScore\n        AND p.awayScore = m.awayScore AS exact_score,\n\n      (\n        (p.homeScore > p.awayScore AND m.homeScore > m.awayScore) OR\n        (p.homeScore < p.awayScore AND m.homeScore < m.awayScore) OR\n        (p.homeScore = p.awayScore AND m.homeScore = m.awayScore)\n      ) AS correct_result,\n\n      m.first_goal != ''\n        AND m.first_goal = p.first_goal AS correct_first_goal,\n\n      m.first_goal_from  != ''\n        AND m.first_goal_from = p.first_goal_from AS correct_first_goal_from,\n\n      m.penalty_winner != ''\n        AND m.penalty_winner = p.penalty_winner as correct_penalty_winner\n\n    FROM predictions p\n    JOIN matches m ON m.id = p.match\n    WHERE m.startAtUtc < datetime()\n  ),\n\n  points AS (\n    SELECT\n      *,\n      (\n        CASE\n          WHEN exact_score THEN 3\n          WHEN correct_result THEN 1\n          ELSE 0\n        END\n        +\n        CASE WHEN correct_first_goal THEN 1 ELSE 0 END\n        +\n        CASE WHEN correct_first_goal_from THEN 1 ELSE 0 END\n        +\n        CASE WHEN correct_penalty_winner THEN 1 ELSE 0 END\n      ) AS base_points\n    FROM scored\n  )\n\nSELECT\n    (row_number() OVER ()) AS id,\n    p.id as prediction_id,\n    m.tournament as tournament_id,\n    m.id AS match_id,\n   p.user as user_id,\n    cast((base_points * CASE WHEN isBonusActive THEN 2 ELSE 1 END) as int) AS points,\n    cast(pp.exact_score = 1 as bool) as exact_score,\n    cast(pp.correct_result = 1 as bool) as correct_result,\n    cast(pp.correct_first_goal = 1 as bool) as correct_first_goal,\n    cast(pp.correct_first_goal_from = 1 as bool) as correct_first_goal_from,\n    cast(pp.correct_penalty_winner=1 as bool) as correct_penalty_winner\nFROM points pp\nJOIN predictions p on p.id = pp.prediction_id\nJOIN matches m ON m.id = p.match"
-    }
+    "name": "results",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "help": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "d3f6aq6gcuo403s",
+        "help": "",
+        "hidden": false,
+        "id": "relation1151204766",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "prediction_id",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "a8upuky9dg8vff5",
+        "help": "",
+        "hidden": false,
+        "id": "_clone_LDHM",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "tournament_id",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "v4sce7qii76p0jl",
+        "help": "",
+        "hidden": false,
+        "id": "relation717139158",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "match_id",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "_pb_users_auth_",
+        "help": "",
+        "hidden": false,
+        "id": "_clone_l2zQ",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "user_id",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "number666537513",
+        "max": null,
+        "min": null,
+        "name": "points",
+        "onlyInt": true,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "bool2879582739",
+        "name": "exact_score",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "bool1806974166",
+        "name": "correct_result",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "bool3066346290",
+        "name": "correct_first_goal",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "bool3516187828",
+        "name": "correct_first_goal_from",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      },
+      {
+        "help": "",
+        "hidden": false,
+        "id": "bool325727573",
+        "name": "correct_penalty_winner",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "bool"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "WITH scored AS (\n    SELECT\n      p.id AS prediction_id,\n      p.homeScore = m.homeScore\n        AND p.awayScore = m.awayScore AS exact_score,\n\n      (\n        (p.homeScore > p.awayScore AND m.homeScore > m.awayScore) OR\n        (p.homeScore < p.awayScore AND m.homeScore < m.awayScore) OR\n        (p.homeScore = p.awayScore AND m.homeScore = m.awayScore)\n      ) AS correct_result,\n\n      m.first_goal != ''\n        AND m.first_goal = p.first_goal AS correct_first_goal,\n\n      m.first_goal_from  != ''\n        AND m.first_goal_from = p.first_goal_from AS correct_first_goal_from,\n\n      m.penalty_winner != ''\n        AND m.penalty_winner = p.penalty_winner as correct_penalty_winner\n\n    FROM predictions p\n    JOIN matches m ON m.id = p.match\n    WHERE m.startAtUtc < datetime()\n  ),\n\n  points AS (\n    SELECT\n      *,\n      (\n        CASE\n          WHEN exact_score THEN 3\n          WHEN correct_result THEN 1\n          ELSE 0\n        END\n        +\n        CASE WHEN correct_first_goal THEN 1 ELSE 0 END\n        +\n        CASE WHEN correct_first_goal_from THEN 1 ELSE 0 END\n        +\n        CASE WHEN correct_penalty_winner THEN 1 ELSE 0 END\n      ) AS base_points\n    FROM scored\n  )\n\nSELECT\n    (row_number() OVER ()) AS id,\n    p.id as prediction_id,\n    m.tournament as tournament_id,\n    m.id AS match_id,\n   p.user as user_id,\n    cast((base_points * CASE WHEN isBonusActive THEN 2 ELSE 1 END) as int) AS points,\n    cast(pp.exact_score = 1 as bool) as exact_score,\n    cast(pp.correct_result = 1 as bool) as correct_result,\n    cast(pp.correct_first_goal = 1 as bool) as correct_first_goal,\n    cast(pp.correct_first_goal_from = 1 as bool) as correct_first_goal_from,\n    cast(pp.correct_penalty_winner=1 as bool) as correct_penalty_winner\nFROM points pp\nJOIN predictions p on p.id = pp.prediction_id\nJOIN matches m ON m.id = p.match"
   }
 ]

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:functions": "netlify functions:serve",
+    "types:check": "tsc",
     "build": "tsc && vite build",
     "posthog:sourcemaps": "posthog-cli --host https://eu.i.posthog.com sourcemap inject --directory ./dist/assets && posthog-cli --host https://eu.i.posthog.com sourcemap upload --directory ./dist/assets --release-name quick-quinielas --delete-after",
     "build:netlify": "pnpm build && pnpm posthog:sourcemaps",
@@ -31,8 +32,8 @@
     "framer-motion": "^11.2.11",
     "luxon": "^3.4.4",
     "netlify-cli": "^26.1.0",
-    "pocketbase": "^0.21.3",
-    "pocketbase-typegen": "1.2.1",
+    "pocketbase": "^0.21.5",
+    "pocketbase-typegen": "^1.5.0",
     "posthog-js": "^1.382.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
