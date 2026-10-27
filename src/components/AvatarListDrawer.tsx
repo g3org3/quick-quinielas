@@ -9,9 +9,9 @@ import {
   DarkMode,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { usePostHog } from "@posthog/react";
 import { DateTime } from "luxon";
 
+import { captureEvent } from "@/analytics";
 import Flag from "@/components/Flag";
 import { BonusBadge } from "@/components/BonusBadge";
 
@@ -31,7 +31,6 @@ interface Props {
 
 export default function AvatarListDrawer(props: Props) {
   const { users, max, onDark } = props;
-  const posthog = usePostHog();
   const bg = useColorModeValue("white", "gray.800");
   const itemBorder = useColorModeValue("gray.100", "gray.700");
   const handleColor = useColorModeValue("gray.300", "gray.600");
@@ -52,7 +51,7 @@ export default function AvatarListDrawer(props: Props) {
   return (
     <Drawer.Root
       onOpenChange={(open) => {
-        if (open) posthog.capture("open_avatar_list");
+        if (open) captureEvent("open_avatar_list");
       }}
     >
       <Drawer.Trigger

@@ -14,7 +14,6 @@ import {
 import { DateTime } from "luxon";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { usePostHog } from "@posthog/react";
 import { FaEye, FaSave } from "react-icons/fa";
 import {
   MatchBetsResponse,
@@ -25,6 +24,7 @@ import {
   PredictionsRecord,
   PredictionsResponse,
 } from "@/pocketbase-types";
+import { captureEvent } from "@/analytics";
 import { pb } from "@/pb";
 import Flag from "./Flag";
 import AvatarListDrawer from "./AvatarListDrawer";
@@ -53,7 +53,6 @@ interface Props {
 export default function MatchV2(props: Props) {
   const { match, tournamentId, bet, prediction } = props;
   const border = "border.subtle";
-  const posthog = usePostHog();
 
   const { mutate, isPending } = useCreatePrediction();
   const { mutate: update, isPending: uisPending } = useUpdatePrediction();
@@ -100,7 +99,7 @@ export default function MatchV2(props: Props) {
     if (
       DateTime.now().toMillis() > DateTime.fromSQL(match.startAtUtc).toMillis()
     ) {
-      posthog.capture("try_to_save_after_match_started");
+      captureEvent("try_to_save_after_match_started");
       toaster.error("Ya ha empezado el partido!");
       return;
     }
@@ -124,13 +123,13 @@ export default function MatchV2(props: Props) {
       isBonusActive,
     };
     if (isBonusActive) {
-      posthog.capture("activated_x2", {
+      captureEvent("activated_x2", {
         label: match.home + "-" + match.away,
         favorite_team: user?.favorite_team,
       });
     }
     if (prediction?.id) {
-      posthog.capture("prediction_updated", {
+      captureEvent("prediction_updated", {
         match_id: match.id,
         home_team: match.home,
         away_team: match.away,
@@ -143,7 +142,7 @@ export default function MatchV2(props: Props) {
       });
       update({ id: prediction.id, prediction: payload });
     } else {
-      posthog.capture("prediction_submitted", {
+      captureEvent("prediction_submitted", {
         match_id: match.id,
         home_team: match.home,
         away_team: match.away,

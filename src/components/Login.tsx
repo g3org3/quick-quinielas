@@ -13,6 +13,7 @@ import { useState } from "react";
 import toaster from "react-hot-toast";
 import { usePostHog } from "@posthog/react";
 
+import { captureEvent, identifyUser } from "@/analytics";
 import { pb } from "@/pb";
 import { GoogleIcon } from "./GoogleIcon";
 
@@ -29,11 +30,11 @@ export default function Login() {
         const { avatarUrl } = res.meta;
         await pb.collection("users").update(res.record.id, { avatarUrl });
       }
-      posthog.identify(res.record.id, {
+      identifyUser(res.record.id, {
         name: res.record.name,
         email: res.record.email,
       });
-      posthog.capture("user_logged_in", { method: "google" });
+      captureEvent("user_logged_in", { method: "google" });
       toaster.success("Bienvenido");
       document.location = "/tournaments/t301godsibnxtnj";
     } catch (e) {
@@ -55,11 +56,11 @@ export default function Login() {
       const res = await pb
         .collection("users")
         .authWithPassword(account, "Ab123456!");
-      posthog.identify(res.record.id, {
+      identifyUser(res.record.id, {
         name: res.record.name,
         email: res.record.email,
       });
-      posthog.capture("user_logged_in", { method: "email" });
+      captureEvent("user_logged_in", { method: "email" });
       toaster.success("Bienvenido");
       document.location = "/tournaments/t301godsibnxtnj";
     } catch (e) {

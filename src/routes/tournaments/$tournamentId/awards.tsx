@@ -11,8 +11,8 @@ import {
 import { keyframes } from "@emotion/react";
 import { useReducedMotion } from "framer-motion";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { usePostHog } from "@posthog/react";
 import { createFileRoute } from "@tanstack/react-router";
+import { captureEvent } from "@/analytics";
 import {
   Avatar,
   Box,
@@ -78,7 +78,6 @@ export const Route = createFileRoute("/tournaments/$tournamentId/awards")({
 function Awards() {
   const { tournamentId } = Route.useParams();
   const navigate = Route.useNavigate();
-  const posthog = usePostHog();
   const { data: awards } = useSuspenseQuery(getAwardsQuery(tournamentId));
   const { data: leaderboard } = useSuspenseQuery(
     getLeaderboardQuery(tournamentId)
@@ -98,10 +97,10 @@ function Awards() {
     if (hasTrackedView.current) return;
 
     hasTrackedView.current = true;
-    posthog.capture("view_awards", {
+    captureEvent("view_awards", {
       tournament_id: tournamentId,
     });
-  }, [posthog, tournamentId]);
+  }, [tournamentId]);
 
   const clearTimer = useCallback(() => {
     if (timerId.current !== undefined) {
@@ -120,12 +119,12 @@ function Awards() {
   }, [navigate, tournamentId]);
 
   const closeAwards = useCallback(() => {
-    posthog.capture("click_close_awards", {
+    captureEvent("click_close_awards", {
       category: AWARD_STORIES[activeIndex].category,
       tournament_id: tournamentId,
     });
     finishAwards();
-  }, [activeIndex, finishAwards, posthog, tournamentId]);
+  }, [activeIndex, finishAwards, tournamentId]);
 
   const changeStory = useCallback(
     (offset: number, source: StoryChangeSource) => {
@@ -133,7 +132,7 @@ function Awards() {
       remainingDuration.current = STORY_DURATION_MS;
 
       if (offset > 0 && source !== "auto") {
-        posthog.capture("click_next_award_category", {
+        captureEvent("click_next_award_category", {
           from_category: AWARD_STORIES[activeIndex].category,
           interaction: source,
           to_category:
@@ -153,7 +152,7 @@ function Awards() {
         wrapStoryIndex(currentIndex + offset, AWARD_STORIES.length)
       );
     },
-    [activeIndex, clearTimer, finishAwards, posthog, tournamentId]
+    [activeIndex, clearTimer, finishAwards, tournamentId]
   );
 
   const pauseTimer = useCallback(() => {

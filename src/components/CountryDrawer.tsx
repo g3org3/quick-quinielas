@@ -1,8 +1,8 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { Box, Flex, Input, Text, useColorModeValue } from "@chakra-ui/react";
-import { usePostHog } from "@posthog/react";
 import { Drawer } from "vaul";
 
+import { captureEvent } from "@/analytics";
 import { countries } from "@/components/countries";
 import Flag from "@/components/Flag";
 
@@ -13,7 +13,6 @@ interface Props {
 }
 
 export default function CountryDrawer({ trigger, value, onApply }: Props) {
-  const posthog = usePostHog();
   const bg = useColorModeValue("white", "gray.800");
   const itemBorder = useColorModeValue("gray.100", "gray.700");
   const handleColor = useColorModeValue("gray.300", "gray.600");
@@ -37,7 +36,7 @@ export default function CountryDrawer({ trigger, value, onApply }: Props) {
       onOpenChange={(next) => {
         setOpen(next);
         if (next) {
-          posthog.capture("open_country_drawer");
+          captureEvent("open_country_drawer");
           setSearch("");
         }
       }}
